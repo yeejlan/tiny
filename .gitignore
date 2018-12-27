@@ -1,0 +1,8 @@
+# Logs
+logs
+*.log
+*.pem
+.gradle
+build
+.DS_Store
+Thumbs.db
