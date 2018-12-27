@@ -9,7 +9,7 @@ import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletHandler
 
 
-@WebServlet(name="mytest",urlPatterns=arrayOf("/"))
+@WebServlet(name="mytest",urlPatterns=arrayOf("/*"), loadOnStartup=1)
 
 class Hello() : HttpServlet() {
   val message = "hello~"
@@ -20,10 +20,11 @@ class Hello() : HttpServlet() {
 
   override fun doGet(request: HttpServletRequest, response: HttpServletResponse){
 
-      response.setContentType("text/html")
+      response.setContentType("text/html;charset=UTF-8")
 
       val out = response.getWriter()
       out.println(message)
+      println(message)
   }
 
   override fun destroy(){
