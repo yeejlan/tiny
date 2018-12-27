@@ -10,6 +10,8 @@ import org.eclipse.jetty.servlet.ServletHandler
 
 import javax.inject.Inject
 import dagger.Component
+import dagger.Provides
+import dagger.Module
 
 //https://medium.com/@elye.project/dagger-2-for-dummies-in-kotlin-with-one-page-simple-code-project-618a5f9f2fe8
 //https://medium.com/@elye.project/dagger-2-for-dummies-in-kotlin-scope-d51a6b6e077f
@@ -50,10 +52,49 @@ fun main(args: Array<String>) {
 }
 
 class Cat @Inject constructor(){
+	@Inject lateinit var _dog: SmallDog
+	@Inject lateinit var _fish: GoldenFish
+
 	fun miao(){
 		println("miao miao miao")
+		_dog.wang()
+		_fish.swim()
 	}
 }
+
+open class Dog @Inject constructor(){
+	open fun wang() {
+		println("wang wang")
+	}
+}
+
+class SmallDog @Inject constructor() : Dog() {
+	override fun wang() {
+		super.wang()
+		println("[small dog] wang wang")
+	}
+}
+
+interface Fish{
+	fun swim()
+}
+
+class GoldenFish @Inject constructor(): Fish {
+	override fun swim() {
+		println("[GoldenFish] swim...")
+	}
+}
+
+
+
+@Module
+object FishModule {
+
+	@Provides fun provideFish(): Fish {
+		return GoldenFish()
+	}
+}
+
 
 @Component
 interface MagicBox{
