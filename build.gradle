@@ -22,6 +22,7 @@ plugins {
 apply plugin: 'kotlin'
 apply plugin: 'application'
 apply plugin: 'org.akhikhl.gretty'
+apply plugin: 'kotlin-kapt'
 
 gretty {
   servletContainer = 'jetty9'
@@ -49,6 +50,8 @@ dependencies {
 	compile group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.12.0'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
+	compile group: 'com.google.dagger', name: 'dagger', version: '2.20'
+	kapt group: 'com.google.dagger', name: 'dagger-compiler', version: '2.20'
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compile("org.jetbrains.kotlin:kotlin-reflect")
 	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'

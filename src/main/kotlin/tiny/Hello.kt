@@ -8,11 +8,17 @@ import javax.servlet.annotation.WebServlet
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletHandler
 
+import javax.inject.Inject
+import dagger.Component
+
+//https://medium.com/@elye.project/dagger-2-for-dummies-in-kotlin-with-one-page-simple-code-project-618a5f9f2fe8
+//https://medium.com/@elye.project/dagger-2-for-dummies-in-kotlin-scope-d51a6b6e077f
 
 @WebServlet(name="mytest",urlPatterns=arrayOf("/*"), loadOnStartup=1)
-
 class Hello() : HttpServlet() {
   val message = "hello~"
+
+  @Inject lateinit var _cat: Cat
   
   override fun init() {
      //pass
@@ -25,6 +31,8 @@ class Hello() : HttpServlet() {
       val out = response.getWriter()
       out.println(message)
       println(message)
+      DaggerMagicBox.create().inject(this)
+      _cat.miao()
   }
 
   override fun destroy(){
@@ -39,4 +47,15 @@ fun main(args: Array<String>) {
     handler.addServletWithMapping(Hello::class.java, "/*")
     server.start()
     server.join()
+}
+
+class Cat @Inject constructor(){
+	fun miao(){
+		println("miao miao miao")
+	}
+}
+
+@Component
+interface MagicBox{
+	fun inject(app: Hello)
 }
