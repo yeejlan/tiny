@@ -13,8 +13,15 @@ import dagger.Component
 import dagger.Provides
 import dagger.Module
 
-//https://medium.com/@elye.project/dagger-2-for-dummies-in-kotlin-with-one-page-simple-code-project-618a5f9f2fe8
-//https://medium.com/@elye.project/dagger-2-for-dummies-in-kotlin-scope-d51a6b6e077f
+fun main(args: Array<String>) {
+
+	val server = Server(8080)
+	val handler = ServletHandler()
+    server.setHandler(handler)
+    handler.addServletWithMapping(Hello::class.java, "/*")
+    server.start()
+    server.join()
+}
 
 @WebServlet(name="mytest",urlPatterns=arrayOf("/*"), loadOnStartup=1)
 class Hello() : HttpServlet() {
@@ -42,14 +49,6 @@ class Hello() : HttpServlet() {
   }
 }
 
-fun main(args: Array<String>) {
-	val server = Server(8080)
-	val handler = ServletHandler()
-    server.setHandler(handler)
-    handler.addServletWithMapping(Hello::class.java, "/*")
-    server.start()
-    server.join()
-}
 
 class Cat @Inject constructor(){
 	@Inject lateinit var _dog: Dog
