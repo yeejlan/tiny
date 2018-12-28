@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 
 import java.util.Properties
 
-class Config{
+class TinyConfig{
 
 	var _configMap: Map<String, Any?> = mapOf()
 	var _value: Any? = null

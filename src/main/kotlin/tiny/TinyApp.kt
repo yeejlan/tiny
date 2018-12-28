@@ -1,7 +1,7 @@
 package tiny
 
 
-class App{
+class TinyApp{
 
 	val PRODUCTION = 10
 	val STAGING = 20

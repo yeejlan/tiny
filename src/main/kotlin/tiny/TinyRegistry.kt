@@ -3,15 +3,21 @@ package tiny
 import com.fasterxml.jackson.module.kotlin.*
 import com.fasterxml.jackson.databind.SerializationFeature
 
-private val storage = HashMap<String, Any?>()
+import tiny.exception.TinyException
 
-object Registry{
+private val storage = HashMap<String, Any>()
 
-	operator fun get(key: String) :Any? {
-		return storage.get(key)
+object TinyRegistry{
+
+	operator fun get(key: String) :Any {
+		val v = storage.get(key)
+		if(v == null){
+			throw TinyException("Value not found for key: " + key)
+		}
+		return v
 	}
 
-	operator fun set(key: String, value: Any?) {
+	operator fun set(key: String, value: Any) {
 		storage.put(key, value)
 	}
 
