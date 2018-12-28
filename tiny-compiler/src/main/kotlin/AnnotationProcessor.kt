@@ -12,15 +12,14 @@ import javax.tools.Diagnostic.Kind.WARNING
 @SupportedAnnotationTypes("tiny.annotation.Controller")
 class AnnotationProcessor : AbstractProcessor() {
 	override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        processingEnv.messager.printMessage(WARNING,"Enter AnnotationProcessor.process")
-        println("Enter AnnotationProcessor.process")
+        //processingEnv.messager.printMessage(WARNING,"Enter AnnotationProcessor.process")
         if(annotations == null){
         	return true
         }
         for (typeElement in annotations) {
-            processingEnv.messager.printMessage(WARNING, typeElement.toString())
+            //processingEnv.messager.printMessage(WARNING, typeElement.toString())
         }
-        processingEnv.messager.printMessage(WARNING, roundEnv.toString())
+        //processingEnv.messager.printMessage(WARNING, roundEnv.toString())
         
         return true
 	}
