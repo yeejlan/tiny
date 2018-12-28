@@ -52,7 +52,7 @@ fun main(args: Array<String>) {
 }
 
 class Cat @Inject constructor(){
-	@Inject lateinit var _dog: SmallDog
+	@Inject lateinit var _dog: Dog
 	@Inject lateinit var _fish: Fish
 
 	fun miao(){
@@ -62,7 +62,7 @@ class Cat @Inject constructor(){
 	}
 }
 
-open class Dog @Inject constructor(){
+open class Dog constructor(){
 	open fun wang() {
 		println("wang wang")
 	}
@@ -79,20 +79,33 @@ interface Fish{
 	fun swim()
 }
 
-class GoldenFish constructor() : Fish {
+class GoldenFish @Inject constructor() : Fish {
+	@Inject lateinit var _man : Man
+
 	override fun swim() {
 		println("[GoldenFish] swim...")
+		_man.run()
 	}
 }
 
+
+class Man @Inject constructor(){
+	fun run(){
+		println("[man] running")
+	}
+}
 
 
 @Module
 class FishModule {
 
-	@Provides fun provideFish(): Fish {
-		return GoldenFish()
+	@Provides fun provideFish(impl: GoldenFish): Fish {
+		return impl
 	}
+
+	@Provides fun provideDog(impl: SmallDog): Dog {
+		return impl
+	}	
 }
 
 
