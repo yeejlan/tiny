@@ -10,11 +10,11 @@ private val tplBasePath = "templates/"
 private val tplSuffix = ".tpl"
 private val tplCache: ConcurrentHashMap<String, Template> = ConcurrentHashMap()
 
-private val heapers: HashMap<String, Any> = HashMap()
+private val helpers: HashMap<String, Any> = HashMap()
 
 class TinyView{
 
-	lateinit var _model: HashMap<String, Any>
+	var _model: HashMap<String, Any>
 	private var _useCache = true
 
 	constructor() {
@@ -23,7 +23,7 @@ class TinyView{
 			_useCache = false
 		}
 
-		_model = heapers
+		_model = helpers
 		_model.put("view", this)
 	}
 
@@ -61,11 +61,15 @@ class TinyView{
 		val make = template.make(_model)
 		return make.toString()
 	}
-
-	fun scanHelpers() {
-
+	
+	companion object{
+		/*
+		* load helper from package path
+		*/
+		fun loadHelpers(package: String) {
+			
+		}
 	}
-
 }
 
 /*

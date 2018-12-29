@@ -19,7 +19,7 @@ import groovy.text.StreamingTemplateEngine
 
 fun main(args: Array<String>) {
 
-	TinyApp.init("development", "config/development/tiny.properties")
+	TinyApp.init("testing", "config/development/tiny.properties")
 	TinyApp.bootstrap()
 
 	val view = TinyView()
