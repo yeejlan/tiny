@@ -1,3 +1,3 @@
-include 'header.tpl'
-this is body
-include 'footer.tpl'
+<%=view.render("header")%>
+this is body ${wall}
+<%=view.render("footer")%>

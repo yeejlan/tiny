@@ -16,39 +16,16 @@ import dagger.Module
 
 import groovy.text.StreamingTemplateEngine
 
-class DDDog {
-	fun getDog(): String{
-		return "[this is a dog]"
-	}
-}
-
-fun include(): String{
-	return "[this is a include]"
-}
 
 fun main(args: Array<String>) {
-	val text = """
-	aaa<%=dog.getDog()%>cccc"""
-
-	val template = StreamingTemplateEngine().createTemplate(text)
-	val model: Map<String, Any> = mapOf(
-			"firstname" to "Grace",
-			"lastname"  to "Hopper",
-			"accepted"  to true,
-			"title"     to "Groovy for COBOL programmers",
-			"dog" to DDDog()
-		)
-	val str = template.make(model)
-	println(str)
 
 	TinyApp.init("development", "config/development/tiny.properties")
 	TinyApp.bootstrap()
-	println(TinyApp.getEnv())
-	println(TinyApp.getEnvString())
-	val config = TinyApp.getConfig()
-	println(config)
-	println(config["timezone"])
-	println(config.getLong("cdc",10))
+
+	val view = TinyView()
+	view["wall"] = "A BIG WALL"
+	println(view.render("body"))
+	
 	return
 	val server = Server(8080)
 	val handler = ServletHandler()
