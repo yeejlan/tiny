@@ -53,7 +53,7 @@ dependencies {
 	implementation group: 'com.google.dagger', name: 'dagger', version: '2.20'
 	kapt group: 'com.google.dagger', name: 'dagger-compiler', version: '2.20'
     compile project("tiny-compiler")
-    kapt project("tiny-compiler")	
+    kapt project("tiny-compiler")
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compile("org.jetbrains.kotlin:kotlin-reflect")
 	compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.8'
@@ -89,6 +89,8 @@ test {
     }
 }
 
+
+applicationDefaultJvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
 
 
 mainClassName = "tiny.HelloKt"

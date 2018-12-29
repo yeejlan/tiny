@@ -13,8 +13,18 @@ import dagger.Component
 import dagger.Provides
 import dagger.Module
 
-fun main(args: Array<String>) {
 
+import java.nio.file.Paths
+fun main(args: Array<String>) {
+	TinyApp.init("development", "config/development/tiny.properties")
+	TinyApp.bootstrap()
+	println(TinyApp.getEnv())
+	println(TinyApp.getEnvString())
+	val config = TinyApp.getConfig()
+	println(config)
+	println(config["timezone"])
+	println(config.getLong("cdc",10))
+	return
 	val server = Server(8080)
 	val handler = ServletHandler()
     server.setHandler(handler)
