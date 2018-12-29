@@ -61,13 +61,13 @@ class TinyView{
 		val make = template.make(_model)
 		return make.toString()
 	}
-	
+
 	companion object{
 		/*
 		* load helper from package path
 		*/
-		fun loadHelpers(package: String) {
-			
+		fun loadHelpers(pkg: String) {
+
 		}
 	}
 }
