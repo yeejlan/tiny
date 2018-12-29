@@ -14,8 +14,33 @@ import dagger.Provides
 import dagger.Module
 
 
-import java.nio.file.Paths
+import groovy.text.StreamingTemplateEngine
+
+class DDDog {
+	fun getDog(): String{
+		return "[this is a dog]"
+	}
+}
+
+fun include(): String{
+	return "[this is a include]"
+}
+
 fun main(args: Array<String>) {
+	val text = """
+	aaa<%=dog.getDog()%>cccc"""
+
+	val template = StreamingTemplateEngine().createTemplate(text)
+	val model: Map<String, Any> = mapOf(
+			"firstname" to "Grace",
+			"lastname"  to "Hopper",
+			"accepted"  to true,
+			"title"     to "Groovy for COBOL programmers",
+			"dog" to DDDog()
+		)
+	val str = template.make(model)
+	println(str)
+
 	TinyApp.init("development", "config/development/tiny.properties")
 	TinyApp.bootstrap()
 	println(TinyApp.getEnv())

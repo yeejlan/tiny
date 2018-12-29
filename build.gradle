@@ -57,6 +57,7 @@ dependencies {
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compile("org.jetbrains.kotlin:kotlin-reflect")
 	compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.8'
+	compile group: 'org.codehaus.groovy', name: 'groovy-templates', version: '2.5.5'
 	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'	
