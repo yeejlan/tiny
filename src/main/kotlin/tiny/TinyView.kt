@@ -40,7 +40,7 @@ class TinyView{
 	*/
 	fun render(tplPath : String): String{
 		var template: Template?
-		if(_useCache && tplCache.containsKey(tplPath)){
+		if(_useCache){
 			template = tplCache.get(tplPath)
 			if(template != null){
 				val make = template.make(_model)
