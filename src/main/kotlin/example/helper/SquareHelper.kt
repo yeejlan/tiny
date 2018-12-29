@@ -1,4 +1,4 @@
-package example
+package example.helper
 
 class SquareHelper {
 

@@ -21,6 +21,8 @@ fun main(args: Array<String>) {
 
 	TinyApp.init("testing", "config/development/tiny.properties")
 	TinyApp.bootstrap()
+	TinyView.loadHelpers("example.helper")
+
 
 	val view = TinyView()
 	view["wall"] = "A BIG WALL"

@@ -1,6 +1,8 @@
 package tiny
 
+
 import tiny.exception.TinyException
+import java.io.File
 import groovy.text.StreamingTemplateEngine
 import groovy.text.Template
 import org.apache.commons.io.IOUtils
@@ -66,15 +68,26 @@ class TinyView{
 		/*
 		* load helper from package path
 		*/
-		fun loadHelpers(pkg: String) {
-
+		fun loadHelpers(pkgName: String) {
+			val pkgPath = pkgName.replace('.', '/')
+			val classpath = this::class.java.classLoader.getResource(pkgPath)
+			if(classpath == null){
+				return
+			}
+			val basePath = classpath.getPath()
+			val baseDir = File(basePath)
+			if (!baseDir.exists() || !baseDir.isDirectory()) {
+				return
+			}
+			val helperFiles = baseDir.list()
+			for(helper in helperFiles){
+				if(helper.endsWith("Helper.class")){
+					val clzName = helper.replace(".class", "")
+					val fullClzName = pkgName + "." + clzName
+					val clz = Class.forName(fullClzName)
+					helpers.put(clzName, clz.newInstance())
+				}
+			}
 		}
 	}
 }
-
-/*
-val fullClassName = "com.somepackage.ApiService"
-val cls = Class.forName(fullClassName)
-val kotlinClass = cls.kotlin
-cls.getMethod("getSomeApi").invoke(kotlinClass.objectInstance)
-*/
