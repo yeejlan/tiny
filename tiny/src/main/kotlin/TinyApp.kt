@@ -31,7 +31,7 @@ object TinyApp {
 	private var _envString = _envStrMapping.get(_env) ?: "production"
 	private lateinit var _config: TinyConfig
 
-	fun init(strEnv: String, configFile: String){
+	@JvmStatic fun init(strEnv: String, configFile: String){
 		val env: Int? = _strEnvMapping.get(strEnv)
 		if(env != null){
 			_env = env
@@ -43,22 +43,22 @@ object TinyApp {
 		_isInit = true
 	}
 
-	fun bootstrap(clz: TinyBootstrap) {
+	@JvmStatic fun bootstrap(clz: TinyBootstrap) {
 		_checkInit()
 		clz.bootstrap()
 	}
 
-	fun getEnv(): Int{
+	@JvmStatic fun getEnv(): Int{
 		_checkInit()
 		return _env
 	}
 
-	fun getEnvString(): String{
+	@JvmStatic fun getEnvString(): String{
 		_checkInit()
 		return _envString
 	}
 
-	fun getConfig(): TinyConfig{
+	@JvmStatic fun getConfig(): TinyConfig{
 		_checkInit()
 		return _config
 	}
@@ -78,7 +78,7 @@ object TinyApp {
 
 	}
 
-	fun runJetty(clz: Class<out Servlet>, port: Int = 8080){
+	@JvmStatic fun runJetty(clz: Class<out Servlet>, port: Int = 8080){
 		val server = Server(port)
 		val handler = ServletHandler()
 		handler.addServletWithMapping(clz, "/*")

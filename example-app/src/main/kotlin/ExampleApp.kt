@@ -10,8 +10,10 @@ import tiny.TinyController
 import tiny.TinyView
 import tiny.TinyConfig
 import tiny.TinyBootstrap
-import tiny.annotation.ControllerScan
-import tiny.annotation.HelperScan
+
+import tiny.annotation.TinyApplication
+import tiny.annotation.TinyControllers
+import tiny.annotation.TinyHelpers
 
 import javax.inject.Inject
 import dagger.Component
@@ -44,12 +46,12 @@ class ExampleServlet() : HttpServlet() {
 	}
 }
 
-
-@ControllerScan("example.controller")
-@HelperScan("example.helper")
+@TinyApplication(name = "demo")
+@TinyControllers("example.controller")
+@TinyHelpers("example.helper")
 class ExampleBootstrap : TinyBootstrap {
 	override fun bootstrap() {
-		println("this is a bootstrap")
+		println("write your bootstrap code here")
 	}
 }
 

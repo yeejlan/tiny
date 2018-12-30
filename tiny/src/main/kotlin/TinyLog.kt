@@ -33,7 +33,7 @@ private val dirAttr = PosixFilePermissions.asFileAttribute(dirPerms)
 
 object TinyLog {
 	
-	fun log(message: String, prefix: String = "default") {
+	@JvmStatic fun log(message: String, prefix: String = "default") {
 		if(!loggerStarted){
 			throw TinyException("Logger not started, please call init first")
 		}
@@ -60,7 +60,7 @@ object TinyLog {
 
 	}
 
-	fun init(path: String) {
+	@JvmStatic fun init(path: String) {
 		val os = System.getProperty("os.name")
 		if(os.toLowerCase().startsWith("win")){
 			isPosix = false

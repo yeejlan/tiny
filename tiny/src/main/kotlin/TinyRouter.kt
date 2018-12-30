@@ -10,14 +10,14 @@ object TinyRouter{
 	/**
 	* get current controller
 	**/
-	fun currController(): String {
+	@JvmStatic fun currController(): String {
 		return _controller.get()
 	}
 
 	/**
 	* get current Action
 	**/
-	fun currAction(): String {
+	@JvmStatic fun currAction(): String {
 		return _action.get()
 	}
 
@@ -26,7 +26,7 @@ object TinyRouter{
 	* TinyRewrite('shop/product/(\d+)', 'shop/showprod', array(1 => 'prod_id'))
 	* will match uri '/shop/product/1001' to 'shop' controller and 'showprod' action, with $_GET['prod_id'] = 1001
 	**/
-	fun addRoute(rule: TinyRewrite){
+	@JvmStatic fun addRoute(rule: TinyRewrite){
 		val r = rule.rewriteUrl.toRegex()
 		_routers.put(r, rule)
 	}
@@ -34,14 +34,14 @@ object TinyRouter{
 	/**
 	* router dispatch to controller/action
 	*/
-	fun dispatch(){
+	@JvmStatic fun dispatch(){
 	}
 
 
 	/**
 	* find controller and call action
 	**/
-	fun callAction(controller: String, action: String){
+	@JvmStatic fun callAction(controller: String, action: String){
 
 	}
 }

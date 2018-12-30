@@ -9,7 +9,7 @@ private val storage = HashMap<String, Any>()
 
 object TinyRegistry{
 
-	operator fun get(key: String) :Any {
+	@JvmStatic operator fun get(key: String) :Any {
 		val v = storage.get(key)
 		if(v == null){
 			throw TinyException("Value not found for key: " + key)
@@ -17,11 +17,11 @@ object TinyRegistry{
 		return v
 	}
 
-	operator fun set(key: String, value: Any) {
+	@JvmStatic operator fun set(key: String, value: Any) {
 		storage.put(key, value)
 	}
 
-	fun delete(key: String){
+	@JvmStatic fun delete(key: String){
         storage.remove(key)
     }
 

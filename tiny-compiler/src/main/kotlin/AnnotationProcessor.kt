@@ -15,15 +15,15 @@ import javax.lang.model.element.*
 
 import com.squareup.javapoet.*
 
-import tiny.annotation.ControllerScan
-import tiny.annotation.HelperScan
+import tiny.annotation.TinyControllers
+import tiny.annotation.TinyHelpers
 import tiny.annotation.DaggerInject
 
 import tiny.TinyController
 import tiny.TinyView
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes(value = arrayOf("tiny.annotation.ControllerScan", "tiny.annotation.HelperScan", "tiny.annotation.DaggerInject"))
+@SupportedAnnotationTypes(value = arrayOf("tiny.annotation.TinyControllers", "tiny.annotation.TinyHelpers", "tiny.annotation.DaggerInject"))
 class AnnotationProcessor : AbstractProcessor() {
 
 	private lateinit var _messager: Messager
@@ -54,29 +54,29 @@ class AnnotationProcessor : AbstractProcessor() {
 			return true
 		}
 
-		/*handle @ControllerScan begin*/
-		for (ele in roundEnv.getElementsAnnotatedWith(ControllerScan::class.java)){
+		/*handle @TinyControllers begin*/
+		for (ele in roundEnv.getElementsAnnotatedWith(TinyControllers::class.java)){
 			if (ele.getKind() != ElementKind.CLASS){
-				printError("@"+ControllerScan::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
+				printError("@"+TinyControllers::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
 			}
 			val classElement = ele as TypeElement
-			val annotation = classElement.getAnnotation(ControllerScan::class.java)
+			val annotation = classElement.getAnnotation(TinyControllers::class.java)
 			val value = annotation.value
 			controllerScan(value)
 		}
-		/*handle @ControllerScan end*/
+		/*handle @TinyControllers end*/
 
-		/*handle @HelperScan begin*/
-		for (ele in roundEnv.getElementsAnnotatedWith(HelperScan::class.java)){
+		/*handle @TinyHelpers begin*/
+		for (ele in roundEnv.getElementsAnnotatedWith(TinyHelpers::class.java)){
 			if (ele.getKind() != ElementKind.CLASS){
-				printError("@"+HelperScan::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
+				printError("@"+TinyHelpers::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
 			}			
 			val classElement = ele as TypeElement
-			val annotation = classElement.getAnnotation(HelperScan::class.java)
+			val annotation = classElement.getAnnotation(TinyHelpers::class.java)
 			val value = annotation.value
 			helperScan(value)
 		}
-		/*handle @HelperScan end*/
+		/*handle @TinyHelpers end*/
 
 		/*handle @DaggerInject begin*/
 		for (ele in roundEnv.getElementsAnnotatedWith(DaggerInject::class.java)){
