@@ -1,6 +1,11 @@
 package example.controller
 
+import tiny.annotation.DaggerInject
+
+@DaggerInject
 class UserController {
+
+	fun constructor(name: String){}
 
 	fun indexAction(): Any {
 		return "this is index page"

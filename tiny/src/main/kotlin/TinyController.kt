@@ -39,7 +39,7 @@ class TinyController{
 		/*
 		* load controller and action from package path
 		*/
-		fun loadControllers(pkgName: String) {
+		@JvmStatic fun loadControllers(pkgName: String) {
 			val pkgPath = pkgName.replace('.', '/')
 			val classpath = this::class.java.classLoader.getResource(pkgPath)
 			if(classpath == null){

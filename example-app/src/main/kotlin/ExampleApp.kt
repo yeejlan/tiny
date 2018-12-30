@@ -20,12 +20,15 @@ import dagger.Module
 
 @WebServlet(name="ExampleServlet",urlPatterns=arrayOf("/*"))
 class ExampleServlet() : HttpServlet() {
+	@Inject lateinit var cat: Cat
 
 	override fun init() {
 		TinyApp.init("testing", "config/development/tiny.properties") 
 		TinyApp.bootstrap(ExampleBootstrap())
 		TinyController.loadControllers("example.controller")
 		TinyView.loadHelpers("example.helper")
+
+		DaggerMagicBox.create().inject(this)
 	}
 
 	override fun doGet(request: HttpServletRequest, response: HttpServletResponse){
@@ -33,12 +36,14 @@ class ExampleServlet() : HttpServlet() {
 		val out = response.getWriter()
 		val view = TinyView()
 		out.println(view.render("body"))
+		cat.miao()
 	}
 
 	override fun destroy(){
 		//pass
 	}
 }
+
 
 @ControllerScan("example.controller")
 @HelperScan("example.helper")
@@ -52,6 +57,12 @@ fun main(args: Array<String>) {
 	val config = TinyConfig("config/development/tiny.properties")
 	println(config.getBoolean("dd"))
 	TinyApp.runJetty(ExampleServlet::class.java)
+}
+
+class Cat @Inject constructor() {
+	fun miao() {
+		println("miao~ miao~ miao~")
+	}
 }
 
 @Module

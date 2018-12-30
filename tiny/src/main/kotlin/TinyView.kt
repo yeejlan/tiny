@@ -72,7 +72,7 @@ class TinyView{
 		/*
 		* load helper from package path
 		*/
-		fun loadHelpers(pkgName: String) {
+		@JvmStatic fun loadHelpers(pkgName: String) {
 			val pkgPath = pkgName.replace('.', '/')
 			val classpath = this::class.java.classLoader.getResource(pkgPath)
 			if(classpath == null){
