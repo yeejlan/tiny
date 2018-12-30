@@ -5,7 +5,6 @@ apply plugin: 'kotlin'
 dependencies { 
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compile("org.jetbrains.kotlin:kotlin-reflect")
-  compile project(":tiny-annotation")
 }
 
 sourceCompatibility = 1.8
