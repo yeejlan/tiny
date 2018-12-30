@@ -43,9 +43,9 @@ object TinyApp {
 		_isInit = true
 	}
 
-	fun bootstrap(clz: Class<out TinyBootstrap>) {
+	fun bootstrap(clz: TinyBootstrap) {
 		_checkInit()
-		(clz as TinyBootstrap).bootstrap()
+		clz.bootstrap()
 	}
 
 	fun getEnv(): Int{
