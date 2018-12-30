@@ -10,6 +10,8 @@ import tiny.TinyController
 import tiny.TinyView
 import tiny.TinyConfig
 import tiny.TinyBootstrap
+import tiny.annotation.ControllerScan
+import tiny.annotation.HelperScan
 
 import javax.inject.Inject
 import dagger.Component
@@ -38,8 +40,8 @@ class ExampleServlet() : HttpServlet() {
 	}
 }
 
-//@ControllerScan("example.controller")
-//@HelperScan("example.helper")
+@ControllerScan("example.controller")
+@HelperScan("example.helper")
 class ExampleBootstrap : TinyBootstrap {
 	override fun bootstrap() {
 		println("this is a bootstrap")

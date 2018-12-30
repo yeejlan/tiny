@@ -2,4 +2,4 @@ package tiny.annotation
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-annotation class ControllerScan
+annotation class ControllerScan(val value: String)
