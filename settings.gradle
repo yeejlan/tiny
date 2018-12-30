@@ -1,1 +1,1 @@
-include 'tiny-compiler'
+include ':example-app', ':tiny', ':tiny-compiler', ':tiny-annotation'

@@ -1,5 +1,0 @@
-package tiny
-
-class TinyRouter{
-	
-}
