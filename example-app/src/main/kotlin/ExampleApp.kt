@@ -8,16 +8,15 @@ import javax.servlet.annotation.WebServlet
 import tiny.*
 
 import tiny.annotation.TinyApplication
-import tiny.annotation.TinyControllers
-import tiny.annotation.TinyHelpers
+import tiny.annotation.AutoWeave
 
 import javax.inject.Inject
 import dagger.Component
 import dagger.Provides
 import dagger.Module
 
-import tiny.generated.DaggerMagicBox
 
+@AutoWeave
 @WebServlet(name="ExampleServlet",urlPatterns=arrayOf("/*"))
 class ExampleServlet() : HttpServlet() {
 	
@@ -25,7 +24,7 @@ class ExampleServlet() : HttpServlet() {
 		TinyApp.init("testing", "config/development/tiny.properties") 
 		TinyApp.bootstrap(ExampleBootstrap())
 		TinyController.loadControllers("example.controller")
-		tiny.generated.TinyHelperLoader.loadHelpers()
+		tiny.web.TinyHelperLoader.loadHelpers()
 	}
 
 	override fun doGet(request: HttpServletRequest, response: HttpServletResponse){
@@ -40,15 +39,13 @@ class ExampleServlet() : HttpServlet() {
 	}
 }
 
-@TinyApplication("demo2", daggerModules = arrayOf(AppModule::class))
-@TinyControllers("example.controller")
-//@TinyHelpers("example.helper")
+@AutoWeave
+@TinyApplication(config = "demo2")
 class ExampleBootstrap : TinyBootstrap {
 	@Inject lateinit var cat: Cat
 
 	init{
-		val dd = DaggerMagicBox.create()
-		dd.inject(this)
+
 	}
 
 	override fun bootstrap() {
@@ -58,9 +55,9 @@ class ExampleBootstrap : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-	val config = TinyConfig("config/development/tiny.properties")
-	println(config.getBoolean("dd"))
-	TinyApp.runJetty(ExampleServlet::class.java)
+	val app = ExampleBootstrap()
+	DaggerMMMM.create().weave(app)
+	app.bootstrap()
 }
 
 class Cat @Inject constructor() {
@@ -69,11 +66,10 @@ class Cat @Inject constructor() {
 	}
 }
 
-
 @Component(modules = arrayOf(AppModule::class))
 interface MMMM{
-	fun inject(target: ExampleServlet)
-	fun inject(target: ExampleBootstrap)
+	fun weave(target: ExampleServlet)
+	fun weave(target: ExampleBootstrap)
 }
 
 

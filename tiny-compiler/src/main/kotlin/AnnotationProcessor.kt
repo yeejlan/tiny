@@ -17,29 +17,33 @@ import javax.lang.model.element.*
 
 import com.squareup.javapoet.*
 
-import tiny.annotation.TinyControllers
-import tiny.annotation.TinyHelpers
 import tiny.annotation.TinyApplication
+import tiny.annotation.AutoWeave
+import tiny.annotation.WeaverBird
+import tiny.annotation.Controller
 import tiny.annotation.Helper
-
-import tiny.TinyController
-import tiny.TinyView
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes(value = arrayOf(
-	"tiny.annotation.TinyControllers",
-	"tiny.annotation.TinyHelpers", 
 	"tiny.annotation.TinyApplication",
+	"tiny.annotation.AutoWeave",
+	"tiny.annotation.WeaverBird",
+	"tiny.annotation.Controller",
 	"tiny.annotation.Helper"
 	))
 class AnnotationProcessor : AbstractProcessor() {
 
+	private val _web = "tiny.web"
+	private val _weaver = "tiny.weaver"
 	private lateinit var _messager: Messager
 	private lateinit var _elements: Elements
 	private lateinit var _types: Types
 	private lateinit var _filer: Filer
+	private var _tinyApp: TypeElement? = null
 	private val _helperMap : HashMap<String, TypeElement> = HashMap()
 	private val _controllerMap : HashMap<String, TypeElement> = HashMap()
+	private val _autoWeaveMap : HashMap<String, TypeElement> = HashMap()
+	private val _weaverBirdMap : HashMap<String, TypeElement> = HashMap()
 	private var _round: Long = 1
 	private var _lastRound = false
 	private var _foundSomething = false
@@ -53,12 +57,12 @@ class AnnotationProcessor : AbstractProcessor() {
 
 	}
 
-	private fun printMessage(msg: String) {
-		_messager.printMessage(MANDATORY_WARNING, msg)
+	private fun printMessage(msg: Any) {
+		_messager.printMessage(MANDATORY_WARNING, ""+msg)
 	}
 
-	private fun printError(msg: String) {
-		_messager.printMessage(ERROR, msg)
+	private fun printError(msg: Any) {
+		_messager.printMessage(ERROR, ""+msg)
 	}	
 
 	override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
@@ -68,40 +72,49 @@ class AnnotationProcessor : AbstractProcessor() {
 			return true
 		}
 
+		/*handle @Controller begin*/
+		for (ele in roundEnv.getElementsAnnotatedWith(Controller::class.java)){
+			if (ele.getKind() != ElementKind.CLASS){
+				printError("@"+Controller::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
+			}
+			val classElement = ele as TypeElement
+			_controllerMap.put(classElement.getQualifiedName().toString(), classElement)
+			_foundSomething = true
+		}
+		/*handle @Controller end*/
+
 		/*handle @Helper begin*/
 		for (ele in roundEnv.getElementsAnnotatedWith(Helper::class.java)){
 			if (ele.getKind() != ElementKind.CLASS){
 				printError("@"+Helper::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
 			}
 			val classElement = ele as TypeElement
-			_helperMap.put(classElement.getSimpleName().toString(), classElement)
+			_helperMap.put(classElement.getQualifiedName().toString(), classElement)
 			_foundSomething = true
 		}
-		/*handle @Helper end*/
+		/*handle @Helper end*/		
 
-		/*handle @TinyControllers begin*/
-		for (ele in roundEnv.getElementsAnnotatedWith(TinyControllers::class.java)){
+		/*handle @AutoWeave begin*/
+		for (ele in roundEnv.getElementsAnnotatedWith(AutoWeave::class.java)){
 			if (ele.getKind() != ElementKind.CLASS){
-				printError("@"+TinyControllers::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
+				printError("@"+AutoWeave::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
 			}
 			val classElement = ele as TypeElement
-			val annotation = classElement.getAnnotation(TinyControllers::class.java)
-			val value = annotation.value
-			controllerScan(value)
+			_autoWeaveMap.put(classElement.getQualifiedName().toString(), classElement)
+			_foundSomething = true
 		}
-		/*handle @TinyControllers end*/
+		/*handle @AutoWeave end*/
 
-		/*handle @TinyHelpers begin*/
-		for (ele in roundEnv.getElementsAnnotatedWith(TinyHelpers::class.java)){
+		/*handle @WeaverBird begin*/
+		for (ele in roundEnv.getElementsAnnotatedWith(WeaverBird::class.java)){
 			if (ele.getKind() != ElementKind.CLASS){
-				printError("@"+TinyHelpers::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
-			}			
+				printError("@"+WeaverBird::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
+			}
 			val classElement = ele as TypeElement
-			val annotation = classElement.getAnnotation(TinyHelpers::class.java)
-			val value = annotation.value
-			helperScan(value)
+			_weaverBirdMap.put(classElement.getQualifiedName().toString(), classElement)
+			_foundSomething = true
 		}
-		/*handle @TinyHelpers end*/
+		/*handle @WeaverBird end*/			
 
 		/*handle @TinyApplication begin*/
 		for (ele in roundEnv.getElementsAnnotatedWith(TinyApplication::class.java)){
@@ -109,22 +122,8 @@ class AnnotationProcessor : AbstractProcessor() {
 				printError("@"+TinyApplication::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
 			}
 			val classElement = ele as TypeElement
-			val annotation = classElement.getAnnotation(TinyApplication::class.java)
-			val name = annotation.name
-			var daggerModules: String = ""
-			for(am in classElement.getAnnotationMirrors()){
-				if(am.getAnnotationType().toString() == "tiny.annotation.TinyApplication"){
-					for(entry in am.getElementValues()){
-						if(entry.key.getSimpleName().toString() == "daggerModules"){
-							daggerModules = entry.value.getValue().toString()
-							break
-						}
-					}
-					//printMessage(""+am.getElementValues().get("daggerModules"))
-					break
-				}
-			}
-			handleTinyApplication(name, daggerModules)
+			_tinyApp = classElement
+			_foundSomething = true
 		}
 		/*handle @TinyApplication end*/
 
@@ -141,123 +140,149 @@ class AnnotationProcessor : AbstractProcessor() {
 	}
 
 	private fun writeStuff(){
+
 		writeHelperLoader()
+		writeTinyServlet()
+		writeDaggerMagicModule()
+		writeDaggerMagicBox()
+		writeTinyBird()
+
 	}
 
-	private fun controllerScan(pkgList: String){
-		val pagSet: MutableList<String> = mutableListOf()
-		val pkgArr = pkgList.split(",")
-		for(onePkg in pkgArr){
-			val pkg = onePkg.trim()
-			if(pkg.isEmpty()){
-				continue
-			}
-			pagSet.add(pkg)
-		}
+	private fun writeTinyBird(){
+		val _clzDaggerMagicBox = ClassName.get("tiny.weaver", "DaggerMagicBox")
+		val _clzMagicBox = ClassName.get("tiny.weaver", "MagicBox")
 
-		var _method = MethodSpec.methodBuilder("loadActions")
+		val _methodGet = MethodSpec.methodBuilder("get")
 			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-
-		for(pkg in pagSet){
-			_method = _method.addStatement("\$T.loadControllers(\$S)", TinyController::class.java, pkg)
-		}
-		val _methodBuilder = _method.build()
-
-		val scanClass = TypeSpec
-				.classBuilder("TinyControllerScanner")
-				.addModifiers(Modifier.PUBLIC)
-				.addMethod(_methodBuilder)
-				.build()
-		val javaFile = JavaFile.builder("tiny.generated", scanClass).build()
-		javaFile.writeTo(_filer)
-
-	}
-
-	
-
-	private fun helperScan(pkgList: String){
-		val pagSet: MutableList<String> = mutableListOf()
-		val pkgArr = pkgList.split(",")
-		for(onePkg in pkgArr){
-			val pkg = onePkg.trim()
-			if(pkg.isEmpty()){
-				continue
-			}
-			pagSet.add(pkg)
-		}
-
-		var _method = MethodSpec.methodBuilder("loadHelpers")
-			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-
-		for(pkg in pagSet){
-			_method = _method.addStatement("\$T.loadHelpers(\$S)", TinyView::class.java, pkg)
-		}
-		val _methodBuilder = _method.build()
-
-		val scanClass = TypeSpec
-				.classBuilder("TinyHelperScanner")
-				.addModifiers(Modifier.PUBLIC)
-				.addMethod(_methodBuilder)
-				.build()
-		val javaFile = JavaFile.builder("tiny.generated", scanClass).build()
-		javaFile.writeTo(_filer)		
-	}
-
-	private fun handleTinyApplication(name:String, modList: String){
-		val modSet: MutableList<String> = mutableListOf()
-		val modArr = modList.split(",")
-		for(oneMod in modArr){
-			val mod = oneMod.trim()
-			if(mod.isEmpty()){
-				continue
-			}
-			modSet.add(mod)
-		}
-
-		/*write magicbox*/
-		val _clzName = ClassName.get("example", "ExampleBootstrap")
-
-		val _method = MethodSpec.methodBuilder("inject")
-			.addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-			.addParameter(_clzName, "app")
+			.returns(_clzMagicBox)
+			.addStatement("return theMagicBox")
 			.build()
+
+		val _field = FieldSpec.builder(_clzMagicBox, "theMagicBox")
+			.addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC)
+			.initializer("\$T.create()", _clzDaggerMagicBox)
+			.build()
+
+		val _class = TypeSpec
+			.classBuilder("TinyBird")
+			.addModifiers(Modifier.PUBLIC)
+			.addField(_field)
+			.addMethod(_methodGet)
+			.build()
+
+		val javaFile = JavaFile.builder(_weaver, _class).build()
+		javaFile.writeTo(_filer)
+	}
+
+	private fun writeDaggerMagicModule(){
+	}
+
+	private fun writeDaggerMagicBox(){
 
 		val _clzComponent = ClassName.get("dagger", "Component")
-		val _clzAppModule = ClassName.get("example", "AppModule")
-		val _anno = AnnotationSpec.builder(_clzComponent)
-			.addMember("modules", "\$T.class", _clzAppModule)
+		val _clzModule = ClassName.get("dagger", "MagicBoxModule")
+
+		val _annoBuilder = AnnotationSpec.builder(_clzComponent)
+			//.addMember("modules", "\$T.class", _clzModule)
+		for(weaverBird in _weaverBirdMap){
+			_annoBuilder.addMember("modules", "\$T.class", weaverBird.value)
+		}
+		val _anno = _annoBuilder.build()
+
+		val _interfaceBuilder = TypeSpec.interfaceBuilder("MagicBox")
+			.addModifiers(Modifier.PUBLIC)
+			.addAnnotation(_anno)
+
+		for(autoWeave in _autoWeaveMap){
+			val _clzName = ClassName.get(autoWeave.value)
+			val _method = MethodSpec.methodBuilder("weave")
+				.addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+				.addParameter(_clzName, "obj")
+				.build()	
+			_interfaceBuilder.addMethod(_method)
+		}
+
+		val _interface = _interfaceBuilder.build()
+
+		val javaFile = JavaFile.builder(_weaver, _interface).build()
+		javaFile.writeTo(_filer)
+	}
+
+	private fun writeTinyServlet(){
+		if(_tinyApp == null){
+			return
+		}
+
+		val annotation = (_tinyApp as TypeElement).getAnnotation(TinyApplication::class.java)
+		val config = annotation.config
+
+		val _clzServlet = ClassName.get("javax.servlet.http", "HttpServlet")
+		val _clzRequest = ClassName.get("javax.servlet.http", "HttpServletRequest")
+		val _clzResponse = ClassName.get("javax.servlet.http", "HttpServletResponse")
+		val _clzAnnoServlet = ClassName.get("javax.servlet.annotation", "WebServlet")
+		val _clzTinyApp = ClassName.get("tiny", "TinyApp")
+		val _clzTinyView = ClassName.get("tiny", "TinyView")
+		val _clzTinyHelperLoader = ClassName.get("tiny.web", "TinyHelperLoader")
+		val _clzServletException = ClassName.get("javax.servlet", "ServletException")
+		val _clzIOException = ClassName.get("java.io", "IOException")
+
+		val _methodInit = MethodSpec.methodBuilder("init")
+			.addModifiers(Modifier.PUBLIC)
+			.addException(_clzServletException)
+			.addStatement("""${'$'}T.init("testing", "config/development/tiny.properties")""", _clzTinyApp)
+			.addStatement("\$T.bootstrap(new example.ExampleBootstrap())", _clzTinyApp)
+			.addStatement("\$T.loadHelpers()", _clzTinyHelperLoader)
 			.build()
 
-		val _interface = TypeSpec.interfaceBuilder("MagicBox")
-		.addModifiers(Modifier.PUBLIC)
-		.addMethod(_method)
-		.addAnnotation(_anno)
-		.build()
+		val _methodDoGet = MethodSpec.methodBuilder("doGet")
+			.addModifiers(Modifier.PUBLIC)
+			.addException(_clzServletException)
+			.addException(_clzIOException)
+			.addParameter(_clzRequest, "request")
+			.addParameter(_clzResponse, "response")
+			.addStatement("""response.setContentType("text/html;charset=UTF-8")""")
+			.addStatement("java.io.PrintWriter out = response.getWriter()")
+			.addStatement("\$T view = new \$T()", _clzTinyView, _clzTinyView)
+			.addStatement("""out.println(view.render("body"))""")
+			.build()
 
-		val javaFile = JavaFile.builder("tiny.generated", _interface).build()
+		val _methodDestroy = MethodSpec.methodBuilder("destroy")
+			.addModifiers(Modifier.PUBLIC)
+			.build()
+
+		val _class = TypeSpec
+				.classBuilder("TinyServlet")
+				.superclass(_clzServlet)
+				.addModifiers(Modifier.PUBLIC)
+				.addMethod(_methodInit)
+				.addMethod(_methodDoGet)
+				.addMethod(_methodDestroy)
+				.build()
+
+		val javaFile = JavaFile.builder(_web, _class).build()
 		javaFile.writeTo(_filer)
-		/*write module*/
 	}
 
 	private fun writeHelperLoader() {
 
-		var _method = MethodSpec.methodBuilder("loadHelpers")
+		val _methodBuilder = MethodSpec.methodBuilder("loadHelpers")
 			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
 
 		val _viewClz = ClassName.get("tiny", "TinyView")
 		for(helper in _helperMap){
 			var _helperClz = ClassName.get(helper.value)
-			_method = _method.addStatement("\$T.addHelper(\$S, new \$L())", _viewClz, helper.key, _helperClz)
+			_methodBuilder.addStatement("\$T.addHelper(\$S, new \$L())", _viewClz, helper.key, _helperClz)
 		}
-		val _methodBuilder = _method.build()
+		val _method = _methodBuilder.build()
 
 		
 		val _class = TypeSpec
 				.classBuilder("TinyHelperLoader")
 				.addModifiers(Modifier.PUBLIC)
-				.addMethod(_methodBuilder)
+				.addMethod(_method)
 				.build()
-		val javaFile = JavaFile.builder("tiny.generated", _class).build()
+		val javaFile = JavaFile.builder(_web, _class).build()
 		javaFile.writeTo(_filer)	
 	}
 
@@ -272,7 +297,7 @@ class AnnotationProcessor : AbstractProcessor() {
 				.addAnnotation(_clz)
 				.build()
 
-		val javaFile = JavaFile.builder("tiny.generated", _class).build()
+		val javaFile = JavaFile.builder(_web, _class).build()
 		javaFile.writeTo(_filer)
 		_round ++				
 	}

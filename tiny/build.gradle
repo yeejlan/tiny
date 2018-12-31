@@ -15,16 +15,16 @@ dependencies {
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compile("org.jetbrains.kotlin:kotlin-reflect")
 	compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.8'
-	compile group: 'org.codehaus.groovy', name: 'groovy-templates', version: '2.5.5'
+	compile group: 'org.codehaus.groovy', name: 'groovy-templates', version: '2.5.5'	
 }
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 compileKotlin {
-  kotlinOptions {
-    freeCompilerArgs = ["-Xjsr305=strict"]
-    jvmTarget = "1.8"
-  }
+	kotlinOptions {
+		freeCompilerArgs = ["-Xjsr305=strict"]
+		jvmTarget = "1.8"
+	}
 }
 
 tasks.withType(JavaCompile) { 

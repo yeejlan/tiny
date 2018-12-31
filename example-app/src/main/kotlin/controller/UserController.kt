@@ -1,18 +1,23 @@
 package example.controller
 
+import tiny.annotation.AutoWeave
+import tiny.annotation.Controller
+
+@Controller
+@AutoWeave
 class UserController {
 
 	fun indexAction(): Any {
-		return "this is index page"
+		return "this is user/index page"
 	}
 
-	fun userAction(): Any {
-		return "this is user page"
+	fun infoAction(): Any {
+		return "this is user/info page"
 	}
 
-	fun aaa() {}
+	fun doSomething() {}
 
-	private fun cccAction(): Any {
-		return "this is a private function"
+	private fun privateAction(): Any {
+		return "this is private place"
 	}
 }
