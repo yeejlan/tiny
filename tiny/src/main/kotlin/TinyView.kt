@@ -14,10 +14,6 @@ private val tplCache: ConcurrentHashMap<String, Template> = ConcurrentHashMap()
 
 private val helpers: HashMap<String, Any> = HashMap()
 
-fun addHelper(helper: String, clz: Class<Any>){
-	helpers.put(helper, clz)
-}
-
 class TinyView{
 
 	var _model: HashMap<String, Any>
@@ -69,29 +65,9 @@ class TinyView{
 	}
 
 	companion object{
-		/*
-		* load helper from package path
-		*/
-		@JvmStatic fun loadHelpers(pkgName: String) {
-			val pkgPath = pkgName.replace('.', '/')
-			val classpath = this::class.java.classLoader.getResource(pkgPath)
-			if(classpath == null){
-				return
-			}
-			val basePath = classpath.getPath()
-			val baseDir = File(basePath)
-			if (!baseDir.exists() || !baseDir.isDirectory()) {
-				return
-			}
-			val helperFiles = baseDir.list()
-			for(helper in helperFiles){
-				if(helper.endsWith("Helper.class")){
-					val clzName = helper.replace(".class", "")
-					val fullClzName = pkgName + "." + clzName
-					val clz = Class.forName(fullClzName)
-					helpers.put(clzName, clz.newInstance())
-				}
-			}
+
+		@JvmStatic fun addHelper(helper: String, clz: Any){
+			helpers.put(helper, clz)
 		}
 	}
 }

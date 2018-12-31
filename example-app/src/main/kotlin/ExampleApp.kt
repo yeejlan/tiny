@@ -5,11 +5,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.annotation.WebServlet
 
-import tiny.TinyApp
-import tiny.TinyController
-import tiny.TinyView
-import tiny.TinyConfig
-import tiny.TinyBootstrap
+import tiny.*
 
 import tiny.annotation.TinyApplication
 import tiny.annotation.TinyControllers
@@ -20,17 +16,16 @@ import dagger.Component
 import dagger.Provides
 import dagger.Module
 
+import tiny.generated.DaggerMagicBox
+
 @WebServlet(name="ExampleServlet",urlPatterns=arrayOf("/*"))
 class ExampleServlet() : HttpServlet() {
-	@Inject lateinit var cat: Cat
-
+	
 	override fun init() {
 		TinyApp.init("testing", "config/development/tiny.properties") 
 		TinyApp.bootstrap(ExampleBootstrap())
 		TinyController.loadControllers("example.controller")
-		TinyView.loadHelpers("example.helper")
-
-		DaggerMagicBox.create().inject(this)
+		tiny.generated.TinyHelperLoader.loadHelpers()
 	}
 
 	override fun doGet(request: HttpServletRequest, response: HttpServletResponse){
@@ -38,7 +33,6 @@ class ExampleServlet() : HttpServlet() {
 		val out = response.getWriter()
 		val view = TinyView()
 		out.println(view.render("body"))
-		cat.miao()
 	}
 
 	override fun destroy(){
@@ -46,12 +40,20 @@ class ExampleServlet() : HttpServlet() {
 	}
 }
 
-@TinyApplication(name = "demo")
+@TinyApplication("demo2", daggerModules = arrayOf(AppModule::class))
 @TinyControllers("example.controller")
-@TinyHelpers("example.helper")
+//@TinyHelpers("example.helper")
 class ExampleBootstrap : TinyBootstrap {
+	@Inject lateinit var cat: Cat
+
+	init{
+		val dd = DaggerMagicBox.create()
+		dd.inject(this)
+	}
+
 	override fun bootstrap() {
 		println("write your bootstrap code here")
+		cat.miao()
 	}
 }
 
@@ -67,13 +69,14 @@ class Cat @Inject constructor() {
 	}
 }
 
-@Module
-class AppModule {
 
+@Component(modules = arrayOf(AppModule::class))
+interface MMMM{
+	fun inject(target: ExampleServlet)
+	fun inject(target: ExampleBootstrap)
 }
 
 
-@Component(modules = arrayOf(AppModule::class))
-interface MagicBox{
-	fun inject(app: ExampleServlet)
+class CatAPP {
+	@Inject lateinit var _ccccat: Cat
 }
