@@ -39,12 +39,8 @@ class ExampleServlet() : HttpServlet() {
 
 @AutoWeave
 @TinyApplication(config = "demo2")
-class ExampleBootstrap : TinyBootstrap {
+class ExampleBootstrap @AutoWeave constructor() : TinyBootstrap {
 	@Inject lateinit var cat: Cat
-
-	init{
-
-	}
 
 	override fun bootstrap() {
 		println("write your bootstrap code here~")
@@ -54,15 +50,11 @@ class ExampleBootstrap : TinyBootstrap {
 
 fun main(args: Array<String>) {
 	val app = ExampleBootstrap()
-	DaggerMMMM.create().weave(app)
 	app.bootstrap()
 
-	val userC = example.controller.UserController()
-	println(userC.infoAction())
-
-	println(userC.apple("RED"))
-//tiny.weaver.TinyBird
-
+	val userController = example.controller.UserController()
+	println(userController.infoAction())
+	println(userController.apple("RED"))
 
 }
 
@@ -70,15 +62,4 @@ class Cat @Inject constructor() {
 	fun miao() {
 		println("miao~ miao~ miao~")
 	}
-}
-
-@Component(modules = arrayOf(AppModule::class))
-interface MMMM{
-	fun weave(target: ExampleServlet)
-	fun weave(target: ExampleBootstrap)
-}
-
-
-class CatAPP {
-	@Inject lateinit var _ccccat: Cat
 }
