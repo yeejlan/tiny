@@ -16,6 +16,8 @@ dependencies {
 	compile("org.jetbrains.kotlin:kotlin-reflect")
 	compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.8'
 	compile group: 'org.codehaus.groovy', name: 'groovy-templates', version: '2.5.5'	
+	compile project(":tiny-annotation")
+	compile "org.aspectj:aspectjtools:1.9.2"
 }
 
 sourceCompatibility = "1.8"

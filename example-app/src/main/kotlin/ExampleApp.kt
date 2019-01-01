@@ -47,7 +47,7 @@ class ExampleBootstrap : TinyBootstrap {
 	}
 
 	override fun bootstrap() {
-		println("write your bootstrap code here")
+		println("write your bootstrap code here~")
 		cat.miao()
 	}
 }
@@ -56,6 +56,9 @@ fun main(args: Array<String>) {
 	val app = ExampleBootstrap()
 	DaggerMMMM.create().weave(app)
 	app.bootstrap()
+
+	val userC = example.controller.UserController()
+	println(userC.infoAction())
 }
 
 class Cat @Inject constructor() {
