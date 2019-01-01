@@ -5,8 +5,8 @@ import tiny.annotation.Controller
 
 @Controller
 @AutoWeave
-class TestController {
-
+class TestController @AutoWeave constructor(){
+	
 	fun indexAction(): Any {
 		return "this is test/index page"
 	}

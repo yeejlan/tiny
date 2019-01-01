@@ -75,7 +75,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		/*handle @Controller begin*/
 		for (ele in roundEnv.getElementsAnnotatedWith(Controller::class.java)){
 			if (ele.getKind() != ElementKind.CLASS){
-				printError("@"+Controller::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
+				continue
 			}
 			val classElement = ele as TypeElement
 			_controllerMap.put(classElement.getQualifiedName().toString(), classElement)
@@ -86,7 +86,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		/*handle @Helper begin*/
 		for (ele in roundEnv.getElementsAnnotatedWith(Helper::class.java)){
 			if (ele.getKind() != ElementKind.CLASS){
-				printError("@"+Helper::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
+				continue
 			}
 			val classElement = ele as TypeElement
 			_helperMap.put(classElement.getQualifiedName().toString(), classElement)
@@ -97,7 +97,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		/*handle @AutoWeave begin*/
 		for (ele in roundEnv.getElementsAnnotatedWith(AutoWeave::class.java)){
 			if (ele.getKind() != ElementKind.CLASS){
-				printError("@"+AutoWeave::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
+				continue
 			}
 			val classElement = ele as TypeElement
 			_autoWeaveMap.put(classElement.getQualifiedName().toString(), classElement)
@@ -108,7 +108,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		/*handle @WeaverBird begin*/
 		for (ele in roundEnv.getElementsAnnotatedWith(WeaverBird::class.java)){
 			if (ele.getKind() != ElementKind.CLASS){
-				printError("@"+WeaverBird::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
+				continue
 			}
 			val classElement = ele as TypeElement
 			_weaverBirdMap.put(classElement.getQualifiedName().toString(), classElement)
@@ -147,6 +147,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		writeDaggerMagicModule()
 		writeDaggerMagicBox()
 		writeTinyBird()
+		printMessage(_autoWeaveMap)
 
 	}
 
