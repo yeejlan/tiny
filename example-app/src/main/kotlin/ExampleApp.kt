@@ -59,6 +59,11 @@ fun main(args: Array<String>) {
 
 	val userC = example.controller.UserController()
 	println(userC.infoAction())
+
+	println(userC.apple("RED"))
+//tiny.weaver.TinyBird
+
+
 }
 
 class Cat @Inject constructor() {
