@@ -36,14 +36,14 @@ interface Apple {
 }
 
 @Singleton
-class BigAppleImpl : Apple{
+class BigAppleImpl @Inject constructor(): Apple{
 	override fun howMany(): String{
 		return "there is only one big apple!"
 	}
 }
 
 @Singleton
-class SmallAppleImpl : Apple{
+class SmallAppleImpl @Inject constructor(): Apple{
 	override fun howMany(): String{
 		return "there are five small apples, which one do you want?"
 	}

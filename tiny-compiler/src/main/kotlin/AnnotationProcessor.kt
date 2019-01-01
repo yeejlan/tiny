@@ -141,6 +141,7 @@ class AnnotationProcessor : AbstractProcessor() {
 
 	private fun writeStuff(){
 
+		writeControllerLoader()
 		writeHelperLoader()
 		writeTinyServlet()
 		writeDaggerMagicModule()
@@ -176,6 +177,8 @@ class AnnotationProcessor : AbstractProcessor() {
 	}
 
 	private fun writeDaggerMagicModule(){
+		//provide controller initialize?
+		val _clzModule = ClassName.get("dagger", "Module")
 	}
 
 	private fun writeDaggerMagicBox(){
@@ -285,6 +288,28 @@ class AnnotationProcessor : AbstractProcessor() {
 		val javaFile = JavaFile.builder(_web, _class).build()
 		javaFile.writeTo(_filer)	
 	}
+
+	private fun writeControllerLoader() {
+
+		val _methodBuilder = MethodSpec.methodBuilder("loadActions")
+			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+
+		val _tinyControllerClz = ClassName.get("tiny", "TinyController")
+		for(controller in _controllerMap){
+			var _controllerClz = ClassName.get(controller.value)
+			_methodBuilder.addStatement("\$T.addAction(\$S, \$L.class)", _tinyControllerClz, controller.key, _controllerClz)
+		}
+		val _method = _methodBuilder.build()
+
+		
+		val _class = TypeSpec
+				.classBuilder("TinyControllerLoader")
+				.addModifiers(Modifier.PUBLIC)
+				.addMethod(_method)
+				.build()
+		val javaFile = JavaFile.builder(_web, _class).build()
+		javaFile.writeTo(_filer)	
+	}	
 
 	private fun forceNextRound() {
 		if(_round>10) {

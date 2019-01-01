@@ -3,14 +3,7 @@ package tiny
 import java.io.File
 import java.lang.reflect.Modifier
 
-public val actions: HashMap<String, Any> = HashMap()
-
-/*
-* add action , for example: addAction("user/info", UserController::Class.java)
-*/
-fun addAction(action: String, clz: Class<Any>){
-	actions.put(action, clz)
-}
+public val actions: HashMap<String, Class<*>> = HashMap()
 
 class TinyController{
 
@@ -37,36 +30,11 @@ class TinyController{
 
 	companion object{
 		/*
-		* load controller and action from package path
+		* add action , for example: addAction("user/info", UserController::Class.java)
 		*/
-		@JvmStatic fun loadControllers(pkgName: String) {
-			val pkgPath = pkgName.replace('.', '/')
-			val classpath = this::class.java.classLoader.getResource(pkgPath)
-			if(classpath == null){
-				return
-			}
-			val basePath = classpath.getPath()
-			val baseDir = File(basePath)
-			if (!baseDir.exists() || !baseDir.isDirectory()) {
-				return
-			}
-			val helperFiles = baseDir.list()
-			for(helper in helperFiles){
-				if(helper.endsWith("Controller.class")){
-					val clzName = helper.replace(".class", "")
-					val fullClzName = pkgName + "." + clzName
-					val clz = Class.forName(fullClzName)
-					val methods = clz.getDeclaredMethods()
-					for(method in methods){
-						val name = method.getName()
-						val modifiers = method.getModifiers()
-						if(name.endsWith("Action") && (Modifier.PUBLIC and modifiers) != 0){
-							println(clzName + "." + name)
-
-						}
-					}
-				}
-			}
+		@JvmStatic fun addAction(action: String, clz: Class<*>){
+			actions.put(action, clz)
 		}
+
 	}
 }

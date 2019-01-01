@@ -23,8 +23,6 @@ class ExampleServlet() : HttpServlet() {
 	override fun init() {
 		TinyApp.init("testing", "config/development/tiny.properties") 
 		TinyApp.bootstrap(ExampleBootstrap())
-		TinyController.loadControllers("example.controller")
-		tiny.web.TinyHelperLoader.loadHelpers()
 	}
 
 	override fun doGet(request: HttpServletRequest, response: HttpServletResponse){
