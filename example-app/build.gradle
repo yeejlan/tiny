@@ -82,15 +82,6 @@ task weave {
 	}
 }
 
-run {
-
-	doFirst {
-		def weaver = configurations.ajweaver.asPath
-		jvmArgs = jvmArgs << "-javaagent:$weaver"	
-	}
-}
-
-
 def weaveAspectJToClass() {
 	ant.taskdef(resource:"org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties", classpath: configurations.ajc.asPath)
 	ant.iajc(source:"1.8", 
@@ -104,6 +95,22 @@ def weaveAspectJToClass() {
 			destDir:"build/classes/java/main",
 		){}
 }
+
+
+def runWithWeaver = true
+
+run {
+
+	doFirst {
+		if(runWithWeaver) {
+			def weaver = configurations.ajweaver.asPath
+			jvmArgs = jvmArgs << "-javaagent:$weaver"
+		}
+	}
+}
+
+
+
 
 
 applicationDefaultJvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
