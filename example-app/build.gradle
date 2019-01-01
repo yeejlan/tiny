@@ -7,6 +7,7 @@ apply plugin: 'kotlin-kapt'
 
 configurations {
 	ajc
+	ajweaver
 }
 
 dependencies { 
@@ -33,6 +34,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
 	ajc 'org.aspectj:aspectjtools:1.9.2'
 	ajc 'org.aspectj:aspectjrt:1.9.2'
+	ajweaver 'org.aspectj:aspectjweaver:1.9.2'
 }
 
 sourceCompatibility = "1.8"
@@ -80,6 +82,15 @@ task weave {
 	}
 }
 
+run {
+
+	doFirst {
+		def weaver = configurations.ajweaver.asPath
+		jvmArgs = jvmArgs << "-javaagent:$weaver"	
+	}
+}
+
+
 def weaveAspectJToClass() {
 	ant.taskdef(resource:"org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties", classpath: configurations.ajc.asPath)
 	ant.iajc(source:"1.8", 
@@ -93,6 +104,7 @@ def weaveAspectJToClass() {
 			destDir:"build/classes/java/main",
 		){}
 }
+
 
 applicationDefaultJvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
 

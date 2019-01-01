@@ -1,0 +1,6 @@
+<aspectj>
+	<weaver options="-Xset:weaveJavaxPackages=true" />
+	<aspects>
+		<aspect name="example.aop.AutoWeaveHandle" />
+	</aspects>
+</aspectj>
