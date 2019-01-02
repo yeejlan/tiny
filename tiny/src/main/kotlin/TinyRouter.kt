@@ -89,6 +89,8 @@ object TinyRouter{
 		try{
 
 			if(actionPair != null){
+				_controller.set(controller)
+				_action.set(action)
 				_callMethod(ctx, actionPair)
 			}else{
 				_pageNotFound(ctx)
