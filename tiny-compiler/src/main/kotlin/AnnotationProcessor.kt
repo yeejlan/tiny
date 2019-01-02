@@ -147,7 +147,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		writeDaggerMagicModule()
 		writeDaggerMagicBox()
 		writeTinyBird()
-		
+
 	}
 
 	private fun writeTinyBird(){
@@ -290,14 +290,42 @@ class AnnotationProcessor : AbstractProcessor() {
 	}
 
 	private fun writeControllerLoader() {
+		val actionMap: HashMap<String, TypeElement> = HashMap()
+		for(controller in _controllerMap){
+			val clz = controller.value
+			for(ele in clz.getEnclosedElements()){
+				if (ele.getKind() != ElementKind.METHOD){
+					continue
+				}
+				if(!ele.getModifiers().contains(Modifier.PUBLIC))	{
+					continue
+				}
+				val params = (ele as ExecutableElement).getParameters()
+				if(!params.isEmpty()){
+					continue
+				}
+				var action = ele.getSimpleName().toString()
+				if(!action.endsWith("Action")){
+					continue
+				}
+				var controller = clz.getSimpleName().toString()
+				if(!controller.endsWith("Controller")){
+					continue
+				}
+				action = action.substring(0, action.length - "Action".length)
+				controller = controller.substring(0, controller.length - "Controller".length)
+				val actionStr = "${controller}/${action}".toLowerCase()
+				actionMap.put(actionStr, clz)
+			}
+		}
 
 		val _methodBuilder = MethodSpec.methodBuilder("loadActions")
 			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
 
 		val _tinyControllerClz = ClassName.get("tiny", "TinyController")
-		for(controller in _controllerMap){
-			var _controllerClz = ClassName.get(controller.value)
-			_methodBuilder.addStatement("\$T.addAction(\$S, \$L.class)", _tinyControllerClz, controller.key, _controllerClz)
+		for(action in actionMap){
+			var _controllerClz = ClassName.get(action.value)
+			_methodBuilder.addStatement("\$T.addAction(\$S, \$L.class)", _tinyControllerClz, action.key, _controllerClz)
 		}
 		val _method = _methodBuilder.build()
 
