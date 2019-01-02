@@ -11,6 +11,9 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 	/*HttpServletResponse*/
 	var response: HttpServletResponse
 
+	/*hold error object when there is a internal server error*/
+	lateinit var error: Throwable
+
 	init{
 		request = req
 		response = res

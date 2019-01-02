@@ -79,7 +79,7 @@ object TinyRouter{
 		}
 
 		val actions = TinyController.getActions()
-		val actionKey = "{$controller}/{action}"
+		val actionKey = "{$controller}/{$action}"
 		if(!actions.containsKey(actionKey)){
 			_pageNotFound(ctx)
 		}
@@ -88,6 +88,8 @@ object TinyRouter{
 			_callMethod(ctx, actionPair)
 
 		}catch(e: Throwable){
+			ctx.error = e
+			_internalServerError(ctx, e)
 			throw e
 		}
 	}
@@ -108,14 +110,41 @@ object TinyRouter{
 
 	private fun _pageNotFound(ctx: TinyWebContext){
 		ctx.response.setStatus(HttpServletResponse.SC_NOT_FOUND)
+
 		val actionKey = "error/page404"
 		val actions = TinyController.getActions()
 		if(!actions.containsKey(actionKey)){
-			val actions = TinyController.getActions()
-			//clz = actions.get(actionKey)
-			
+			val out = ctx.response.getWriter()
+			out.println("Page Not Found!")
+			return
 		}
 
-		ctx.response.sendError(HttpServletResponse.SC_NOT_FOUND)
+		val actionPair = actions.get(actionKey)
+		_callMethod(ctx, actionPair)
+
 	}
+
+	private fun _internalServerError(ctx: TinyWebContext, e: Throwable){
+		ctx.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+
+		val actionKey = "error/page500"
+		val actions = TinyController.getActions()
+		if(!actions.containsKey(actionKey)){
+			_printInternalError(ctx, e)
+			return
+		}
+
+		val actionPair = actions.get(actionKey)
+		_callMethod(ctx, actionPair)
+	}
+
+	fun _printInternalError(ctx: TinyWebContext, e: Throwable){
+		val out = ctx.response.getWriter()
+		out.println("Internal Server Error!")
+		if(TinyApp.getEnv() > TinyApp.PRODUCTION){
+			out.println("<br />")
+			e.printStackTrace(out)
+		}
+	}
+
 }
