@@ -12,11 +12,12 @@ class UserController @AutoWeave constructor(): TinyController() {
 	@Inject lateinit var man: Man
 
 	fun indexAction(): Any {
+		throw Throwable("nana")
 		return "this is user/index page"
 	}
 
 	fun infoAction(): Any {
-		return "this is user/info page"
+		return render("body")
 	}
 
 	fun apple(color: String): Any {

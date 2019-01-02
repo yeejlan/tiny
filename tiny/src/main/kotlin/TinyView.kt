@@ -7,6 +7,7 @@ import groovy.text.StreamingTemplateEngine
 import groovy.text.Template
 import org.apache.commons.io.IOUtils
 import java.util.concurrent.ConcurrentHashMap
+import groovy.lang.Writable
 
 private val tplBasePath = "templates/"
 private val tplSuffix = ".tpl"
@@ -40,13 +41,13 @@ class TinyView{
 	/*
 	* render a template, for example render('common/header') will lookup /templates/common/header.tpl
 	*/
-	fun render(tplPath : String): String{
+	fun render(tplPath : String): Writable{
 		var template: Template?
 		if(_useCache){
 			template = tplCache.get(tplPath)
 			if(template != null){
-				val make = template.make(_model)
-				return make.toString()
+				val writable = template.make(_model)
+				return writable
 			}
 		}
 
@@ -60,8 +61,8 @@ class TinyView{
 		if(template != null){
 			tplCache.put(tplPath, template)
 		}
-		val make = template.make(_model)
-		return make.toString()
+		val writable = template.make(_model)
+		return writable
 	}
 
 	companion object{

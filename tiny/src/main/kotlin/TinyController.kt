@@ -2,6 +2,7 @@ package tiny
 
 import java.io.File
 import java.lang.reflect.Modifier
+import groovy.lang.Writable
 
 data class ActionPair(val first:Class<*>, val second: String)
 
@@ -13,9 +14,9 @@ open class TinyController{
 	lateinit var ctx: TinyWebContext
 
 	/**
-	* render a template to string(without .tpl)
+	* render a template (without .tpl)
 	**/
-	fun render(tplPath : String): String{
+	fun render(tplPath : String): Writable{
 		return view.render(tplPath)
 	}
 

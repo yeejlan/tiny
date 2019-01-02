@@ -89,7 +89,7 @@ class AnnotationProcessor : AbstractProcessor() {
 				continue
 			}
 			val classElement = ele as TypeElement
-			_helperMap.put(classElement.getQualifiedName().toString(), classElement)
+			_helperMap.put(classElement.getSimpleName().toString(), classElement)
 			_foundSomething = true
 		}
 		/*handle @Helper end*/		
@@ -291,8 +291,8 @@ class AnnotationProcessor : AbstractProcessor() {
 
 	private fun writeControllerLoader() {
 		val actionMap: HashMap<String, Pair<TypeElement,String>> = HashMap()
-		for(controller in _controllerMap){
-			val clz = controller.value
+		for(oneController in _controllerMap){
+			val clz = oneController.value
 			for(ele in clz.getEnclosedElements()){
 				if (ele.getKind() != ElementKind.METHOD){
 					continue
