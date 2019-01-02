@@ -23,14 +23,18 @@ class ExampleServlet() : HttpServlet() {
 	override fun init() {
 		TinyApp.init("testing", "config/development/tiny.properties") 
 		TinyApp.bootstrap(ExampleBootstrap())
+	
+		tiny.web.TinyControllerLoader.loadActions()
+		tiny.web.TinyHelperLoader.loadHelpers()
 	}
 
 	override fun doGet(request: HttpServletRequest, response: HttpServletResponse){
-		response.setContentType("text/html;charset=UTF-8")
-		val out = response.getWriter()
-		val view = TinyView()
-		out.println(view.render("body"))
+		TinyRouter.dispatch(request, response)
 	}
+
+	override fun doPost(request: HttpServletRequest, response: HttpServletResponse){
+		TinyRouter.dispatch(request, response)
+	}	
 
 	override fun destroy(){
 		//pass
@@ -66,7 +70,8 @@ fun callAction() {
 
 fun main(args: Array<String>) {
 	
-	callAction()
+	//callAction()
+	TinyApp.runJetty(ExampleServlet::class.java)
 }
 
 class Cat @Inject constructor() {

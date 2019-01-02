@@ -79,13 +79,19 @@ object TinyRouter{
 		}
 
 		val actions = TinyController.getActions()
-		val actionKey = "{$controller}/{$action}"
-		if(!actions.containsKey(actionKey)){
-			_pageNotFound(ctx)
-		}
+		val actionKey = "${controller}/${action}"
+
+		ctx.response.setContentType("text/html;charset=UTF-8")
+
+		val actionPair = actions.get(actionKey)
+
 		try{
-			val actionPair = actions.get(actionKey)
-			_callMethod(ctx, actionPair)
+
+			if(actionPair != null){
+				_callMethod(ctx, actionPair)
+			}else{
+				_pageNotFound(ctx)
+			}
 
 		}catch(e: Throwable){
 			ctx.error = e
@@ -94,10 +100,7 @@ object TinyRouter{
 		}
 	}
 
-	private fun _callMethod(ctx: TinyWebContext, actionPair: ActionPair?){
-		if(actionPair == null){
-			throw TinyException("Action not found")
-		}
+	private fun _callMethod(ctx: TinyWebContext, actionPair: ActionPair){
 		val targetClz = actionPair.first
 		val targetAction = actionPair.second
 
@@ -105,7 +108,10 @@ object TinyRouter{
 		(_instance as TinyController).ctx = ctx
 
 		val _method = targetClz.getMethod(targetAction)
-		_method.invoke(_instance)
+
+		val out = _method.invoke(_instance)
+		val writer = ctx.response.getWriter()
+		writer.print(out)
 	}
 
 	private fun _pageNotFound(ctx: TinyWebContext){
@@ -113,13 +119,13 @@ object TinyRouter{
 
 		val actionKey = "error/page404"
 		val actions = TinyController.getActions()
-		if(!actions.containsKey(actionKey)){
-			val out = ctx.response.getWriter()
-			out.println("Page Not Found!")
+		val actionPair = actions.get(actionKey)
+		if(actionPair == null){
+			val writer = ctx.response.getWriter()
+			writer.println("Page Not Found!")
 			return
 		}
-
-		val actionPair = actions.get(actionKey)
+	
 		_callMethod(ctx, actionPair)
 
 	}
@@ -129,21 +135,21 @@ object TinyRouter{
 
 		val actionKey = "error/page500"
 		val actions = TinyController.getActions()
-		if(!actions.containsKey(actionKey)){
+		val actionPair = actions.get(actionKey)
+		if(actionPair == null){
 			_printInternalError(ctx, e)
 			return
 		}
-
-		val actionPair = actions.get(actionKey)
+		
 		_callMethod(ctx, actionPair)
 	}
 
 	fun _printInternalError(ctx: TinyWebContext, e: Throwable){
-		val out = ctx.response.getWriter()
-		out.println("Internal Server Error!")
+		val writer = ctx.response.getWriter()
+		writer.println("Internal Server Error!")
 		if(TinyApp.getEnv() > TinyApp.PRODUCTION){
-			out.println("<br />")
-			e.printStackTrace(out)
+			writer.println("<br />")
+			e.printStackTrace(writer)
 		}
 	}
 
