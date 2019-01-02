@@ -48,14 +48,18 @@ class ExampleBootstrap @AutoWeave constructor() : TinyBootstrap {
 	}
 }
 
-fun main(args: Array<String>) {
+fun callAction() {
 	val app = ExampleBootstrap()
 	app.bootstrap()
 
 	val userController = example.controller.UserController()
 	println(userController.infoAction())
 	println(userController.apple("RED"))
+}
 
+fun main(args: Array<String>) {
+	
+	callAction()
 }
 
 class Cat @Inject constructor() {

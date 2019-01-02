@@ -3,11 +3,12 @@ package tiny
 import java.io.File
 import java.lang.reflect.Modifier
 
-public val actions: HashMap<String, Class<*>> = HashMap()
+private val actions: HashMap<String, Class<*>> = HashMap()
 
 class TinyController{
 
 	var view = TinyView()
+	lateinit var ctx: TinyWebContext
 
 	fun before(){
 		//pass
@@ -25,7 +26,7 @@ class TinyController{
 	}
 
 	fun callAction(controller: String, action: String){
-		TinyRouter.callAction(controller, action)
+		TinyRouter.callAction(ctx, controller, action)
 	}
 
 	companion object{
@@ -35,6 +36,9 @@ class TinyController{
 		@JvmStatic fun addAction(action: String, clz: Class<*>){
 			actions.put(action, clz)
 		}
-
+		
+		fun getActions(): HashMap<String, Class<*>>{
+			return actions
+		}		
 	}
 }

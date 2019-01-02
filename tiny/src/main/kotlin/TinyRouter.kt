@@ -1,5 +1,10 @@
 package tiny
 
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+
+import tiny.TinyWebContext
+
 data class TinyRewrite(val rewriteUrl: String, val action: String, val matchList: List<Map<Int, String>>? = null)
 
 object TinyRouter{
@@ -34,14 +39,50 @@ object TinyRouter{
 	/**
 	* router dispatch to controller/action
 	*/
-	@JvmStatic fun dispatch(){
+	@JvmStatic fun dispatch(request: HttpServletRequest, response: HttpServletResponse){
+		_controller.set("")
+		_action.set("")
+
+		val uri = request.getPathInfo().trim('/')
+		val routeMatched = false
+		var controller = ""
+		var action = ""
+
+		//normal controller/action parse
+		if(!routeMatched){
+			val uriArr = uri.split('/')  //format: 'controller/action'
+			if(uriArr.size == 1){
+				controller = uriArr[0]
+				action = "index"
+			}else if(uriArr.size == 2){
+				controller = uriArr[0]
+				action = uriArr[1]
+			}
+		}
+
+		val ctx = TinyWebContext(request, response)
+		callAction(ctx, controller, action)
 	}
 
 
 	/**
 	* find controller and call action
 	**/
-	@JvmStatic fun callAction(controller: String, action: String){
+	@JvmStatic fun callAction(ctx: TinyWebContext, controllerStr: String, actionStr: String){
+		
+		var controller = controllerStr
+		var action = actionStr		
+		if(controller.isEmpty()){
+			controller = "home"
+		}
+
+		if(action.isEmpty()){
+			action = "index"
+		}
+
+		//val one
+		val actions = TinyController.getActions()
+		//if()
 
 	}
 }

@@ -17,8 +17,8 @@ class AutoWeaveHandle {
 	@Before("initMethod()")
 	fun autoWeave(jp: JoinPoint) {
 
-		val clz = Class.forName(jp.getTarget()::class.java.getCanonicalName())
-	
+		val clz = jp.getTarget()::class.java
+		
 		val _method = TinyBird.get()::class.java.getMethod("weave", clz)
 		_method.invoke(TinyBird.get(), jp.getTarget())
 

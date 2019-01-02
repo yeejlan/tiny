@@ -147,8 +147,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		writeDaggerMagicModule()
 		writeDaggerMagicBox()
 		writeTinyBird()
-		printMessage("=="+_autoWeaveMap)
-
+		
 	}
 
 	private fun writeTinyBird(){
