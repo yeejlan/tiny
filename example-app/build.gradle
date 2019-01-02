@@ -111,6 +111,6 @@ run {
 }
 
 
-applicationDefaultJvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
+//applicationDefaultJvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
 
 mainClassName = "example.ExampleAppKt"

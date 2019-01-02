@@ -2,6 +2,7 @@ package tiny
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import java.lang.reflect.InvocationTargetException
 
 data class TinyRewrite(val rewriteUrl: String, val action: String, val matchList: List<Map<Int, String>>? = null)
 
@@ -93,10 +94,12 @@ object TinyRouter{
 				_pageNotFound(ctx)
 			}
 
+		}catch(e: InvocationTargetException){
+			ctx.error = e
+			_internalServerError(ctx, e)	
 		}catch(e: Throwable){
 			ctx.error = e
 			_internalServerError(ctx, e)
-			throw e
 		}
 	}
 
@@ -111,7 +114,11 @@ object TinyRouter{
 
 		val out = _method.invoke(_instance)
 		val writer = ctx.response.getWriter()
-		writer.print(out)
+		if(out is groovy.lang.Writable){
+			out.writeTo(writer)
+		}else{
+			writer.print(out)
+		}
 	}
 
 	private fun _pageNotFound(ctx: TinyWebContext){
@@ -148,8 +155,14 @@ object TinyRouter{
 		val writer = ctx.response.getWriter()
 		writer.println("Internal Server Error!")
 		if(TinyApp.getEnv() > TinyApp.PRODUCTION){
-			writer.println("<br />")
-			e.printStackTrace(writer)
+			writer.println("<br /><pre>\r\n")
+			if(e is InvocationTargetException ){
+				val targetError = e.getTargetException()
+				targetError.printStackTrace(writer)
+			}else{
+				e.printStackTrace(writer)
+			}
+			writer.println("</pre><br />\r\n")
 		}
 	}
 
