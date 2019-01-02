@@ -3,20 +3,14 @@ package tiny
 import java.io.File
 import java.lang.reflect.Modifier
 
-private val actions: HashMap<String, Class<*>> = HashMap()
+data class ActionPair(val first:Class<*>, val second: String)
 
-class TinyController{
+private val actions: HashMap<String, ActionPair> = HashMap()
+
+open class TinyController{
 
 	var view = TinyView()
 	lateinit var ctx: TinyWebContext
-
-	fun before(){
-		//pass
-	}
-
-	fun after(){
-		//pass
-	}
 
 	/**
 	* render a template to string(without .tpl)
@@ -33,12 +27,12 @@ class TinyController{
 		/*
 		* add action , for example: addAction("user/info", UserController::Class.java)
 		*/
-		@JvmStatic fun addAction(action: String, clz: Class<*>){
-			actions.put(action, clz)
+		@JvmStatic fun addAction(actionKey: String, action: ActionPair){
+			actions.put(actionKey, action)
 		}
 		
-		fun getActions(): HashMap<String, Class<*>>{
+		fun getActions(): HashMap<String, ActionPair>{
 			return actions
-		}		
+		}
 	}
 }

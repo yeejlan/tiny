@@ -45,6 +45,13 @@ class ExampleBootstrap @AutoWeave constructor() : TinyBootstrap {
 	override fun bootstrap() {
 		println("write your bootstrap code here~")
 		cat.miao()
+
+		val env = "development"
+		val appName = "tiny"
+		val configFile = "config/${env}/${appName}.properties"
+		TinyApp.init(env, configFile)
+		//TinyApp.bootstrap(new example.ExampleBootstrap())
+		//TinyHelperLoader.loadHelpers()
 	}
 }
 

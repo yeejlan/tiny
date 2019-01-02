@@ -2,10 +2,11 @@ package example.controller
 
 import tiny.annotation.AutoWeave
 import tiny.annotation.Controller
+import tiny.TinyController
 
 @Controller
 @AutoWeave
-class TestController @AutoWeave constructor(){
+class TestController @AutoWeave constructor(): TinyController(){
 	
 	fun indexAction(): Any {
 		return "this is test/index page"

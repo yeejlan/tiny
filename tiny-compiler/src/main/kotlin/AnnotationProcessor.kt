@@ -290,7 +290,7 @@ class AnnotationProcessor : AbstractProcessor() {
 	}
 
 	private fun writeControllerLoader() {
-		val actionMap: HashMap<String, TypeElement> = HashMap()
+		val actionMap: HashMap<String, Pair<TypeElement,String>> = HashMap()
 		for(controller in _controllerMap){
 			val clz = controller.value
 			for(ele in clz.getEnclosedElements()){
@@ -304,18 +304,18 @@ class AnnotationProcessor : AbstractProcessor() {
 				if(!params.isEmpty()){
 					continue
 				}
-				var action = ele.getSimpleName().toString()
-				if(!action.endsWith("Action")){
+				val actionStr = ele.getSimpleName().toString()
+				if(!actionStr.endsWith("Action")){
 					continue
 				}
-				var controller = clz.getSimpleName().toString()
-				if(!controller.endsWith("Controller")){
+				val controllerStr = clz.getSimpleName().toString()
+				if(!controllerStr.endsWith("Controller")){
 					continue
 				}
-				action = action.substring(0, action.length - "Action".length)
-				controller = controller.substring(0, controller.length - "Controller".length)
-				val actionStr = "${controller}/${action}".toLowerCase()
-				actionMap.put(actionStr, clz)
+				val action = actionStr.substring(0, actionStr.length - "Action".length)
+				val controller = controllerStr.substring(0, controllerStr.length - "Controller".length)
+				val actionKey = "${controller}/${action}".toLowerCase()
+				actionMap.put(actionKey, Pair(clz, actionStr))
 			}
 		}
 
@@ -323,9 +323,12 @@ class AnnotationProcessor : AbstractProcessor() {
 			.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
 
 		val _tinyControllerClz = ClassName.get("tiny", "TinyController")
+		val _tinyActionPairClz = ClassName.get("tiny", "ActionPair")
 		for(action in actionMap){
-			var _controllerClz = ClassName.get(action.value)
-			_methodBuilder.addStatement("\$T.addAction(\$S, \$L.class)", _tinyControllerClz, action.key, _controllerClz)
+			val actionPair = action.value
+			val _controllerClz = ClassName.get(actionPair.first)
+			_methodBuilder.addStatement("\$T.addAction(\$S, new \$T(\$T.class, \$S))",
+							_tinyControllerClz, action.key,  _tinyActionPairClz, _controllerClz, actionPair.second)
 		}
 		val _method = _methodBuilder.build()
 

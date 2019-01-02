@@ -3,8 +3,6 @@ package tiny
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-import tiny.TinyWebContext
-
 data class TinyRewrite(val rewriteUrl: String, val action: String, val matchList: List<Map<Int, String>>? = null)
 
 object TinyRouter{
@@ -43,7 +41,7 @@ object TinyRouter{
 		_controller.set("")
 		_action.set("")
 
-		val uri = request.getPathInfo().trim('/')
+		val uri = request.getPathInfo().trim('/').toLowerCase()
 		val routeMatched = false
 		var controller = ""
 		var action = ""
@@ -80,9 +78,44 @@ object TinyRouter{
 			action = "index"
 		}
 
-		//val one
 		val actions = TinyController.getActions()
-		//if()
+		val actionKey = "{$controller}/{action}"
+		if(!actions.containsKey(actionKey)){
+			_pageNotFound(ctx)
+		}
+		try{
+			val actionPair = actions.get(actionKey)
+			_callMethod(ctx, actionPair)
 
+		}catch(e: Throwable){
+			throw e
+		}
+	}
+
+	private fun _callMethod(ctx: TinyWebContext, actionPair: ActionPair?){
+		if(actionPair == null){
+			throw TinyException("Action not found")
+		}
+		val targetClz = actionPair.first
+		val targetAction = actionPair.second
+
+		val _instance = targetClz.newInstance()
+		(_instance as TinyController).ctx = ctx
+
+		val _method = targetClz.getMethod(targetAction)
+		_method.invoke(_instance)
+	}
+
+	private fun _pageNotFound(ctx: TinyWebContext){
+		ctx.response.setStatus(HttpServletResponse.SC_NOT_FOUND)
+		val actionKey = "error/page404"
+		val actions = TinyController.getActions()
+		if(!actions.containsKey(actionKey)){
+			val actions = TinyController.getActions()
+			//clz = actions.get(actionKey)
+			
+		}
+
+		ctx.response.sendError(HttpServletResponse.SC_NOT_FOUND)
 	}
 }

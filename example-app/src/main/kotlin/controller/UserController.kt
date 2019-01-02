@@ -3,10 +3,11 @@ package example.controller
 import tiny.annotation.AutoWeave
 import tiny.annotation.Controller
 import javax.inject.Inject
+import tiny.TinyController
 
 @Controller
 @AutoWeave
-class UserController @AutoWeave constructor(){
+class UserController @AutoWeave constructor(): TinyController() {
 
 	@Inject lateinit var man: Man
 
