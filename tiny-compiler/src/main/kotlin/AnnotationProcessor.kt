@@ -96,10 +96,15 @@ class AnnotationProcessor : AbstractProcessor() {
 
 		/*handle @AutoWeave begin*/
 		for (ele in roundEnv.getElementsAnnotatedWith(AutoWeave::class.java)){
-			if (ele.getKind() != ElementKind.CLASS){
+			if (ele.getKind() != ElementKind.CONSTRUCTOR){
 				continue
 			}
-			val classElement = ele as TypeElement
+			val exeElement = ele as ExecutableElement
+			val parentElement = exeElement.getEnclosingElement()
+			if(parentElement.getKind() != ElementKind.CLASS){
+				printError("Could not found class define for: " + exeElement.getSimpleName())
+			}
+			val classElement = parentElement as TypeElement
 			_autoWeaveMap.put(classElement.getQualifiedName().toString(), classElement)
 			_foundSomething = true
 		}

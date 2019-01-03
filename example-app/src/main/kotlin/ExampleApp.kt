@@ -16,7 +16,6 @@ import dagger.Provides
 import dagger.Module
 
 
-@AutoWeave
 @WebServlet(name="ExampleServlet",urlPatterns=arrayOf("/*"))
 class ExampleServlet() : HttpServlet() {
 	
@@ -41,7 +40,6 @@ class ExampleServlet() : HttpServlet() {
 	}
 }
 
-@AutoWeave
 @TinyApplication(config = "demo2")
 class ExampleBootstrap @AutoWeave constructor() : TinyBootstrap {
 	@Inject lateinit var cat: Cat

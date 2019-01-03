@@ -17,7 +17,7 @@ private val helpers: HashMap<String, Any> = HashMap()
 
 class TinyView{
 
-	var _model: HashMap<String, Any>
+	private var _model: HashMap<String, Any>
 	private var _useCache = true
 
 	constructor() {

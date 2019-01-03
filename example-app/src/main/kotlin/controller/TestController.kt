@@ -5,7 +5,6 @@ import tiny.annotation.Controller
 import tiny.TinyController
 
 @Controller
-@AutoWeave
 class TestController @AutoWeave constructor(): TinyController(){
 	
 	fun indexAction(): Any {

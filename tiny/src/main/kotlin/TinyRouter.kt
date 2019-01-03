@@ -97,11 +97,8 @@ object TinyRouter{
 			}
 
 		}catch(e: InvocationTargetException){
-			ctx.error = e
+			ctx.exception = e
 			_internalServerError(ctx, e)	
-		}catch(e: Throwable){
-			ctx.error = e
-			_internalServerError(ctx, e)
 		}
 	}
 
@@ -159,8 +156,8 @@ object TinyRouter{
 		if(TinyApp.getEnv() > TinyApp.PRODUCTION){
 			writer.println("<br /><pre>\r\n")
 			if(e is InvocationTargetException ){
-				val targetError = e.getTargetException()
-				targetError.printStackTrace(writer)
+				val targetException = e.getTargetException()
+				targetException.printStackTrace(writer)
 			}else{
 				e.printStackTrace(writer)
 			}

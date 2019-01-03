@@ -6,14 +6,12 @@ import javax.inject.Inject
 import tiny.TinyController
 
 @Controller
-@AutoWeave
 class UserController @AutoWeave constructor(): TinyController() {
 
 	@Inject lateinit var man: Man
 
 	fun indexAction(): Any {
-		throw Throwable("nana")
-		return "this is user/index page"
+		throw Exception("This is user/index page, tesing internal server error")
 	}
 
 	fun infoAction(): Any {
