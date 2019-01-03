@@ -35,7 +35,7 @@ class TinyConfig{
 				return mapper.writeValueAsString(_configMap)
 
 			}catch (e: Throwable){
-				return "{}";
+				throw e
 			}
 		}
 

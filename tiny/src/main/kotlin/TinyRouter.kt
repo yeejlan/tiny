@@ -9,8 +9,9 @@ import java.io.BufferedInputStream
 import java.io.FileInputStream
 import java.io.File
 import java.io.FileNotFoundException
+import javafx.util.Pair
 
-data class TinyRewrite(val rewriteUrl: String, val action: String, val matchList: List<Map<Int, String>>? = null)
+data class TinyRewrite(val regex: String, val rewriteTo: String, val paramMapping: Array<Pair<Int, String>>? = null)
 
 object TinyRouter{
 	private val _routers: HashMap<Regex, TinyRewrite> = HashMap()
@@ -33,11 +34,12 @@ object TinyRouter{
 
 	/**
 	* add a regex router
-	* TinyRewrite('shop/product/(\d+)', 'shop/showprod', array(1 => 'prod_id'))
-	* will match uri '/shop/product/1001' to 'shop' controller and 'showprod' action, with $_GET['prod_id'] = 1001
+	* TinyRewrite("shop/product/(\d+)", "shop/showprod", array(1 => "prod_id"))
+	* will match uri "/shop/product/1001" to "shop" controller and "showprod" action, with ctx.params["prod_id"] = 1001
 	**/
-	@JvmStatic fun addRoute(rule: TinyRewrite){
-		val r = rule.rewriteUrl.toRegex()
+	@JvmStatic fun addRoute(regex: String, rewriteTo: String, paramMapping: Array<Pair<Int, String>>? = null){
+		val r = regex.toRegex()
+		val rule = TinyRewrite(regex, rewriteTo, paramMapping)
 		_routers.put(r, rule)
 	}
 
@@ -48,10 +50,42 @@ object TinyRouter{
 		_controller.set("")
 		_action.set("")
 
-		val uri = request.getPathInfo().trim('/').toLowerCase()
-		val routeMatched = false
+		val requestUri = request.getPathInfo()
+		val uri = requestUri.trim('/').toLowerCase()
+		var routeMatched = false
 		var controller = ""
 		var action = ""
+
+		//check rewrite rules
+		val extraParams: HashMap<String, String> = HashMap()
+		for(route in _routers){
+			val(r, objRewrite) = route
+			val matchResult = r.matchEntire(requestUri)
+			if(matchResult == null){
+				continue
+			}
+			//route matched
+			val rewriteToArr = objRewrite.rewriteTo.split('/')
+			if(rewriteToArr.size == 2){
+				controller = rewriteToArr[0]
+				action = rewriteToArr[1]
+			}
+			//add params
+			if(objRewrite.paramMapping != null){
+				val matches = matchResult.groupValues
+				if(matches.size != objRewrite.paramMapping.size + 1){
+					throw TinyException("Match map does not match the rewrite rule: " + objRewrite)
+				}
+				for(one in objRewrite.paramMapping){
+					if(one.key < matches.size){
+						extraParams.put(one.value, matches[one.key])
+					}
+				}
+			}
+
+			routeMatched = true
+			break
+		}
 
 		//normal controller/action parse
 		if(!routeMatched){
@@ -63,9 +97,12 @@ object TinyRouter{
 				controller = uriArr[0]
 				action = uriArr[1]
 			}
-		}
+		}		
 
 		val ctx = TinyWebContext(request, response)
+		for(param in extraParams){
+			ctx.params[param.key] = param.value
+		}
 		callAction(ctx, controller, action)
 	}
 

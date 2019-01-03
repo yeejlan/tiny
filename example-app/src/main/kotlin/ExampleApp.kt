@@ -15,6 +15,8 @@ import dagger.Component
 import dagger.Provides
 import dagger.Module
 
+import javafx.util.Pair
+
 
 @WebServlet(name="ExampleServlet",urlPatterns=arrayOf("/*"))
 class ExampleServlet() : HttpServlet() {
@@ -64,7 +66,7 @@ fun callAction() {
 
 fun main(args: Array<String>) {
 	
-	//callAction()
+	TinyRouter.addRoute("/hello/(.*)", "user/hello", arrayOf(Pair(1, "username")))
 	TinyApp.runJetty(ExampleServlet::class.java)
 }
 

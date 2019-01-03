@@ -23,6 +23,10 @@ class UserController @AutoWeave constructor(): TinyController() {
 		return "this is a ${color} apple"
 	}	
 
+	fun helloAction(): Any {
+		return ctx.params
+	}
+
 	fun doSomething() {}
 
 	private fun privateAction(): Any {
