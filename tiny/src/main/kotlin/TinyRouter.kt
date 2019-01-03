@@ -130,26 +130,25 @@ object TinyRouter{
 
 		val actionPair = actions.get(actionKey)
 
-		try{
-
-			if(actionPair != null){
-				_controller.set(controller)
-				_action.set(action)
+		if(actionPair != null){ //action found
+			_controller.set(controller)
+			_action.set(action)
+			try{
 				_callMethod(ctx, actionPair)
-			}else{
-				var fileFound = false
-				if(TinyApp.getEnv() > TinyApp.PRODUCTION){
-					fileFound = _serveStaticFile(ctx) 
-				}
-				if(!fileFound){
-					_pageNotFound(ctx)
-				}
+			}catch(e: InvocationTargetException){
+				ctx.exception = e
+				_internalServerError(ctx, e)	
 			}
-
-		}catch(e: InvocationTargetException){
-			ctx.exception = e
-			_internalServerError(ctx, e)	
+		}else{ //action not found
+			var fileFound = false
+			if(TinyApp.getEnv() > TinyApp.PRODUCTION){
+				fileFound = _serveStaticFile(ctx) 
+			}
+			if(!fileFound){
+				_pageNotFound(ctx)
+			}
 		}
+
 	}
 
 	private fun _callMethod(ctx: TinyWebContext, actionPair: ActionPair){
