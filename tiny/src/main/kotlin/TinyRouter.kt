@@ -2,7 +2,6 @@ package tiny
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpServletRequestWrapper
 import java.lang.reflect.InvocationTargetException
 import java.net.URLDecoder
 import java.io.InputStream
@@ -240,6 +239,3 @@ object TinyRouter{
 	}
 }
 
-class TinyServletRequestWrapper(request: HttpServletRequest) : HttpServletRequestWrapper(request) {
-	override fun getServletPath():String { return "/*" }
-}
