@@ -11,7 +11,7 @@ class UserController @AutoWeave constructor(): TinyController() {
 	@Inject lateinit var man: Man
 
 	fun indexAction(): Any {
-		throw Exception("This is user/index page, tesing internal server error")
+		throw Exception("This is user/index page, tesing Internal Server Error")
 	}
 
 	fun infoAction(): Any {

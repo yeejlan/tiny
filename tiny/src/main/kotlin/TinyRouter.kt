@@ -82,6 +82,7 @@ object TinyRouter{
 		val actions = TinyController.getActions()
 		val actionKey = "${controller}/${action}"
 
+		ctx.request.setCharacterEncoding("UTF-8")
 		ctx.response.setContentType("text/html;charset=UTF-8")
 
 		val actionPair = actions.get(actionKey)

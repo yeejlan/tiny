@@ -75,6 +75,8 @@ compileJava {
 	}
 }
 
+task "as"(dependsOn: assemble)
+
 task weave {
 	dependsOn build
 

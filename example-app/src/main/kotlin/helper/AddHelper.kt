@@ -5,7 +5,7 @@ import tiny.annotation.Helper
 @Helper
 class AddHelper {
 
-	fun getSquare(a: Long, b: Long): Long {
+	fun add(a: Long, b: Long): Long {
 		return a + b
 	}
 }
