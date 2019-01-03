@@ -9,7 +9,6 @@ import java.io.BufferedInputStream
 import java.io.FileInputStream
 import java.io.File
 import java.io.FileNotFoundException
-import javafx.util.Pair
 
 data class TinyRewrite(val regex: String, val rewriteTo: String, val paramMapping: Array<Pair<Int, String>>? = null)
 
@@ -77,8 +76,8 @@ object TinyRouter{
 					throw TinyException("Match map does not match the rewrite rule: " + objRewrite)
 				}
 				for(one in objRewrite.paramMapping){
-					if(one.key < matches.size){
-						extraParams.put(one.value, matches[one.key])
+					if(one.first < matches.size){
+						extraParams.put(one.second, matches[one.first])
 					}
 				}
 			}
