@@ -2,7 +2,14 @@ package tiny
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpServletRequestWrapper
 import java.lang.reflect.InvocationTargetException
+import java.net.URLDecoder
+import java.io.InputStream
+import java.io.BufferedInputStream
+import java.io.FileInputStream
+import java.io.File
+import java.io.FileNotFoundException
 
 data class TinyRewrite(val rewriteUrl: String, val action: String, val matchList: List<Map<Int, String>>? = null)
 
@@ -94,7 +101,13 @@ object TinyRouter{
 				_action.set(action)
 				_callMethod(ctx, actionPair)
 			}else{
-				_pageNotFound(ctx)
+				var fileFound = false
+				if(TinyApp.getEnv() > TinyApp.PRODUCTION){
+					fileFound = _serveStaticFile(ctx) 
+				}
+				if(!fileFound){
+					_pageNotFound(ctx)
+				}
 			}
 
 		}catch(e: InvocationTargetException){
@@ -166,4 +179,67 @@ object TinyRouter{
 		}
 	}
 
+	fun _serveStaticFile(ctx: TinyWebContext): Boolean {
+		val fileNotFound = false
+
+		val BASEPATH = "static"
+
+		val request = ctx.request
+		val response = ctx.response
+
+		val uri = request.getPathInfo()
+		val filePath = URLDecoder.decode(uri, "UTF-8")
+
+		val resourceUrl = TinyRouter::class.java.classLoader.getResource(BASEPATH + filePath)
+		if(resourceUrl == null){
+			return fileNotFound
+		}
+		
+		val context = request.getServletContext()
+		if(context == null){
+			throw TinyException("Could not get ServletContext!")
+		}
+
+		val file = File(resourceUrl.toURI())
+		if(file.exists() && file.isFile() && file.canRead()){
+			//pass
+		}else{
+			return fileNotFound
+		}
+		
+		val fileLength = file.length()
+		val fileName = file.getName()
+
+		response.setHeader("Content-Length", fileLength.toString())
+		response.setHeader("Content-Type", context.getMimeType(fileName))
+		response.setHeader("Content-Disposition", "inline;filename=${fileName}")
+
+		var inStream: FileInputStream? = null
+		val buffer = ByteArray(8192)
+		try {
+			inStream = FileInputStream(file)
+			var bytesRead: Int
+			val outStream = response.getOutputStream()
+
+			do{
+				bytesRead = inStream.read(buffer, 0, buffer.size)
+				outStream.write(buffer, 0, bytesRead)
+
+			}while (bytesRead == buffer.size)
+
+		}catch(e: Throwable){
+			throw e
+		}
+		finally {
+			if (inStream != null) {
+				inStream.close()
+			}
+		}
+
+		return true //file Found
+	}
+}
+
+class TinyServletRequestWrapper(request: HttpServletRequest) : HttpServletRequestWrapper(request) {
+	override fun getServletPath():String { return "/*" }
 }

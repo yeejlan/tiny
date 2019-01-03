@@ -4,7 +4,7 @@ import tiny.TinyException
 import java.util.TimeZone
 import javax.servlet.Servlet
 import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.servlet.ServletHandler
+import org.eclipse.jetty.servlet.ServletContextHandler
 
 object TinyApp {
 
@@ -76,9 +76,12 @@ object TinyApp {
 
 	@JvmStatic fun runJetty(clz: Class<out Servlet>, port: Int = 8080){
 		val server = Server(port)
-		val handler = ServletHandler()
-		handler.addServletWithMapping(clz, "/*")
-		server.setHandler(handler)
+
+		val context = ServletContextHandler()
+		context.setContextPath("/")
+		context.addServlet(clz, "/*")
+		server.setHandler(context)
+
 		server.start()
 		server.join()
 	}
