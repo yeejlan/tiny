@@ -65,7 +65,7 @@ fun callAction() {
 fun main(args: Array<String>) {
 	println(Runtime.getRuntime().availableProcessors())
 	TinyRouter.addRoute("/hello/(.*)", "user/hello", arrayOf(Pair(1, "username")))
-	//TinyApp.runJetty(ExampleServlet::class.java)
+	TinyApp.runJetty(ExampleServlet::class.java)
 }
 
 class Cat @Inject constructor() {

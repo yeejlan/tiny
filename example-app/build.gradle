@@ -109,6 +109,8 @@ run {
 			def weaver = configurations.ajweaver.asPath
 			jvmArgs = jvmArgs << "-javaagent:$weaver"
 		}
+		jvmArgs = jvmArgs << "-XXaltjvm=dcevm"
+		jvmArgs = jvmArgs << "-javaagent:c:/tools/hotswap-agent.jar"
 	}
 }
 
