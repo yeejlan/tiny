@@ -1,1 +1,3 @@
 Java 7 introduced the Files.isReadable static method, it accepts a file Path and returns true if file exists and is readable, otherwise false.. From the docs. Tests whether a file is readable. This method checks that a file exists and that this Java virtual machine has appropriate privileges that would allow it open the file for reading
+
+This question has a neat way of mapping

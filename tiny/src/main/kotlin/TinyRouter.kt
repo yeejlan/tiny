@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 private val DEFAULT_EXPIRE_TIME_IN_MILLIS = TimeUnit.DAYS.toMillis(30)
 private val ONE_SECOND_IN_MILLIS = TimeUnit.SECONDS.toMillis(1)
 
-data class TinyRewrite(val regex: String, val rewriteTo: String, val paramMapping: Array<Pair<Int, String>>? = null)
+private data class TinyRewrite(val regex: String, val rewriteTo: String, val paramMapping: Array<Pair<Int, String>>? = null)
 
 object TinyRouter{
 	private val _routers: HashMap<Regex, TinyRewrite> = HashMap()
