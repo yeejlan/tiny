@@ -9,6 +9,10 @@ import java.io.BufferedInputStream
 import java.io.FileInputStream
 import java.io.File
 import java.io.FileNotFoundException
+import java.util.concurrent.TimeUnit
+
+private val DEFAULT_EXPIRE_TIME_IN_MILLIS = TimeUnit.DAYS.toMillis(30)
+private val ONE_SECOND_IN_MILLIS = TimeUnit.SECONDS.toMillis(1)
 
 data class TinyRewrite(val regex: String, val rewriteTo: String, val paramMapping: Array<Pair<Int, String>>? = null)
 
@@ -243,6 +247,15 @@ object TinyRouter{
 		
 		val fileLength = file.length()
 		val fileName = file.getName()
+		val lastModified = file.lastModified()
+
+		val isModified = _isStaticFileModified(ctx, fileName, lastModified)
+		if(!isModified){
+			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED)
+			return true //file Found
+		}
+
+		_setStaticFileCache(ctx, fileName, lastModified)
 
 		response.setHeader("Content-Length", fileLength.toString())
 		response.setHeader("Content-Type", context.getMimeType(fileName))
@@ -272,5 +285,29 @@ object TinyRouter{
 
 		return true //file Found
 	}
+
+	private fun _setStaticFileCache(ctx: TinyWebContext, fileName: String, lastModified: Long) {
+
+		val etag = "w/${fileName}-${lastModified}"
+		ctx.response.setHeader("ETag", etag)
+		ctx.response.setDateHeader("Last-Modified", lastModified)
+		ctx.response.setDateHeader("Expires", System.currentTimeMillis() + DEFAULT_EXPIRE_TIME_IN_MILLIS)
+	}
+
+	private fun _isStaticFileModified(ctx: TinyWebContext, etag: String, lastModified: Long): Boolean {
+		val ifNoneMatch = ctx.request.getHeader("If-None-Match")
+
+		if (ifNoneMatch == etag) {
+			return false
+		}
+		else {
+			val ifModifiedSince = ctx.request.getDateHeader("If-Modified-Since")
+			if(ifModifiedSince + ONE_SECOND_IN_MILLIS > lastModified){
+				return false
+			}
+		}
+		return true
+	}
+
 }
 
