@@ -149,8 +149,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		writeControllerLoader()
 		writeHelperLoader()
 		writeTinyServlet()
-		writeDaggerMagicModule()
-		writeDaggerMagicBox()
+		writeMagicBox()
 		writeTinyBird()
 
 	}
@@ -181,18 +180,13 @@ class AnnotationProcessor : AbstractProcessor() {
 		javaFile.writeTo(_filer)
 	}
 
-	private fun writeDaggerMagicModule(){
-		//provide controller initialize?
-		val _clzModule = ClassName.get("dagger", "Module")
-	}
 
-	private fun writeDaggerMagicBox(){
+	private fun writeMagicBox(){
 
 		val _clzComponent = ClassName.get("dagger", "Component")
-		val _clzModule = ClassName.get("dagger", "MagicBoxModule")
 
 		val _annoBuilder = AnnotationSpec.builder(_clzComponent)
-			//.addMember("modules", "\$T.class", _clzModule)
+
 		for(weaverBird in _weaverBirdMap){
 			_annoBuilder.addMember("modules", "\$T.class", weaverBird.value)
 		}
