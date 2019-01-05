@@ -204,7 +204,7 @@ object TinyRouter{
 		_callMethod(ctx, actionPair)
 	}
 
-	fun _printInternalError(ctx: TinyWebContext, e: Throwable){
+	private fun _printInternalError(ctx: TinyWebContext, e: Throwable){
 		val writer = ctx.response.getWriter()
 		writer.println("Internal Server Error!")
 		if(TinyApp.getEnv() > TinyApp.PRODUCTION){
@@ -219,7 +219,7 @@ object TinyRouter{
 		}
 	}
 
-	fun _serveStaticFile(ctx: TinyWebContext): Boolean {
+	private fun _serveStaticFile(ctx: TinyWebContext): Boolean {
 		val fileNotFound = false
 
 		val BASEPATH = "static"

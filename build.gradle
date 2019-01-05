@@ -2,15 +2,17 @@ buildscript {
 	repositories {
 		ext {
 			kotlinVersion = '1.3.11'
+			dokka_version = '0.9.16'
 		}		
 		maven{
 			url 'http://maven.aliyun.com/nexus/content/groups/public/'
 		}
 		dependencies {
-			classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-			classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+			classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+			classpath "org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}"
+			classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
 		}		
-	}  
+	}
 }
 
 allprojects {

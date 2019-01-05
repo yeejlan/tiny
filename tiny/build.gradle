@@ -8,7 +8,6 @@ dependencies {
 	compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.14.v20181114'
 	compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.4.14.v20181114'
 	compile group: 'org.eclipse.jetty', name: 'jetty-annotations', version: '9.4.14.v20181114'
-
 	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
 	compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.0'
 	compile group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.12.0'
@@ -36,4 +35,11 @@ compileKotlin {
 tasks.withType(JavaCompile) { 
 	options.encoding = "UTF-8"
 	options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
+
+apply plugin: 'org.jetbrains.dokka'
+
+dokka {
+    outputFormat = 'html' 
+    outputDirectory = "$buildDir/javadoc"
 }
