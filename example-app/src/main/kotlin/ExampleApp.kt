@@ -6,68 +6,25 @@ import javax.servlet.http.HttpServletResponse
 import javax.servlet.annotation.WebServlet
 
 import tiny.*
-
 import tiny.annotation.TinyApplication
-import tiny.annotation.AutoWeave
 
-import javax.inject.Inject
-import dagger.Component
-import dagger.Provides
-import dagger.Module
-
-
-@WebServlet(name="ExampleServlet",urlPatterns=arrayOf("/*"))
-class ExampleServlet() : HttpServlet() {
-	
-	override fun init() {
-		tiny.web.TinyControllerLoader.loadActions()
-		tiny.web.TinyHelperLoader.loadHelpers()
-	}
-
-	override fun doGet(request: HttpServletRequest, response: HttpServletResponse){
-		TinyRouter.dispatch(request, response)
-	}
-
-	override fun doPost(request: HttpServletRequest, response: HttpServletResponse){
-		TinyRouter.dispatch(request, response)
-	}	
-
-	override fun destroy(){
-		//pass
-	}
-}
-
-@TinyApplication(config = "demo2")
-class ExampleBootstrap @AutoWeave constructor() : TinyBootstrap {
-	@Inject lateinit var cat: Cat
+@TinyApplication
+class ExampleApp : TinyBootstrap {
 
 	override fun bootstrap() {
 
 		val envMap = System.getenv()
-		val env = envMap.get("APP_ENV") ?: "production"
+		val env = envMap.get("APP_ENV") ?: "development"
 		val appName = "tiny"
 		val configFile = "config/${env}/${appName}.properties"
-		TinyApp.init(env, configFile)
-	}
-}
 
-fun callAction() {
-	val userController = example.controller.UserController()
-	println(userController.infoAction())
-	println(userController.apple("RED"))
+		TinyApp.init(env, configFile)
+
+		TinyRouter.addRoute("/hello/(.*)", "user/hello", arrayOf(Pair(1, "username")))
+	}
 }
 
 fun main(args: Array<String>) {
-	val app = ExampleBootstrap()
-	app.bootstrap()
 
-	TinyRouter.addRoute("/hello/(.*)", "user/hello", arrayOf(Pair(1, "username")))
-
-	TinyApp.runJetty(ExampleServlet::class.java)
-}
-
-class Cat @Inject constructor() {
-	fun miao() {
-		println("miao~ miao~ miao~")
-	}
+	TinyApp.runJetty(tiny.web.TinyServlet::class.java)
 }

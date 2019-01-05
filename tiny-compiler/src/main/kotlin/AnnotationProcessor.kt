@@ -39,7 +39,7 @@ class AnnotationProcessor : AbstractProcessor() {
 	private lateinit var _elements: Elements
 	private lateinit var _types: Types
 	private lateinit var _filer: Filer
-	private var _tinyApp: TypeElement? = null
+	private var _tinyApplication: TypeElement? = null
 	private val _helperMap : HashMap<String, TypeElement> = HashMap()
 	private val _controllerMap : HashMap<String, TypeElement> = HashMap()
 	private val _autoWeaveMap : HashMap<String, TypeElement> = HashMap()
@@ -119,7 +119,7 @@ class AnnotationProcessor : AbstractProcessor() {
 			_weaverBirdMap.put(classElement.getQualifiedName().toString(), classElement)
 			_foundSomething = true
 		}
-		/*handle @WeaverBird end*/			
+		/*handle @WeaverBird end*/
 
 		/*handle @TinyApplication begin*/
 		for (ele in roundEnv.getElementsAnnotatedWith(TinyApplication::class.java)){
@@ -127,7 +127,7 @@ class AnnotationProcessor : AbstractProcessor() {
 				printError("@"+TinyApplication::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
 			}
 			val classElement = ele as TypeElement
-			_tinyApp = classElement
+			_tinyApplication = classElement
 			_foundSomething = true
 		}
 		/*handle @TinyApplication end*/
@@ -218,28 +218,32 @@ class AnnotationProcessor : AbstractProcessor() {
 	}
 
 	private fun writeTinyServlet(){
-		if(_tinyApp == null){
+		if(_tinyApplication == null){
+			printError("No @TinyApplication found, please provide one")
 			return
 		}
 
-		val annotation = (_tinyApp as TypeElement).getAnnotation(TinyApplication::class.java)
-		val config = annotation.config
-
+		val _clzApp = ClassName.get(_tinyApplication)
 		val _clzServlet = ClassName.get("javax.servlet.http", "HttpServlet")
 		val _clzRequest = ClassName.get("javax.servlet.http", "HttpServletRequest")
 		val _clzResponse = ClassName.get("javax.servlet.http", "HttpServletResponse")
 		val _clzAnnoServlet = ClassName.get("javax.servlet.annotation", "WebServlet")
-		val _clzTinyApp = ClassName.get("tiny", "TinyApp")
-		val _clzTinyView = ClassName.get("tiny", "TinyView")
+		val _clzTinyRouter = ClassName.get("tiny", "TinyRouter")
 		val _clzTinyHelperLoader = ClassName.get("tiny.web", "TinyHelperLoader")
+		val _clzTinyControllerLoader = ClassName.get("tiny.web", "TinyControllerLoader")
 		val _clzServletException = ClassName.get("javax.servlet", "ServletException")
 		val _clzIOException = ClassName.get("java.io", "IOException")
+
+		val _anno = AnnotationSpec.builder(_clzAnnoServlet)
+			.addMember("name", "\$S", "TinyServlet")
+			.addMember("urlPatterns", "\$S", "/*")
+			.build()
 
 		val _methodInit = MethodSpec.methodBuilder("init")
 			.addModifiers(Modifier.PUBLIC)
 			.addException(_clzServletException)
-			.addStatement("""${'$'}T.init("testing", "config/development/tiny.properties")""", _clzTinyApp)
-			.addStatement("\$T.bootstrap(new example.ExampleBootstrap())", _clzTinyApp)
+			.addStatement("new \$T().bootstrap()", _clzApp)
+			.addStatement("\$T.loadActions()", _clzTinyControllerLoader)
 			.addStatement("\$T.loadHelpers()", _clzTinyHelperLoader)
 			.build()
 
@@ -249,11 +253,17 @@ class AnnotationProcessor : AbstractProcessor() {
 			.addException(_clzIOException)
 			.addParameter(_clzRequest, "request")
 			.addParameter(_clzResponse, "response")
-			.addStatement("""response.setContentType("text/html;charset=UTF-8")""")
-			.addStatement("java.io.PrintWriter out = response.getWriter()")
-			.addStatement("\$T view = new \$T()", _clzTinyView, _clzTinyView)
-			.addStatement("""out.println(view.render("body"))""")
+			.addStatement("\$T.dispatch(request, response)", _clzTinyRouter)
 			.build()
+
+		val _methodDoPost = MethodSpec.methodBuilder("doPost")
+			.addModifiers(Modifier.PUBLIC)
+			.addException(_clzServletException)
+			.addException(_clzIOException)
+			.addParameter(_clzRequest, "request")
+			.addParameter(_clzResponse, "response")
+			.addStatement("\$T.dispatch(request, response)", _clzTinyRouter)
+			.build()			
 
 		val _methodDestroy = MethodSpec.methodBuilder("destroy")
 			.addModifiers(Modifier.PUBLIC)
@@ -263,8 +273,10 @@ class AnnotationProcessor : AbstractProcessor() {
 				.classBuilder("TinyServlet")
 				.superclass(_clzServlet)
 				.addModifiers(Modifier.PUBLIC)
+				.addAnnotation(_anno)
 				.addMethod(_methodInit)
 				.addMethod(_methodDoGet)
+				.addMethod(_methodDoPost)
 				.addMethod(_methodDestroy)
 				.build()
 
