@@ -28,14 +28,14 @@ object TinyApp {
 	private var _configFile: String = ""
 	private lateinit var _config: TinyConfig
 
-	@JvmStatic fun init(strEnv: String, configFile: String){
+	@JvmStatic fun init(strEnv: String, appName: String){
 		val env: Int? = _strEnvMapping.get(strEnv)
 		if(env != null){
 			_env = env
 			_envString = strEnv
 		}
 
-		_configFile = configFile
+		_configFile = "config/${_envString}/${appName}.properties"
 		_config = TinyConfig(_configFile)
 		_settle()
 		_isInit = true

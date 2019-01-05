@@ -13,11 +13,10 @@ class ExampleApp : TinyBootstrap {
 
 	override fun bootstrap() {
 
-		val env = System.getProperty("tiny.appliction.env") ?: "production"
+		val env = System.getProperty("tiny.appliction.env") ?: "testing"
 		val appName = "tiny"
-		val configFile = "config/${env}/${appName}.properties"
 
-		TinyApp.init(env, configFile)
+		TinyApp.init(env, appName)
 
 		TinyRouter.addRoute("/hello/(.*)", "user/hello", arrayOf(Pair(1, "username")))
 	}
