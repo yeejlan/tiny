@@ -13,7 +13,7 @@ class ExampleApp : TinyBootstrap {
 
 	override fun bootstrap() {
 
-		val env = System.getProperty("tiny.appliction.env") ?: "testing"
+		val env = System.getProperty("tiny.appliction.env") ?: "production"
 		val appName = "tiny"
 
 		TinyApp.init(env, appName)
@@ -24,5 +24,5 @@ class ExampleApp : TinyBootstrap {
 
 fun main(args: Array<String>) {
 
-	TinyApp.runJetty(tiny.web.TinyServlet::class.java)
+	TinyApp.runJetty()
 }

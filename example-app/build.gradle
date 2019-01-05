@@ -102,6 +102,7 @@ def weaveAspectJToClass() {
 
 
 def runWithWeaver = true
+def tinyApplictionEnv = "development"
 
 run {
 
@@ -112,7 +113,7 @@ run {
 		}
 		jvmArgs = jvmArgs << "-XXaltjvm=dcevm"
 		jvmArgs = jvmArgs << "-javaagent:c:/tools/hotswap-agent.jar"
-		jvmArgs = jvmArgs << "-Dtiny.appliction.env=development"
+		jvmArgs = jvmArgs << "-Dtiny.appliction.env=$tinyApplictionEnv"
 	}
 }
 

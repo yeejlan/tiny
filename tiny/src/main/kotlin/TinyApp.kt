@@ -5,6 +5,7 @@ import java.util.TimeZone
 import javax.servlet.Servlet
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletContextHandler
+import org.eclipse.jetty.webapp.WebAppContext
 
 object TinyApp {
 
@@ -76,14 +77,25 @@ object TinyApp {
 
 	}
 
-	@JvmStatic fun runJetty(clz: Class<out Servlet>, port: Int = 8080){
+	@JvmStatic fun runJetty(port: Int = 8080){
 		val server = Server(port)
 
-		val context = ServletContextHandler()
+		val context = WebAppContext()
 		context.setContextPath("/")
-		context.addServlet(clz, "/*")
+		context.setResourceBase("./webcontent")
+		context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*/classes/.*")
+		context.setConfigurations(arrayOf(
+			org.eclipse.jetty.annotations.AnnotationConfiguration(),
+			org.eclipse.jetty.webapp.WebInfConfiguration(), 
+			org.eclipse.jetty.webapp.WebXmlConfiguration(),
+			org.eclipse.jetty.webapp.MetaInfConfiguration(), 
+			org.eclipse.jetty.webapp.FragmentConfiguration(), 
+			org.eclipse.jetty.plus.webapp.EnvConfiguration(),
+			org.eclipse.jetty.plus.webapp.PlusConfiguration(), 
+			org.eclipse.jetty.webapp.JettyWebXmlConfiguration()	
+		))	
 		server.setHandler(context)
-
+		
 		server.start()
 		server.join()
 	}

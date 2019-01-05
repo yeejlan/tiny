@@ -231,6 +231,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		val _anno = AnnotationSpec.builder(_clzAnnoServlet)
 			.addMember("name", "\$S", "TinyServlet")
 			.addMember("urlPatterns", "\$S", "/*")
+			.addMember("loadOnStartup", "1")
 			.build()
 
 		val _methodInit = MethodSpec.methodBuilder("init")
