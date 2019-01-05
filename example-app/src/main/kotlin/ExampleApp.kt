@@ -20,9 +20,6 @@ import dagger.Module
 class ExampleServlet() : HttpServlet() {
 	
 	override fun init() {
-		TinyApp.init("testing", "config/development/tiny.properties") 
-		TinyApp.bootstrap(ExampleBootstrap())
-	
 		tiny.web.TinyControllerLoader.loadActions()
 		tiny.web.TinyHelperLoader.loadHelpers()
 	}
@@ -46,7 +43,8 @@ class ExampleBootstrap @AutoWeave constructor() : TinyBootstrap {
 
 	override fun bootstrap() {
 
-		val env = "development"
+		val envMap = System.getenv()
+		val env = envMap.get("APP_ENV") ?: "production"
 		val appName = "tiny"
 		val configFile = "config/${env}/${appName}.properties"
 		TinyApp.init(env, configFile)
@@ -54,17 +52,17 @@ class ExampleBootstrap @AutoWeave constructor() : TinyBootstrap {
 }
 
 fun callAction() {
-	val app = ExampleBootstrap()
-	app.bootstrap()
-
 	val userController = example.controller.UserController()
 	println(userController.infoAction())
 	println(userController.apple("RED"))
 }
 
 fun main(args: Array<String>) {
-	println(Runtime.getRuntime().availableProcessors())
+	val app = ExampleBootstrap()
+	app.bootstrap()
+
 	TinyRouter.addRoute("/hello/(.*)", "user/hello", arrayOf(Pair(1, "username")))
+
 	TinyApp.runJetty(ExampleServlet::class.java)
 }
 

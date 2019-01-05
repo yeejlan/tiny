@@ -58,6 +58,14 @@ object TinyRouter{
 		var routeMatched = false
 		var controller = ""
 		var action = ""
+		val ctx = TinyWebContext(request, response)
+
+		if(TinyApp.getEnv() > TinyApp.PRODUCTION){
+			val staticFileFound = _serveStaticFile(ctx) 
+			if(staticFileFound){
+				return
+			}
+		}
 
 		//check rewrite rules
 		val extraParams: HashMap<String, String> = HashMap()
@@ -86,6 +94,10 @@ object TinyRouter{
 				}
 			}
 
+			for(param in extraParams){
+				ctx.params[param.key] = param.value
+			}
+
 			routeMatched = true
 			break
 		}
@@ -102,10 +114,6 @@ object TinyRouter{
 			}
 		}		
 
-		val ctx = TinyWebContext(request, response)
-		for(param in extraParams){
-			ctx.params[param.key] = param.value
-		}
 		callAction(ctx, controller, action)
 	}
 
@@ -143,13 +151,7 @@ object TinyRouter{
 				_internalServerError(ctx, e)	
 			}
 		}else{ //action not found
-			var fileFound = false
-			if(TinyApp.getEnv() > TinyApp.PRODUCTION){
-				fileFound = _serveStaticFile(ctx) 
-			}
-			if(!fileFound){
-				_pageNotFound(ctx)
-			}
+			_pageNotFound(ctx)
 		}
 
 	}

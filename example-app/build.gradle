@@ -76,6 +76,7 @@ compileJava {
 }
 
 task "as"(dependsOn: assemble)
+task "c"(dependsOn: classes)
 
 task weave {
 	dependsOn build
