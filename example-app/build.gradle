@@ -112,6 +112,7 @@ run {
 		}
 		jvmArgs = jvmArgs << "-XXaltjvm=dcevm"
 		jvmArgs = jvmArgs << "-javaagent:c:/tools/hotswap-agent.jar"
+		//jvmArgs = jvmArgs << "-Dtiny.appliction.env=testing"
 	}
 }
 

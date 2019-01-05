@@ -25,6 +25,7 @@ object TinyApp {
 	private var _isInit = false
 	private var _env = PRODUCTION
 	private var _envString = _envStrMapping.get(_env) ?: "production"
+	private var _configFile: String = ""
 	private lateinit var _config: TinyConfig
 
 	@JvmStatic fun init(strEnv: String, configFile: String){
@@ -34,7 +35,8 @@ object TinyApp {
 			_envString = strEnv
 		}
 
-		_config = TinyConfig(configFile)
+		_configFile = configFile
+		_config = TinyConfig(_configFile)
 		_settle()
 		_isInit = true
 	}
@@ -88,7 +90,7 @@ object TinyApp {
 
 	private fun _checkInit() {
 		if(!_isInit) {
-			throw TinyException("Please call TinyApp.init first")
+			throw TinyException("App init error, env: ${_envString}, config: ${_configFile}")
 		}
 	}
 }
