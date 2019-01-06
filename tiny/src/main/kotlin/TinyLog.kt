@@ -147,20 +147,25 @@ class LoggerThread() : Thread() {
 
 		var writer = writerCache.get(logFile)
 
-		try{
-			if(writer == null){//not found in cache
-				writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, 
-					StandardOpenOption.APPEND, StandardOpenOption.WRITE)
-				if(writer != null){
-					writerCache.put(logFile, writer)
-				}
+		if(writer == null){//not found in cache
+			writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, 
+				StandardOpenOption.APPEND, StandardOpenOption.WRITE)
+			if(writer != null){
+				writerCache.put(logFile, writer)
 			}
+		}
+		val msg = now + " " + message + "\r\n"
+		try{
 
-			val msg = now + " " + message + "\r\n"
 			writer?.write(msg)
 			writer?.flush()
-		}catch(e: IOException){
-			//pass
+		}catch(e: IOException){ //remove bad writer
+			writerCache.remove(logFile)
+			try{
+				writer?.close()
+			}catch(e: IOException){
+				//pass
+			}
 		}
 	}
 }

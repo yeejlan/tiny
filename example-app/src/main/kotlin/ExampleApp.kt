@@ -23,6 +23,17 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
+	test()
+	//TinyApp.runJetty()
+}
 
-	TinyApp.runJetty()
+fun test(){
+	val env = System.getProperty("tiny.appliction.env") ?: "production"
+	val appName = "tiny"
+	TinyApp.init(env, appName)
+
+	for(i in 1..5){
+		TinyLog.log("the content ${i}", "log${i}")		
+	}
+	Thread.sleep(1000)
 }
