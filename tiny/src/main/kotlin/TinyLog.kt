@@ -29,7 +29,25 @@ private val filePerms = PosixFilePermissions.fromString("rw-rw----")
 private val fileAttr = PosixFilePermissions.asFileAttribute(filePerms)
 private val dirPerms = PosixFilePermissions.fromString("rwxrwx---")
 private val dirAttr = PosixFilePermissions.asFileAttribute(dirPerms)
+private val maxFileOpened = 10
+private val writerCache = WriterCache()
 
+private class WriterCache(initialCapacity: Int = 15, loadFactor: Float = 0.75f, accessOrder:Boolean = true)
+	: LinkedHashMap<Path, BufferedWriter>(initialCapacity, loadFactor, accessOrder) {
+
+	override fun removeEldestEntry(eldest: Map.Entry<Path, BufferedWriter>): Boolean {
+			val tooMany = this.size > maxFileOpened
+			if(tooMany) {
+				val writer = eldest.value
+				try{
+					writer.close()
+				}catch(e: IOException){
+					//pass
+				}
+			}
+			return tooMany
+		}
+}
 
 object TinyLog {
 	
@@ -93,8 +111,8 @@ class LoggerThread() : Thread() {
 
 		val c = Calendar.getInstance()
 		val year = c.get(Calendar.YEAR).toString()
-		val month = (c.get(Calendar.MONTH) + 1).toString()
-		val day = c.get(Calendar.DAY_OF_MONTH).toString()
+		val month = String.format("%02d", c.get(Calendar.MONTH) + 1)
+		val day = String.format("%02d", c.get(Calendar.DAY_OF_MONTH))
 
 		val logName = prefix + "_" + day + ".log"
 
@@ -127,24 +145,22 @@ class LoggerThread() : Thread() {
 		val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
 		val now = sdf.format(Date())
 
-		var writer: BufferedWriter? = null
+		var writer = writerCache.get(logFile)
+
 		try{
-			writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, 
-				StandardOpenOption.APPEND, StandardOpenOption.WRITE)
+			if(writer == null){//not found in cache
+				writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, 
+					StandardOpenOption.APPEND, StandardOpenOption.WRITE)
+				if(writer != null){
+					writerCache.put(logFile, writer)
+				}
+			}
 
 			val msg = now + " " + message + "\r\n"
 			writer?.write(msg)
-
+			writer?.flush()
 		}catch(e: IOException){
 			//pass
-		}finally{
-			try{
-				if(writer != null){
-					writer.close()
-				}
-			}catch(e: IOException){
-				//pass
-			}
 		}
 	}
 }

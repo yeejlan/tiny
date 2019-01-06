@@ -52,6 +52,18 @@ class TinyConfig{
 		return value
 	}
 
+	fun getString(pathStr: String, default: String = ""): String {
+
+		if(pathStr.isEmpty()){
+			return default
+		}
+		val value = this.get(pathStr)
+		if(value.isEmpty()){
+			return default
+		}
+		return value
+	}
+
 	fun getInt(pathStr: String, default: Int = 0): Int {
 
 		if(pathStr.isEmpty()){

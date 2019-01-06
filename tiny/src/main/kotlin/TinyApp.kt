@@ -9,10 +9,10 @@ import org.eclipse.jetty.webapp.WebAppContext
 
 object TinyApp {
 
-	val PRODUCTION = 10
-	val STAGING = 20
-	val TESTING = 30
-	val DEVELOPMENT = 40
+	@JvmField val PRODUCTION = 10
+	@JvmField val STAGING = 20
+	@JvmField val TESTING = 30
+	@JvmField val DEVELOPMENT = 40
 
 	private val _envStrMapping: Map<Int, String> = mapOf(
 		PRODUCTION to "production",
