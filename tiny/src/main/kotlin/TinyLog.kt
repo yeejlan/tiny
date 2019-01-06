@@ -31,6 +31,7 @@ private val dirPerms = PosixFilePermissions.fromString("rwxrwx---")
 private val dirAttr = PosixFilePermissions.asFileAttribute(dirPerms)
 private val maxFileOpened = 10
 private val writerCache = WriterCache()
+private var loggerRunning = true
 
 private class WriterCache(initialCapacity: Int = 15, loadFactor: Float = 0.75f, accessOrder:Boolean = true)
 	: LinkedHashMap<Path, BufferedWriter>(initialCapacity, loadFactor, accessOrder) {
@@ -73,6 +74,7 @@ object TinyLog {
 
 		val loggerThread = LoggerThread()
 		loggerThread.setDaemon(true)
+		loggerThread.setName("TinyLog logger worker")
 		loggerThread.start()
 		loggerStarted = true
 
@@ -85,6 +87,7 @@ object TinyLog {
 		}
 		TinyLog.setLogPath(path)
 		TinyLog.startLoggerThread()
+		Runtime.getRuntime().addShutdownHook(LoggerShutdownThread())
 	}
 }
 
@@ -93,7 +96,7 @@ private class LoggerThread() : Thread() {
 	override fun run(){
 
 		try{
-			while(true){
+			while(loggerRunning){
 				
 				var logObject: LogObject? = queue.poll()
 				while(logObject != null) {
@@ -175,3 +178,18 @@ private class LoggerThread() : Thread() {
 }
 
 private data class LogObject(val message: String, val prefix: String)
+
+private class LoggerShutdownThread() : Thread() {
+	override fun run(){
+		loggerRunning = false
+		Thread.sleep(100) //to finish log writing
+		for(one in writerCache){
+			val writer = one.value
+			try{
+				writer.close()
+			}catch(e: IOException){
+				//pass
+			}
+		}
+	}
+}
