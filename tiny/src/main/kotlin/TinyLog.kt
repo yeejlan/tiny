@@ -148,8 +148,12 @@ class LoggerThread() : Thread() {
 		var writer = writerCache.get(logFile)
 
 		if(writer == null){//not found in cache
-			writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, 
-				StandardOpenOption.APPEND, StandardOpenOption.WRITE)
+			try{
+				writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, 
+					StandardOpenOption.APPEND, StandardOpenOption.WRITE)
+			}catch(e: IOException){
+				//pass
+			}
 			if(writer != null){
 				writerCache.put(logFile, writer)
 			}
