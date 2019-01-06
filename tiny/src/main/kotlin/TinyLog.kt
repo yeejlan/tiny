@@ -88,7 +88,7 @@ object TinyLog {
 	}
 }
 
-class LoggerThread() : Thread() {
+private class LoggerThread() : Thread() {
 
 	override fun run(){
 
@@ -174,4 +174,4 @@ class LoggerThread() : Thread() {
 	}
 }
 
-data class LogObject(val message: String, val prefix: String)
+private data class LogObject(val message: String, val prefix: String)
