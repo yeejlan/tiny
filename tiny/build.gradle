@@ -21,6 +21,7 @@ dependencies {
 	compileOnly group: 'org.apache.commons', name: 'commons-pool2', version: '2.6.0'
 	compileOnly project(":tiny-annotation")
 	compileOnly group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+	compileOnly group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 	compileOnly "org.aspectj:aspectjtools:1.9.2"
 }
 

@@ -8,6 +8,11 @@ import org.eclipse.jetty.servlet.ServletContextHandler
 import org.eclipse.jetty.webapp.WebAppContext
 import java.util.concurrent.ConcurrentLinkedQueue
 import org.slf4j.LoggerFactory
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.classic.joran.JoranConfigurator
+import ch.qos.logback.core.joran.spi.JoranException
+import ch.qos.logback.core.util.StatusPrinter
+import java.io.File
 
 private val shutdownQueue = ConcurrentLinkedQueue<TinyShutdownHook>()
 
@@ -46,7 +51,9 @@ object TinyApp {
 		if(env != null){
 			_env = env
 			_envString = strEnv
-		}else{
+		}
+		_logbackInit()
+		if(env == null){
 			logger.warn("Unknown env: ${strEnv}, fallback to ${_envString}")
 		}
 
@@ -114,6 +121,24 @@ object TinyApp {
 		}
 		TinyLog.init(_config["log.path"])
 
+	}
+
+	private fun _logbackInit(){
+		val context = LoggerFactory.getILoggerFactory() as LoggerContext
+		try {
+			val configurator = JoranConfigurator()
+			configurator.setContext(context)
+			context.reset()
+			val configFile = "config/${_envString}/logback.xml"
+			val resourceUrl = this::class.java.classLoader.getResource(configFile)
+			if(resourceUrl == null){
+				throw TinyException("Logback config is missing: " + configFile)
+			}
+			configurator.doConfigure(File(resourceUrl.toURI()))
+		}catch (e: JoranException){
+			//pass
+		}
+		StatusPrinter.printInCaseOfErrorsOrWarnings(context)
 	}
 
 	@JvmStatic fun runJetty(port: Int = 8080){
