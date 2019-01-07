@@ -27,6 +27,7 @@ class TinyRedisPool(host: String, port:Int = 6379, database: Int = 1, timeout: D
 	private lateinit var _pool: GenericObjectPool<StatefulRedisConnection<String, String>>
 	private lateinit var _client: RedisClient
 	private val _conn = ThreadLocal<StatefulRedisConnection<String, String>?>()
+	private var _name: String = ""
 
 	init {
 		_host = host
@@ -41,6 +42,8 @@ class TinyRedisPool(host: String, port:Int = 6379, database: Int = 1, timeout: D
 					.withDatabase(_database)
 					.withTimeout(_timeout)
 					.build()
+
+		_name = uri.toString()
 		_client = RedisClient.create(uri)
 		val config = GenericObjectPoolConfig<Any>()
 		config.setMinIdle(poolMinIdle)

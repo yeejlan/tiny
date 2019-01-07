@@ -15,6 +15,7 @@ class TinyRedisSolo(host: String, port:Int = 6379, database: Int = 1, timeout: D
 	private val _timeout: Duration
 	private lateinit var _client: RedisClient
 	private var _conn: StatefulRedisConnection<String, String>? = null
+	private var _name: String = ""
 
 	init {
 		_host = host
@@ -29,6 +30,8 @@ class TinyRedisSolo(host: String, port:Int = 6379, database: Int = 1, timeout: D
 					.withDatabase(_database)
 					.withTimeout(_timeout)
 					.build()
+
+		_name = uri.toString()					
 		_client = RedisClient.create(uri)
 	}
 
