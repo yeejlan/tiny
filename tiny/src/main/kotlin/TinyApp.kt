@@ -38,8 +38,10 @@ object TinyApp {
 	private var _envString = _envStrMapping.get(_env) ?: "production"
 	private var _configFile: String = ""
 	private lateinit var _config: TinyConfig
+	private lateinit var _appName: String
 
 	@JvmStatic fun init(strEnv: String, appName: String){
+		_appName = appName
 		val env: Int? = _strEnvMapping.get(strEnv)
 		if(env != null){
 			_env = env
@@ -51,7 +53,7 @@ object TinyApp {
 		_configFile = "config/${_envString}/${appName}.ini"
 		_config = TinyConfig(_configFile)
 		_settle()
-		logger.info("App started with env=${_envString} and config=${appName}")
+		logger.info("App[${_appName}] started with env=${_envString} and config=${_configFile}")
 		_isInit = true
 	}
 
@@ -72,7 +74,7 @@ object TinyApp {
 		} catch (e: InterruptedException) {
 			//pass
 		}
-		logger.info("App stoped with ${hookCount} shutdown hook[s] processed")
+		logger.info("App[${_appName}] stoped with ${hookCount} shutdown hook[s] processed")
 	}
 
 	@JvmStatic fun addShutdownHook(hook: TinyShutdownHook){

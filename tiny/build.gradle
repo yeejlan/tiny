@@ -8,7 +8,7 @@ dependencies {
 	compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.14.v20181114'
 	compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.4.14.v20181114'
 	compile group: 'org.eclipse.jetty', name: 'jetty-annotations', version: '9.4.14.v20181114'
-	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+	compileOnly group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
 	compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.0'
 	compile group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.12.0'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
