@@ -87,7 +87,7 @@ object TinyLog {
 		}
 		TinyLog.setLogPath(path)
 		TinyLog.startLoggerThread()
-		Runtime.getRuntime().addShutdownHook(LoggerShutdownThread())
+		TinyApp.addShutdownHook(LoggerShutdownHook())
 	}
 }
 
@@ -179,10 +179,10 @@ private class LoggerThread() : Thread() {
 
 private data class LogObject(val message: String, val prefix: String)
 
-private class LoggerShutdownThread() : Thread() {
-	override fun run(){
+private class LoggerShutdownHook() : TinyShutdownHook {
+
+	override fun shutdownProcess() {
 		loggerRunning = false
-		Thread.sleep(100) //to finish log writing
 		for(one in writerCache){
 			val writer = one.value
 			try{

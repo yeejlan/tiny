@@ -6,6 +6,13 @@ import javax.servlet.Servlet
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletContextHandler
 import org.eclipse.jetty.webapp.WebAppContext
+import java.util.concurrent.ConcurrentLinkedQueue
+
+private val shutdownQueue = ConcurrentLinkedQueue<TinyShutdownHook>()
+
+interface TinyShutdownHook{
+	fun shutdownProcess()
+}
 
 object TinyApp {
 
@@ -36,10 +43,31 @@ object TinyApp {
 			_envString = strEnv
 		}
 
-		_configFile = "config/${_envString}/${appName}.properties"
+		_configFile = "config/${_envString}/${appName}.ini"
 		_config = TinyConfig(_configFile)
 		_settle()
 		_isInit = true
+	}
+
+	@JvmStatic fun shutdown(){
+		var hookObject =  shutdownQueue.poll()
+		while(hookObject != null){
+			try {
+				hookObject.shutdownProcess()
+				hookObject = shutdownQueue.poll()
+			} catch (e: Throwable) {
+				//pass
+			}
+		}
+		try {
+			Thread.sleep(1000) //wait shutdown cleanup
+		} catch (e: InterruptedException) {
+			//pass
+		}
+	}
+
+	@JvmStatic fun addShutdownHook(hook: TinyShutdownHook){
+		shutdownQueue.add(hook)
 	}
 
 	@JvmStatic fun bootstrap(clz: TinyBootstrap) {

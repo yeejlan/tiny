@@ -35,5 +35,6 @@ fun test(){
 	for(i in 1..5){
 		TinyLog.log("the content ${i}", "log${i}")		
 	}
-	Thread.sleep(1000)
+	Thread.sleep(1)
+	TinyApp.shutdown()
 }

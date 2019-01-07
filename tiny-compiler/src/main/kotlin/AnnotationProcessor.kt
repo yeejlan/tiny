@@ -227,6 +227,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		val _clzTinyControllerLoader = ClassName.get("tiny.web", "TinyControllerLoader")
 		val _clzServletException = ClassName.get("javax.servlet", "ServletException")
 		val _clzIOException = ClassName.get("java.io", "IOException")
+		val _clzTinyApp = ClassName.get("tiny", "TinyApp")
 
 		val _anno = AnnotationSpec.builder(_clzAnnoServlet)
 			.addMember("name", "\$S", "TinyServlet")
@@ -262,6 +263,7 @@ class AnnotationProcessor : AbstractProcessor() {
 
 		val _methodDestroy = MethodSpec.methodBuilder("destroy")
 			.addModifiers(Modifier.PUBLIC)
+			.addStatement("\$T.shutdown()", _clzTinyApp)
 			.build()
 
 		val _class = TypeSpec
