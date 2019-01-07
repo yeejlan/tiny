@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse
 import javax.servlet.annotation.WebServlet
 
 import tiny.*
+import tiny.lib.*
 import tiny.annotation.TinyApplication
 
 @TinyApplication
@@ -27,13 +28,17 @@ fun main(args: Array<String>) {
 	//TinyApp.runJetty()
 }
 
+
 fun test(){
 	val env = System.getProperty("tiny.appliction.env") ?: "production"
 	val appName = "tiny"
 	TinyApp.init(env, appName)
 
+	val redis = TinyRedis("127.0.0.1")
+	println(redis)
+
 	for(i in 1..5){
-		TinyLog.log("the content ${i}", "log${i}")		
+		//TinyLog.log("the content ${i}", "log${i}")		
 	}
 	Thread.sleep(1)
 	TinyApp.shutdown()
