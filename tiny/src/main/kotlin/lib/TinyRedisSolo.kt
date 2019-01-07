@@ -38,12 +38,8 @@ class TinyRedisSolo(host: String, port:Int = 6379, database: Int = 1, timeout: D
 		return conn
 	}
 
-	fun close(conn: StatefulRedisConnection<String, String>? = null) {
-		if(conn != null){
-			conn.close()
-		}else {
-			_conn?.close()
-		}
+	fun close() {
+		_conn?.close()
 		_client.shutdown()
 	}
 

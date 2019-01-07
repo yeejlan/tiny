@@ -34,7 +34,7 @@ fun test(){
 	val appName = "tiny"
 	TinyApp.init(env, appName)
 
-	val redis = TinyRedis("127.0.0.1")
+	val redis = TinyRedisPool("127.0.0.1")
 	println(redis)
 
 	for(i in 1..5){

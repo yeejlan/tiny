@@ -19,13 +19,14 @@ private val poolMaxWaitMillis = 3000L
 private val poolMinEvictableIdleTimeMillis = 120000L
 private val poolTimeBetweenEvictionRunsMillis = 120000L
 
-class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Duration = connectTimeout) {
+class TinyRedisPool(host: String, port:Int = 6379, database: Int = 1, timeout: Duration = connectTimeout) {
 	private val _host: String
 	private val _port: Int
 	private val _database: Int
 	private val _timeout: Duration
 	private lateinit var _pool: GenericObjectPool<StatefulRedisConnection<String, String>>
 	private lateinit var _client: RedisClient
+	private val _conn = ThreadLocal<StatefulRedisConnection<String, String>?>()
 
 	init {
 		_host = host
@@ -58,11 +59,16 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 	}
 
 	fun connect(): StatefulRedisConnection<String, String> {
-		return _pool.borrowObject()
+		val conn = _pool.borrowObject()
+		_conn.set(conn)
+		return conn
 	}
 
-	fun close(conn: StatefulRedisConnection<String, String>) {
-		_pool.returnObject(conn)
+	fun close() {
+		val conn = _conn.get()
+		if(conn != null){
+			_pool.returnObject(conn)
+		}
 	}
 
 	private inner class RedisShutdownHook() : TinyShutdownHook {
