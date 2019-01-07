@@ -65,7 +65,7 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 		_pool.returnObject(conn)
 	}
 
-	inner class RedisShutdownHook() : TinyShutdownHook {
+	private inner class RedisShutdownHook() : TinyShutdownHook {
 
 		override fun shutdownProcess() {
 			try{
