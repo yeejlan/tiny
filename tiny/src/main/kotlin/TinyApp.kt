@@ -51,7 +51,7 @@ object TinyApp {
 		_configFile = "config/${_envString}/${appName}.ini"
 		_config = TinyConfig(_configFile)
 		_settle()
-		logger.info("TinyApp started with env=${_envString} and config=${appName}")
+		logger.info("App started with env=${_envString} and config=${appName}")
 		_isInit = true
 	}
 
@@ -72,7 +72,7 @@ object TinyApp {
 		} catch (e: InterruptedException) {
 			//pass
 		}
-		logger.info("TinyApp stoped with ${hookCount} shutdown hook[s] processed")
+		logger.info("App stoped with ${hookCount} shutdown hook[s] processed")
 	}
 
 	@JvmStatic fun addShutdownHook(hook: TinyShutdownHook){
