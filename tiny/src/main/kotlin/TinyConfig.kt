@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import java.util.Properties
 import java.io.InputStreamReader
 import tiny.TinyException
+import org.slf4j.LoggerFactory
 
+private val logger = LoggerFactory.getLogger(TinyConfig::class.java)
 class TinyConfig{
 
 	var _configMap: Map<String, String> = mapOf()
@@ -16,7 +18,9 @@ class TinyConfig{
 		val properties = Properties()
 		val inputStream = this::class.java.classLoader.getResourceAsStream(configFile)
 		if(inputStream == null){
-			throw TinyException("Read config file failed: " + configFile)
+			val errMsg = "Read config file failed: " + configFile
+			logger.warn(errMsg)
+			throw TinyException(errMsg)
 		}
 		val reader = InputStreamReader(inputStream, "UTF-8")
 		properties.load(reader)

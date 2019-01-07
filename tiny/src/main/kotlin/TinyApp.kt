@@ -7,8 +7,11 @@ import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletContextHandler
 import org.eclipse.jetty.webapp.WebAppContext
 import java.util.concurrent.ConcurrentLinkedQueue
+import org.slf4j.LoggerFactory
 
 private val shutdownQueue = ConcurrentLinkedQueue<TinyShutdownHook>()
+
+private val logger = LoggerFactory.getLogger(TinyApp::class.java)
 
 interface TinyShutdownHook{
 	fun shutdownProcess()
@@ -41,22 +44,27 @@ object TinyApp {
 		if(env != null){
 			_env = env
 			_envString = strEnv
+		}else{
+			logger.warn("Unknown env: ${strEnv}, fallback to ${_envString}")
 		}
 
 		_configFile = "config/${_envString}/${appName}.ini"
 		_config = TinyConfig(_configFile)
 		_settle()
+		logger.info("TinyApp started with env=${_envString} and config=${appName}")
 		_isInit = true
 	}
 
 	@JvmStatic fun shutdown(){
 		var hookObject =  shutdownQueue.poll()
+		var hookCount = 0
 		while(hookObject != null){
 			try {
+				hookCount++
 				hookObject.shutdownProcess()
 				hookObject = shutdownQueue.poll()
 			} catch (e: Throwable) {
-				//pass
+				logger.warn("ShutdownHook error: " + e)
 			}
 		}
 		try {
@@ -64,6 +72,7 @@ object TinyApp {
 		} catch (e: InterruptedException) {
 			//pass
 		}
+		logger.info("TinyApp stoped with ${hookCount} shutdown hook[s] processed")
 	}
 
 	@JvmStatic fun addShutdownHook(hook: TinyShutdownHook){
