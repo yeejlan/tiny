@@ -31,7 +31,7 @@ class TinyRedisSolo(host: String, port:Int = 6379, database: Int = 1, timeout: D
 					.withTimeout(_timeout)
 					.build()
 
-		_name = uri.toString()					
+		_name = uri.toString()	
 		_client = RedisClient.create(uri)
 	}
 

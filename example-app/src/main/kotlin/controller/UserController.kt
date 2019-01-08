@@ -19,11 +19,11 @@ class UserController @AutoWeave constructor(): TinyController() {
 	}
 
 	fun apple(color: String): Any {
-		man.run()
 		return "this is a ${color} apple"
 	}	
 
 	fun helloAction(): Any {
+		man.run()
 		return ctx.params
 	}
 

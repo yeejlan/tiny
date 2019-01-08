@@ -15,6 +15,7 @@ dependencies {
 	compileOnly group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
 	compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.14.v20181114'
 	compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.4.14.v20181114'
+	compile group: 'org.eclipse.jetty', name: 'jetty-annotations', version: '9.4.14.v20181114'
 	compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.0'
 	compile group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.12.0'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
@@ -76,7 +77,7 @@ compileJava {
 	dependsOn configurations.ajc.getTaskDependencyFromProjectDependency(true, "compileJava")
 
 	doLast {
-
+	
 	}
 }
 
@@ -84,7 +85,7 @@ task "as"(dependsOn: assemble)
 task "c"(dependsOn: classes)
 
 task weave {
-	dependsOn build
+	dependsOn classes
 
 	doLast {
 		weaveAspectJToClass()
@@ -96,18 +97,19 @@ def weaveAspectJToClass() {
 	ant.iajc(source:"1.8", 
 			target:"1.8", 
 			showWeaveInfo:true,
-			inpath:'build/classes',
+			inpath:'build/classes/kotlin/main',
+			destDir:"build/classes/out",
+			inpathDirCopyFilter: "**/*.java",
+			classpath: "${configurations.ajc.asPath};../tiny/build/classes/kotlin/main;../tiny-annotation/build/classes/kotlin/main",
 			maxmem:"512m", 
 			fork:"true",
 			//aspectPath:"",
-			classpath: "${configurations.ajc.asPath};../tiny/build/classes/kotlin/main;../tiny-annotation/build/classes/kotlin/main",
-			destDir:"build/classes/java/main",
 		){}
 }
 
 
 def runWithWeaver = true
-def runWithHotSwap = true
+def runWithHotSwap = false
 def tinyApplictionEnv = "development"
 
 run {

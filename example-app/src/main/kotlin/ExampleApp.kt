@@ -19,8 +19,8 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-	test()
-	//TinyApp.runJetty()
+	//test()
+	TinyApp.runJetty()
 }
 
 
