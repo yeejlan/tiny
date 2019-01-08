@@ -3,6 +3,7 @@ package tiny
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import com.fasterxml.jackson.module.kotlin.*
+import tiny.lib.TinySession
 
 class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 
@@ -15,8 +16,11 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 	/*hold exception when there is a internal server error*/
 	var exception: Throwable? = null
 
-	/*store request params, array param NOT supported, use request.getParameterValues()*/
+	/*store request params, array params are NOT supported, for those please use request.getParameterValues()*/
 	var params: TinyParams
+
+	/*session support*/
+	val session = TinySession()
 
 	init{
 		request = req

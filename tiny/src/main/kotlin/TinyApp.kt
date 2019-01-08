@@ -154,7 +154,7 @@ object TinyApp {
 
 		val context = WebAppContext()
 		context.setContextPath("/")
-		context.setResourceBase("./webcontent")
+		context.setResourceBase("./src/main")
 		context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*/classes/.*")
 		context.setConfigurations(arrayOf(
 			org.eclipse.jetty.annotations.AnnotationConfiguration(),
