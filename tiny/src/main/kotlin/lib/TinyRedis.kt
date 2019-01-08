@@ -19,7 +19,7 @@ private val poolMaxWaitMillis = 3000L
 private val poolMinEvictableIdleTimeMillis = 120000L
 private val poolTimeBetweenEvictionRunsMillis = 120000L
 
-class TinyRedisPool(host: String, port:Int = 6379, database: Int = 1, timeout: Duration = connectTimeout) {
+class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Duration = connectTimeout) {
 	private val _host: String
 	private val _port: Int
 	private val _database: Int
