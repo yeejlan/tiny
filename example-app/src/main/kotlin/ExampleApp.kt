@@ -21,7 +21,7 @@ class ExampleApp : TinyBootstrap {
 fun main(args: Array<String>) {
 	println(UniqueIdUtils.getUniqueId())
 	//test()
-	//TinyApp.runJetty()
+	TinyApp.runJetty()
 }
 
 

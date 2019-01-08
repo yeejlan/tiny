@@ -65,14 +65,13 @@ class TinyRedisPoolConfig() {
 	}
 }
 
-class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Duration = connectTimeout): AutoCloseable {
+class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Duration = connectTimeout) {
 	private val _host: String
 	private val _port: Int
 	private val _database: Int
 	private val _timeout: Duration
 	private lateinit var _pool: GenericObjectPool<StatefulRedisConnection<String, String>>
 	private lateinit var _client: RedisClient
-	private val _conn = ThreadLocal<StatefulRedisConnection<String, String>?>()
 	private var _name: String = ""
 
 	init {
@@ -100,17 +99,24 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 		return this	
 	}
 
-	fun connect(): StatefulRedisConnection<String, String> {
+	fun exec(body: (StatefulRedisConnection<String, String>) -> Unit) {
 		val conn = _pool.borrowObject()
-		_conn.set(conn)
-		return conn
-	}
-
-	override fun close() {
-		val conn = _conn.get()
-		if(conn != null){
+		try{
+			body(conn)
+		}finally{
 			_pool.returnObject(conn)
 		}
+	}
+
+	fun query(body: (StatefulRedisConnection<String, String>) -> String): String {
+		val conn = _pool.borrowObject()
+		var value: String
+		try{
+			value = body(conn)
+		}finally{
+			_pool.returnObject(conn)
+		}
+		return value
 	}
 
 	override fun toString(): String {
