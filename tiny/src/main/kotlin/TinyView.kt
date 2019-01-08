@@ -8,11 +8,14 @@ import groovy.text.Template
 import org.apache.commons.io.IOUtils
 import java.util.concurrent.ConcurrentHashMap
 import groovy.lang.Writable
+import java.io.InputStream
+import java.io.FileInputStream
 
 private val tplBasePath = "templates/"
 private val tplSuffix = ".tpl"
 private val tplCache: ConcurrentHashMap<String, Template> = ConcurrentHashMap()
-
+private val devResourcesDir = TinyApp.getConfig()["dev.resources.dir"]
+private val workDirectory = System.getProperty("user.dir")
 private val helpers: HashMap<String, Any> = HashMap()
 
 class TinyView{
@@ -51,10 +54,19 @@ class TinyView{
 			}
 		}
 
-		val tplFile = tplBasePath + tplPath + tplSuffix
-		val inputStream = this::class.java.classLoader.getResourceAsStream(tplFile)
-		if(inputStream == null){
-			throw TinyException("Read template file failed: " + tplFile)
+		var inputStream: InputStream?
+		if(_useCache || devResourcesDir.isEmpty()){
+			val tplFile = tplBasePath + tplPath + tplSuffix
+			inputStream = this::class.java.classLoader.getResourceAsStream(tplFile)
+			if(inputStream == null){
+				throw TinyException("Read template file failed: " + tplFile)
+			}
+		}else{//development environment and devResourcesDir is set
+			val tplFile = workDirectory + "/" + devResourcesDir + "/" + tplBasePath + tplPath + tplSuffix
+			inputStream = FileInputStream(File(tplFile))
+			if(inputStream == null){
+				throw TinyException("Read template file failed: " + tplFile)
+			}			
 		}
 		val text = IOUtils.toString(inputStream, "UTF-8")
 		template = StreamingTemplateEngine().createTemplate(text)

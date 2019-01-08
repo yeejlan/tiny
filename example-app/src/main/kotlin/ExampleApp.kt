@@ -10,7 +10,7 @@ class ExampleApp : TinyBootstrap {
 	override fun bootstrap() {
 
 		val env = System.getProperty("tiny.appliction.env") ?: "production"
-		val appName = "tiny"
+		val appName = "exampleapp"
 
 		TinyApp.init(env, appName)
 
