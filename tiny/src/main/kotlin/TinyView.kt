@@ -55,18 +55,16 @@ class TinyView{
 		}
 
 		var inputStream: InputStream?
+		lateinit var tplFile: String
 		if(_useCache || devResourcesDir.isEmpty()){
-			val tplFile = tplBasePath + tplPath + tplSuffix
+			tplFile = tplBasePath + tplPath + tplSuffix
 			inputStream = this::class.java.classLoader.getResourceAsStream(tplFile)
-			if(inputStream == null){
-				throw TinyException("Read template file failed: " + tplFile)
-			}
 		}else{//development environment and devResourcesDir is set
-			val tplFile = workDirectory + "/" + devResourcesDir + "/" + tplBasePath + tplPath + tplSuffix
+			tplFile = workDirectory + "/" + devResourcesDir + "/" + tplBasePath + tplPath + tplSuffix
 			inputStream = FileInputStream(File(tplFile))
-			if(inputStream == null){
-				throw TinyException("Read template file failed: " + tplFile)
-			}			
+		}
+		if(inputStream == null){
+			throw TinyException("Read template file failed: " + tplFile)
 		}
 		val text = IOUtils.toString(inputStream, "UTF-8")
 		template = StreamingTemplateEngine().createTemplate(text)
