@@ -18,9 +18,7 @@ class TinyConfig{
 		val properties = Properties()
 		val inputStream = this::class.java.classLoader.getResourceAsStream(configFile)
 		if(inputStream == null){
-			val errMsg = "Read config file failed: " + configFile
-			logger.warn(errMsg)
-			throw TinyException(errMsg)
+			throw TinyException("Read config file failed: " + configFile)
 		}
 		val reader = InputStreamReader(inputStream, "UTF-8")
 		properties.load(reader)
@@ -54,6 +52,10 @@ class TinyConfig{
 			return ""
 		}
 		return value
+	}
+
+	fun getConfigMap(): Map<String, String> {
+		return _configMap
 	}
 
 	fun getString(pathStr: String, default: String = ""): String {

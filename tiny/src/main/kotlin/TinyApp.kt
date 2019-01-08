@@ -14,6 +14,8 @@ import ch.qos.logback.core.joran.spi.JoranException
 import ch.qos.logback.core.util.StatusPrinter
 import java.io.File
 
+import tiny.lib.TinyResourceLoader
+
 private val shutdownQueue = ConcurrentLinkedQueue<TinyShutdownHook>()
 
 private val logger = LoggerFactory.getLogger(TinyApp::class.java)
@@ -60,8 +62,9 @@ object TinyApp {
 		_configFile = "config/${_envString}/${appName}.ini"
 		_config = TinyConfig(_configFile)
 		_settle()
-		logger.info("App[${_appName}] started with env=${_envString} and config=${_configFile}")
+		logger.info("App[${_appName}] starting with env=${_envString} and config=${_configFile}")
 		_isInit = true
+		TinyResourceLoader().load()
 	}
 
 	@JvmStatic fun shutdown(){
@@ -101,6 +104,11 @@ object TinyApp {
 	@JvmStatic fun getEnvString(): String{
 		_checkInit()
 		return _envString
+	}
+
+	@JvmStatic fun getAppName(): String{
+		_checkInit()
+		return _appName
 	}
 
 	@JvmStatic fun getConfig(): TinyConfig{

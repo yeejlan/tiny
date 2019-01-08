@@ -19,8 +19,8 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-	//test()
-	TinyApp.runJetty()
+	test()
+	//TinyApp.runJetty()
 }
 
 
@@ -29,8 +29,8 @@ fun test(){
 	val appName = "tiny"
 	TinyApp.init(env, appName)
 
-	val redis = TinyRedisPool("127.0.0.1")
-	println(redis)
+	//val redis = TinyRedis("127.0.0.1").create()
+	println(TinyRegistry)
 
 	for(i in 1..5){
 		//TinyLog.log("the content ${i}", "log${i}")		
