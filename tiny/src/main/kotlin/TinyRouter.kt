@@ -148,9 +148,9 @@ object TinyRouter{
 			_action.set(action)
 			try{
 				_callMethod(ctx, actionPair)
-			}catch(e: InvocationTargetException){
+			}catch(e: Throwable){
 				ctx.exception = e
-				_internalServerError(ctx, e)	
+				_internalServerError(ctx, e)
 			}
 		}else{ //action not found
 			_pageNotFound(ctx)
