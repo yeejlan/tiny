@@ -43,7 +43,7 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 		session.destroy()
 		session.sessionId = UniqueIdUtil.getUniqueId()
 		setCookie(sessionName, session.sessionId, domain=cookieDomain, maxAge=sessionExpire)
-	}		
+	}
 
 	fun saveSession() {
 		session.save()

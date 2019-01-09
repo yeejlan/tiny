@@ -1,5 +1,6 @@
 package tiny.lib
 
+import com.fasterxml.jackson.module.kotlin.*
 import io.lettuce.core.support.ConnectionPoolSupport
 import io.lettuce.core.RedisClient
 import io.lettuce.core.api.StatefulRedisConnection
@@ -10,6 +11,8 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import java.time.Duration
 
 import tiny.*
+
+private val objectMapper = jacksonObjectMapper()
 
 private val connectTimeout = Duration.ofSeconds(3)
 private val poolMaxTotal = 10
@@ -117,6 +120,60 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 			_pool.returnObject(conn)
 		}
 		return value
+	}
+
+	fun set(key: String, value: String, expireSeconds: Long = 3600) {
+		exec({ connection ->
+			val commands = connection.sync()
+			commands.multi()
+			commands.set(key, value)
+			commands.expire(key, expireSeconds)
+			commands.exec()
+		})
+	}
+
+	fun set(key: String, value: Any, expireSeconds: Long = 3600) {
+		var valueStr: String
+		try {
+			valueStr =  objectMapper.writeValueAsString(value)
+		}catch (e: Throwable){
+			throw e
+		}
+		set(key, valueStr, expireSeconds)
+	}
+
+	fun expire(key: String, expireSeconds: Long = 3600) {
+		exec({ connection ->
+			val commands = connection.sync()
+			commands.expire(key, expireSeconds)
+		})
+	}
+
+	fun delete(key: String) {
+		exec({ connection ->
+			val commands = connection.sync()
+			commands.del(key)
+		})
+	}
+
+	fun get(key: String): String {
+		return query({ connection ->
+			val commands = connection.sync()
+			commands.get(key)
+		})
+	}
+
+	fun <T> get(key: String, valueType: Class<T> ): T? {
+		
+		val value = this.get(key)
+		if(value.isEmpty()){
+			return null
+		}
+		try {
+			return objectMapper.readValue(value, valueType)
+		}catch (e: Throwable){
+			throw e
+		}
 	}
 
 	override fun toString(): String {

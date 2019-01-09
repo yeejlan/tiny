@@ -4,9 +4,9 @@ import com.fasterxml.jackson.module.kotlin.*
 
 interface ISessionStorage {
 
-	fun load(sessionId: String): HashMap<String, String>
-	fun save(sessionId: String, data: HashMap<String, String>)
-	fun touch(sessionId: String, data: HashMap<String, String>)
+	fun load(sessionId: String): String
+	fun save(sessionId: String, data: String)
+	fun touch(sessionId: String, data: String)
 }
 
 object SessionStorage {

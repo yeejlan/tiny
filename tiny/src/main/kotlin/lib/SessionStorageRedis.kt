@@ -4,38 +4,29 @@ import tiny.*
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(SessionStorageRedis::class.java)
-private val sessionExpire = TinyApp.getConfig()["session.expire.seconds"]
+private val sessionExpire = TinyApp.getConfig().getLong("session.expire.seconds", 3600)
 
 class SessionStorageRedis: ISessionStorage {
-	private var _storage = HashMap<String, String>()
-	private var _redis: TinyRedis? = null
-	private var _changed = false
+	private var _tinyRedis: TinyRedis? = null
 
 	init {
 		val redisName = "redis.default"
 		try{
-			_redis = TinyRegistry.get(redisName) as TinyRedis
+			_tinyRedis = TinyRegistry.get(redisName) as TinyRedis
 		}catch(e: TinyException){
 			logger.warn("${this::class.java.getSimpleName()} init error: can not found ${redisName} in TinyRegistry, please make sure Redis config[\"${redisName}\"] exists")
 		}
 	}
 
-	override fun load(sessionId: String): HashMap<String, String>{
-		if(_redis == null){
-			return HashMap<String, String>()
-		}
-		return HashMap<String, String>()
+	override fun load(sessionId: String): String{
+		return _tinyRedis?.get(sessionId) ?: ""
 	}
 
-	override fun save(sessionId: String, data: HashMap<String, String>) {	
-		if(_redis == null){
-			return
-		}
+	override fun save(sessionId: String, data: String) {
+		_tinyRedis?.set(sessionId, data, sessionExpire)
 	}
 
-	override fun touch(sessionId: String, data: HashMap<String, String>) {	
-		if(_redis == null){
-			return
-		}
+	override fun touch(sessionId: String, data: String) {
+		_tinyRedis?.expire(sessionId, sessionExpire)
 	}
 }

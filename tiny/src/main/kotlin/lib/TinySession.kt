@@ -53,8 +53,16 @@ class TinySession {
 			return
 		}		
 		if(_sessionStorage != null){
-			_map = _sessionStorage.load(sessionId)
-		}		
+			val valueStr = _sessionStorage.load(sessionId)
+			if(valueStr.isEmpty()){
+				return
+			}
+			try{
+				_map = objectMapper.readValue<HashMap<String, String>>(valueStr)
+			}catch(e: Throwable){
+				throw e
+			}
+		}
 	}
 
 	fun save() {
@@ -65,7 +73,8 @@ class TinySession {
 			return
 		}
 		if(_sessionStorage != null){
-			_sessionStorage.save(sessionId, _map)
+			val valueStr =  objectMapper.writeValueAsString(_map)
+			_sessionStorage.save(sessionId, valueStr)
 		}
 	}
 
@@ -74,7 +83,8 @@ class TinySession {
 			return
 		}		
 		if(_sessionStorage != null){
-			_sessionStorage.touch(sessionId, _map)
+			val valueStr =  objectMapper.writeValueAsString(_map)
+			_sessionStorage.touch(sessionId, valueStr)
 		}
 	}
 
