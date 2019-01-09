@@ -111,15 +111,15 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 		}
 	}
 
-	fun query(body: (StatefulRedisConnection<String, String>) -> String): String {
+	fun query(body: (StatefulRedisConnection<String, String>) -> String?): String {
 		val conn = _pool.borrowObject()
-		var value: String
+		var value: String?
 		try{
 			value = body(conn)
 		}finally{
 			_pool.returnObject(conn)
 		}
-		return value
+		return value ?: ""
 	}
 
 	fun set(key: String, value: String, expireSeconds: Long = 3600) {
@@ -159,7 +159,7 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 	fun get(key: String): String {
 		val value = query({ connection ->
 			val commands = connection.sync()
-			commands.get(key) ?: ""
+			commands.get(key)
 		})
 
 		return value
