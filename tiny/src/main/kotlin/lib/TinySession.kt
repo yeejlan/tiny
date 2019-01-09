@@ -6,25 +6,14 @@ import org.slf4j.LoggerFactory
 
 private val objectMapper = jacksonObjectMapper()
 private val logger = LoggerFactory.getLogger(TinySession::class.java)
-private val sessionName = TinyApp.getConfig()["session.name"]
 
 class TinySession {
 	private var _map = HashMap<String, String>()
 	private var _changed = false
-	private var _sessionId: String = ""
+	var sessionId: String = ""
 
 	companion object{
 		private val _sessionStorage = SessionStorage.get()
-	}
-
-	init{
-		//load session
-		load()
-	}
-
-	fun newSession(){
-		destroy()
-		_sessionId = UniqueIdUtil.getUniqueId()
 	}
 
 	operator fun set(key: String, value: Any) {
@@ -61,7 +50,7 @@ class TinySession {
 
 	fun load() {
 		if(_sessionStorage != null){
-			_map = _sessionStorage.load(_sessionId)
+			_map = _sessionStorage.load(sessionId)
 		}		
 	}
 
@@ -69,14 +58,17 @@ class TinySession {
 		if(!_changed){
 			return
 		}
+		if(sessionId.isEmpty()){
+			return
+		}
 		if(_sessionStorage != null){
-			_sessionStorage.save(_sessionId, _map)
+			_sessionStorage.save(sessionId, _map)
 		}
 	}
 
 	fun touch(){
 		if(_sessionStorage != null){
-			_sessionStorage.touch(_sessionId, _map)
+			_sessionStorage.touch(sessionId, _map)
 		}
 	}	
 

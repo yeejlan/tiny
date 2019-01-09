@@ -2,8 +2,12 @@ package tiny
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import com.fasterxml.jackson.module.kotlin.*
-import tiny.lib.TinySession
+import javax.servlet.http.Cookie
+import tiny.lib.*
+
+private val sessionName = TinyApp.getConfig()["session.name"]
+private val cookieDomain = TinyApp.getConfig()["cookie.domain"]
+private val sessionExpire = TinyApp.getConfig().getInt("session.expire.seconds")
 
 class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 
@@ -17,15 +21,46 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 	var exception: Throwable? = null
 
 	/*store request params, array params are NOT supported, for those please use request.getParameterValues()*/
-	var params: TinyParams
+	lateinit var params: TinyParams
 
 	/*session support*/
 	val session = TinySession()
+
+	/*cookies storage*/
+	lateinit var cookies: TinyCookies
 
 	init{
 		request = req
 		response = res
 
+		_initParams()
+		_initCookies()
+		_initSession()
+
+	}
+
+	fun newSession(){
+		session.destroy()
+		session.sessionId = UniqueIdUtil.getUniqueId()
+		setCookie(sessionName, session.sessionId, domain=cookieDomain, maxAge=sessionExpire)
+	}		
+
+	fun saveSession() {
+		session.save()
+	}
+
+	fun setCookie(name: String, value: String, maxAge: Int = 0, domain: String = "", 
+		path: String = "/", secure: Boolean = false, httponly: Boolean = false) {
+		val c = Cookie(name, value)
+		c.setMaxAge(maxAge)
+		c.setDomain(domain)
+		c.setPath(path)
+		c.setSecure(secure)
+		c.setHttpOnly(httponly)
+		response.addCookie(c)
+	}
+
+	private fun _initParams(){
 		val paramMap: HashMap<String, String> = HashMap()
 		var paramKeys = request.getParameterNames()
 		for(paramKey in paramKeys){
@@ -34,66 +69,25 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 		}
 		params = TinyParams(paramMap)
 	}
-}
 
-class TinyParams(paramMap: HashMap<String, String>) {
-	private var _params: HashMap<String, String>
-
-	init{
-		_params = paramMap
-	}
-
-	override fun toString(): String {
-
-		if(!_params.isEmpty()){
-			val mapper = jacksonObjectMapper()
-			try {
-
-				return mapper.writeValueAsString(_params)
-
-			}catch (e: Throwable){
-				throw e
+	private fun _initCookies(){
+		val cookieMap: HashMap<String, String> = HashMap()
+		val _cookies = request.getCookies()
+		if(_cookies != null){
+			for(c in _cookies){
+				cookieMap.put(c.getName(), c.getValue())
 			}
 		}
-
-		return "{}"
+		cookies = TinyCookies(cookieMap)
 	}
 
-	operator fun set(key: String, value: String) {
-		_params.put(key, value)
-	}
-
-	operator fun get(key: String): String {
-		var value: String?
-		
-		value = _params.get(key)
-		if(value == null){
-			return ""
+	private fun _initSession(){
+		val sessionId = cookies[sessionName]
+		if(sessionId.isEmpty()){
+			newSession()
+		}else{
+			session.sessionId = sessionId
+			session.load()
 		}
-		return value
 	}
-
-	fun getInt(key: String, default: Int = 0): Int {
-
-		if(key.isEmpty()){
-			return default
-		}
-		return this.get(key).toIntOrNull() ?: default
-	}
-
-	fun getLong(key: String, default: Long = 0): Long {
-
-		if(key.isEmpty()){
-			return default
-		}		
-		return this.get(key).toLongOrNull() ?: default
-	}
-
-	fun getBoolean(key: String): Boolean {
-		if(key.isEmpty()){
-			return false
-		}		
-		return this.get(key).toBoolean()
-	}
-
 }

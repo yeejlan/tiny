@@ -4,6 +4,7 @@ import tiny.*
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(SessionStorageRedis::class.java)
+private val sessionExpire = TinyApp.getConfig()["session.expire.seconds"]
 
 class SessionStorageRedis: ISessionStorage {
 	private var _storage = HashMap<String, String>()
