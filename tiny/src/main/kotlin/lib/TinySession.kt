@@ -17,7 +17,7 @@ class TinySession {
 	}
 
 	operator fun set(key: String, value: Any) {
-		_changed = true
+		changed()
 		try {
 			val valueStr =  objectMapper.writeValueAsString(value)
 			_map.put(key, valueStr)
@@ -38,17 +38,20 @@ class TinySession {
 	}
 
 	fun delete(key: String) {
-		_changed = true
+		changed()
 		_map.remove(key)	
 	}
 
 	fun destroy() {
-		_changed = true
+		changed()
 		_map.clear()
 		save()
 	}
 
 	fun load() {
+		if(sessionId.isEmpty()){
+			return
+		}		
 		if(_sessionStorage != null){
 			_map = _sessionStorage.load(sessionId)
 		}		
@@ -67,10 +70,17 @@ class TinySession {
 	}
 
 	fun touch(){
+		if(sessionId.isEmpty()){
+			return
+		}		
 		if(_sessionStorage != null){
 			_sessionStorage.touch(sessionId, _map)
 		}
-	}	
+	}
+
+	fun changed(){
+		_changed = true
+	}
 
 	fun <T> get(key: String, valueType: Class<T> ): T? {
 		try {
