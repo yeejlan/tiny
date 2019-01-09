@@ -1,12 +1,27 @@
 package tiny.lib
 
-interface SessionStorage {
+import com.fasterxml.jackson.module.kotlin.*
 
-	fun load()
-	fun save()
+interface ISessionStorage {
 
-	fun get(key: String): String?
-	fun set(key: String, value: String)
-	fun delete(key: String)
-	fun clean()
+	fun load(sessionId: String): HashMap<String, String>
+	fun save(sessionId: String, data: HashMap<String, String>)
+	fun touch(sessionId: String, data: HashMap<String, String>)
+}
+
+object SessionStorage {
+	private val _storageSupported = arrayOf("redis")
+	private var _sessionStorage: ISessionStorage? = null
+
+	@JvmStatic fun set(storage: ISessionStorage) {
+		_sessionStorage = storage
+	}
+
+	@JvmStatic fun get(): ISessionStorage? {
+		return _sessionStorage
+	}
+
+	@JvmStatic fun getStorageSupported(): Array<String>{
+		return _storageSupported
+	}
 }

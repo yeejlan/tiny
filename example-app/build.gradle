@@ -109,7 +109,7 @@ def weaveAspectJToClass() {
 
 
 def runWithWeaver = true
-def runWithHotSwap = true
+def runWithHotSwap = false
 def tinyApplictionEnv = "development"
 
 run {

@@ -1,46 +1,40 @@
 package tiny.lib
 
 import tiny.*
+import org.slf4j.LoggerFactory
 
-class SessionStorageRedis: SessionStorage {
+private val logger = LoggerFactory.getLogger(SessionStorageRedis::class.java)
+
+class SessionStorageRedis: ISessionStorage {
 	private var _storage = HashMap<String, String>()
-	private var _redis: TinyRedis
+	private var _redis: TinyRedis? = null
 	private var _changed = false
 
 	init {
-		val redisName = "redis.aadefault"
+		val redisName = "redis.default"
 		try{
 			_redis = TinyRegistry.get(redisName) as TinyRedis
 		}catch(e: TinyException){
-			throw TinyException("${this::class.java.getSimpleName()} init error: can not found ${redisName} in TinyRegistry")
+			logger.warn("${this::class.java.getSimpleName()} init error: can not found ${redisName} in TinyRegistry, please make sure Redis config[\"${redisName}\"] exists")
 		}
 	}
 
-	override fun load() {
-
+	override fun load(sessionId: String): HashMap<String, String>{
+		if(_redis == null){
+			return HashMap<String, String>()
+		}
+		return HashMap<String, String>()
 	}
 
-	override fun save() {
-		if(!_changed){
+	override fun save(sessionId: String, data: HashMap<String, String>) {	
+		if(_redis == null){
 			return
 		}
-
 	}
 
-	override fun get(key: String): String? {
-		return _storage.get(key)
-	}
-
-	override fun set(key: String, value: String) {
-		_storage.put(key, value)
-	}
-
-	override fun delete(key: String) {
-		_storage.remove(key)
-	}
-
-	override fun clean() {
-		_storage = HashMap<String, String>()
-		save()
+	override fun touch(sessionId: String, data: HashMap<String, String>) {	
+		if(_redis == null){
+			return
+		}
 	}
 }

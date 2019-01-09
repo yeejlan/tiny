@@ -1,6 +1,9 @@
 package tiny.lib
 
 import tiny.*
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger(TinyResourceLoader::class.java)
 
 class TinyResourceLoader{
 	val _envString = TinyApp.getEnvString()
@@ -16,6 +19,7 @@ class TinyResourceLoader{
 
 	fun load(){
 		_loadRedis()
+		_loadSessionStorage()
 	}
 
 	private fun _loadRedis(){
@@ -38,5 +42,20 @@ class TinyResourceLoader{
 		}
 	}
 
-
+	private fun _loadSessionStorage() {
+		val configName = "session.storage"
+		var storageName = TinyApp.getConfig()[configName]
+		if(storageName.isEmpty()){
+			logger.warn("""App config["${configName}"] not found, fallback to "redis" """)
+			storageName = "redis"
+		}
+		val storageSupported = SessionStorage.getStorageSupported()
+		if(!storageSupported.contains(storageName)) {
+			logger.warn("""Session storage not supported: "${storageName}", session disabled""")
+			return
+		}
+		when (storageName) {
+			"redis" -> SessionStorage.set(SessionStorageRedis())
+		}
+	}
 }

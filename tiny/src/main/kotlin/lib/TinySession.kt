@@ -1,21 +1,37 @@
 package tiny.lib
 
 import com.fasterxml.jackson.module.kotlin.*
+import tiny.*
+import org.slf4j.LoggerFactory
 
-private val supportedStorage = arrayOf("redis")
 private val objectMapper = jacksonObjectMapper()
-private lateinit var sessionStorage: SessionStorage
+private val logger = LoggerFactory.getLogger(TinySession::class.java)
+private val sessionName = TinyApp.getConfig()["session.name"]
 
 class TinySession {
-	private val _storage = HashMap<String, String>()
+	private var _map = HashMap<String, String>()
+	private var _changed = false
+	private var _sessionId: String = ""
 
+	companion object{
+		private val _sessionStorage = SessionStorage.get()
+	}
 
+	init{
+		//load session
+		load()
+	}
+
+	fun newSession(){
+		destroy()
+		_sessionId = UniqueIdUtil.getUniqueId()
+	}
 
 	operator fun set(key: String, value: Any) {
-
+		_changed = true
 		try {
 			val valueStr =  objectMapper.writeValueAsString(value)
-			_storage.put(key, valueStr)
+			_map.put(key, valueStr)
 
 		}catch (e: Throwable){
 			throw e
@@ -25,16 +41,48 @@ class TinySession {
 	operator fun get(key: String): String {
 		var value: String?
 		
-		value = _storage.get(key)
+		value = _map.get(key)
 		if(value == null){
 			return ""
 		}
 		return value
 	}
 
+	fun delete(key: String) {
+		_changed = true
+		_map.remove(key)	
+	}
+
+	fun destroy() {
+		_changed = true
+		_map.clear()
+		save()
+	}
+
+	fun load() {
+		if(_sessionStorage != null){
+			_map = _sessionStorage.load(_sessionId)
+		}		
+	}
+
+	fun save() {
+		if(!_changed){
+			return
+		}
+		if(_sessionStorage != null){
+			_sessionStorage.save(_sessionId, _map)
+		}
+	}
+
+	fun touch(){
+		if(_sessionStorage != null){
+			_sessionStorage.touch(_sessionId, _map)
+		}
+	}	
+
 	fun <T> get(key: String, valueType: Class<T> ): T? {
 		try {
-			val value = _storage.get(key)
+			val value = _map.get(key)
 			if(value == null){
 				return null
 			}
@@ -69,6 +117,6 @@ class TinySession {
 	}
 
 	override fun toString(): String {
-		return _storage.toString()
+		return _map.toString()
 	}
 }

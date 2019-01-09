@@ -19,9 +19,9 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-	println(UniqueIdUtil.getUniqueId())
+	//println(UniqueIdUtil.getUniqueId())
 	//test()
-	//TinyApp.runJetty()
+	TinyApp.runJetty()
 }
 
 
