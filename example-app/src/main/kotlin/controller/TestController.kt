@@ -3,6 +3,7 @@ package example.controller
 import tiny.annotation.AutoWeave
 import tiny.annotation.Controller
 import tiny.TinyController
+import tiny.lib.*
 
 @Controller
 class TestController @AutoWeave constructor(): TinyController(){
@@ -19,7 +20,7 @@ class TestController @AutoWeave constructor(): TinyController(){
 		return "this is test/info page"
 	}
 
-	fun sessionAction(): Any {
+	fun setSessionAction() : Any{
 		ctx.session.set("userid", 123)
 		val infoMap: HashMap<String, Any> = hashMapOf(
 			"id" to 123,
@@ -28,6 +29,12 @@ class TestController @AutoWeave constructor(): TinyController(){
 			"zipcode" to "200079"
 		)
 		ctx.session.set("userInfo", infoMap)
+		ctx.session.set("randid", UniqueIdUtil.getUniqueId())
+		return ctx.session
+	}
+
+	fun getSessionAction(): Any {
+
 		val info = ctx.session.get("userInfo")
 		println(info)
 		return ctx.session

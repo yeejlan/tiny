@@ -157,10 +157,12 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 	}
 
 	fun get(key: String): String {
-		return query({ connection ->
+		val value = query({ connection ->
 			val commands = connection.sync()
-			commands.get(key)
+			commands.get(key) ?: ""
 		})
+
+		return value
 	}
 
 	fun <T> get(key: String, valueType: Class<T> ): T? {
