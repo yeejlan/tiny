@@ -8,7 +8,7 @@ private val objectMapper = jacksonObjectMapper()
 private val logger = LoggerFactory.getLogger(TinySession::class.java)
 
 class TinySession {
-	private var _map = HashMap<String, String>()
+	private var _map = HashMap<String, Any>()
 	private var _changed = false
 	var sessionId: String = ""
 
@@ -18,23 +18,11 @@ class TinySession {
 
 	operator fun set(key: String, value: Any) {
 		changed()
-		try {
-			val valueStr =  objectMapper.writeValueAsString(value)
-			_map.put(key, valueStr)
-
-		}catch (e: Throwable){
-			throw e
-		}
+		_map.put(key, value)
 	}
 
-	operator fun get(key: String): String {
-		var value: String?
-		
-		value = _map.get(key)
-		if(value == null){
-			return ""
-		}
-		return value
+	operator fun get(key: String): Any? {
+		return _map.get(key)
 	}
 
 	fun delete(key: String) {
@@ -58,7 +46,7 @@ class TinySession {
 				return
 			}
 			try{
-				_map = objectMapper.readValue<HashMap<String, String>>(valueStr)
+				_map = objectMapper.readValue<HashMap<String, Any>>(valueStr)
 			}catch(e: Throwable){
 				throw e
 			}
@@ -90,42 +78,6 @@ class TinySession {
 
 	fun changed(){
 		_changed = true
-	}
-
-	fun <T> get(key: String, valueType: Class<T> ): T? {
-		try {
-			val value = _map.get(key)
-			if(value == null){
-				return null
-			}
-			return objectMapper.readValue(value, valueType)
-
-		}catch (e: Throwable){
-			throw e
-		}
-	}
-
-	fun getInt(key: String, default: Int = 0): Int {
-
-		if(key.isEmpty()){
-			return default
-		}
-		return this.get(key).toIntOrNull() ?: default
-	}
-
-	fun getLong(key: String, default: Long = 0): Long {
-
-		if(key.isEmpty()){
-			return default
-		}		
-		return this.get(key).toLongOrNull() ?: default
-	}
-
-	fun getBoolean(key: String): Boolean {
-		if(key.isEmpty()){
-			return false
-		}		
-		return this.get(key).toBoolean()
 	}
 
 	override fun toString(): String {

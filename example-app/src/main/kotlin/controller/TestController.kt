@@ -28,7 +28,7 @@ class TestController @AutoWeave constructor(): TinyController(){
 			"zipcode" to "200079"
 		)
 		ctx.session.set("userInfo", infoMap)
-		val info = ctx.session.get("userInfo", HashMap::class.java)
+		val info = ctx.session.get("userInfo")
 		println(info)
 		return ctx.session
 	}
