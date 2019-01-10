@@ -19,23 +19,22 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-
 	test()
 	//TinyApp.runJetty()
 }
 
 
 fun test(){
+
 	val env = System.getProperty("tiny.appliction.env") ?: "production"
 	val appName = "exampleapp"
+
 	TinyApp.init(env, appName)
 
-	//val redis = TinyRedis("127.0.0.1").create()
-	println(TinyRegistry)
+	val jdbc = TinyJdbc()
 
-	for(i in 1..5){
-		//TinyLog.log("the content ${i}", "log${i}")		
-	}
-	Thread.sleep(1)
+	jdbc.use("account")
+	jdbc.exec("select * from user limit 5")
+
 	TinyApp.shutdown()
 }
