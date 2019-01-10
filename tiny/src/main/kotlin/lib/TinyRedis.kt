@@ -11,7 +11,9 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import java.time.Duration
 
 import tiny.*
+import org.slf4j.LoggerFactory
 
+private val logger = LoggerFactory.getLogger(TinyRedis::class.java)
 private val objectMapper = jacksonObjectMapper()
 
 private val connectTimeout = Duration.ofSeconds(3)
@@ -106,6 +108,8 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 		val conn = _pool.borrowObject()
 		try{
 			body(conn)
+		}catch(e: Throwable){
+			logger.warn("exec error", e)
 		}finally{
 			_pool.returnObject(conn)
 		}
@@ -113,9 +117,11 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 
 	fun query(body: (StatefulRedisConnection<String, String>) -> String?): String {
 		val conn = _pool.borrowObject()
-		var value: String?
+		var value: String? = null
 		try{
 			value = body(conn)
+		}catch(e: Throwable){
+			logger.warn("exec error", e)
 		}finally{
 			_pool.returnObject(conn)
 		}
