@@ -19,8 +19,8 @@ object TinyRegistry{
 	}
 
 	@JvmStatic fun delete(key: String){
-        storage.remove(key)
-    }
+		storage.remove(key)
+	}
 
 	override fun toString(): String {
 

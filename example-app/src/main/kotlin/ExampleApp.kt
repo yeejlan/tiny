@@ -19,15 +19,15 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-	//println(UniqueIdUtil.getUniqueId())
-	//test()
-	TinyApp.runJetty()
+
+	test()
+	//TinyApp.runJetty()
 }
 
 
 fun test(){
 	val env = System.getProperty("tiny.appliction.env") ?: "production"
-	val appName = "tiny"
+	val appName = "exampleapp"
 	TinyApp.init(env, appName)
 
 	//val redis = TinyRedis("127.0.0.1").create()

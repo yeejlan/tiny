@@ -12,7 +12,7 @@ configurations {
 
 dependencies { 
 	compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
-	compileOnly group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
 	compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.14.v20181114'
 	compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.4.14.v20181114'
 	compile group: 'org.eclipse.jetty', name: 'jetty-annotations', version: '9.4.14.v20181114'

@@ -74,10 +74,10 @@ object TinyApp {
 			try {
 				hookCount++
 				hookObject.shutdownProcess()
-				hookObject = shutdownQueue.poll()
 			} catch (e: Throwable) {
-				logger.warn("ShutdownHook error: " + e)
+				logger.warn("Shutdown process error: " + e)
 			}
+			hookObject = shutdownQueue.poll()
 		}
 		try {
 			Thread.sleep(1000) //wait shutdown cleanup

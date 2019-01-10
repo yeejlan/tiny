@@ -1,5 +1,6 @@
 package tiny.lib
 
+import com.zaxxer.hikari.HikariDataSource
 import tiny.*
 import org.slf4j.LoggerFactory
 
@@ -14,12 +15,37 @@ class TinyResourceLoader{
 		val database = config.getInt("${prefix}.database")
 		val poolConfig = TinyRedisPoolConfig().doConfig(config, "${prefix}.pool")
 		return TinyRedis(host, port, database).create(poolConfig)
+	}
 
+	fun buildDataSourceHikari(config: TinyConfig, prefix: String): HikariDataSource{
+		val hikariConfig = DataSourceHikariConfig().doConfig(config, prefix)
+		return DatasourceHiKari().create(hikariConfig)
 	}
 
 	fun load(){
+		_loadDataSourceHikari()
 		_loadRedis()
 		_loadSessionStorage()
+	}
+
+	private fun _loadDataSourceHikari(){
+		val configFile = "config/${_envString}/datasource.ini"
+		lateinit var config: TinyConfig
+		try{
+			config = TinyConfig(configFile)
+		}catch(e: TinyException){
+			return
+		}
+
+		val configMatcher = "datasource\\.([_a-zA-Z0-9]+)\\.url".toRegex()
+		for(one in config.getConfigMap()){
+			val key = one.key
+			if(configMatcher.containsMatchIn(key)){
+				val dataSourceName = key.substring(0, key.length - ".url".length)
+				val dataSourceHikari = buildDataSourceHikari(config, dataSourceName)
+				TinyRegistry[dataSourceName] = dataSourceHikari
+			}
+		}
 	}
 
 	private fun _loadRedis(){
