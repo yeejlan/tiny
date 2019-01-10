@@ -5,12 +5,13 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(SessionStorageRedis::class.java)
 private val sessionExpire = TinyApp.getConfig().getLong("session.expire.seconds", 3600)
+private val storageProvider = TinyApp.getConfig()["session.storage.provider"]
 
 class SessionStorageRedis: ISessionStorage {
 	private var _tinyRedis: TinyRedis? = null
 
 	init {
-		val redisName = "redis.default"
+		val redisName = storageProvider
 		try{
 			_tinyRedis = TinyRegistry.get(redisName) as TinyRedis
 		}catch(e: TinyException){
