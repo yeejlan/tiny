@@ -108,8 +108,6 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 		val conn = _pool.borrowObject()
 		try{
 			body(conn)
-		}catch(e: Throwable){
-			logger.warn("exec error", e)
 		}finally{
 			_pool.returnObject(conn)
 		}
@@ -117,11 +115,9 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 
 	fun query(body: (StatefulRedisConnection<String, String>) -> String?): String {
 		val conn = _pool.borrowObject()
-		var value: String? = null
+		var value: String?
 		try{
 			value = body(conn)
-		}catch(e: Throwable){
-			logger.warn("exec error", e)
 		}finally{
 			_pool.returnObject(conn)
 		}
