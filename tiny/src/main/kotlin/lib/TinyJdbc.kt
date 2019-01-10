@@ -40,6 +40,9 @@ class TinyJdbc {
 		try{
 			conn = ds.getConnection()
 			value = body(conn)
+		}catch(e: Throwable){
+			logger.error("Sql exec error on ${this}", e)
+			throw e
 		}finally{
 			try{
 				conn?.close()
@@ -132,7 +135,7 @@ class TinyJdbc {
 	}
 
 	override fun toString(): String {
-		return this::class.java.getSimpleName()+"[$_datasource.get(), sql=$_sql.get()]"
+		return this::class.java.getSimpleName()+"[${_datasource.get()}, sql=${_sql.get()}]"
 	}
 }
 
