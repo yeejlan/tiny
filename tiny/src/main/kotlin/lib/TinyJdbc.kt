@@ -30,7 +30,7 @@ class TinyJdbc {
 		_datasource.set(dataSource)
 	}
 
-	fun execWithConn(body: (Connection) -> Any?): Any? {
+	fun exec(body: (Connection) -> Any?): Any? {
 		val ds = _datasource.get()
 		if(ds == null){
 			throw SQLException("DataSource is null")
@@ -44,49 +44,25 @@ class TinyJdbc {
 			try{
 				conn?.close()
 			}catch(e: Throwable){
-				logger.error("conn close error", e)
+				logger.error("connnection close error", e)
 			}
 		}
 		return value
 	}
 
-	fun exec(sql: String): Any? {
-		_sql.set(sql)
-		val value = execWithConn({ conn ->
-			lateinit var stmt: PreparedStatement
-			var rs: ResultSet? = null
-			try {
-				stmt = conn.prepareStatement(sql)
-				rs = stmt.executeQuery()
-				println("===rs = " + rs)
-				while (rs?.next() ?: false){
-					println(rs)
-				}
-			}finally {
-				try{
-					rs?.close()
-					stmt.close()
-				}catch(e: Throwable){
-					logger.error("resource close error", e)
-				}
-			}
-		})
-		return value
-	}
-
 	fun queryForList(sql: String, paramMap: Map<String, *>?): List<Map<String, Any>>? {
 		_sql.set(sql)
-		val value = execWithConn({ conn ->
+		val value = exec({ conn ->
 			var stmt: PreparedStatement? = null
 			var rs: ResultSet? = null
 			try {
 				stmt = conn.prepareStatement(sql)
 				if(stmt == null){
-					return@execWithConn null
+					return@exec null
 				}
 				rs = stmt.executeQuery()
 				if(rs == null){
-					return@execWithConn null
+					return@exec null
 				}
 				val resultList: MutableList<HashMap<String, Any>> = mutableListOf()
 				val metaData = rs.getMetaData()
@@ -98,7 +74,7 @@ class TinyJdbc {
 					}
 					resultList.add(resultMap)
 				}
-				return@execWithConn resultList
+				return@exec resultList
 			}finally {
 				try{
 					rs?.close()
@@ -117,17 +93,17 @@ class TinyJdbc {
 
 	fun queryForMap(sql: String, paramMap: Map<String, *>?): Map<String, Any> {
 		_sql.set(sql)
-		val value = execWithConn({ conn ->
+		val value = exec({ conn ->
 			var stmt: PreparedStatement? = null
 			var rs: ResultSet? = null
 			try {
 				stmt = conn.prepareStatement(sql)
 				if(stmt == null){
-					return@execWithConn null
+					return@exec null
 				}
 				rs = stmt.executeQuery()
 				if(rs == null){
-					return@execWithConn null
+					return@exec null
 				}
 				val resultMap = HashMap<String, Any>()
 				val metaData = rs.getMetaData()
@@ -138,7 +114,7 @@ class TinyJdbc {
 					}
 					break
 				}
-				return@execWithConn resultMap
+				return@exec resultMap
 			}finally {
 				try{
 					rs?.close()
@@ -156,7 +132,7 @@ class TinyJdbc {
 	}
 
 	override fun toString(): String {
-		return this::class.java.getSimpleName()+"[$_datasource, sql=$_sql]"
+		return this::class.java.getSimpleName()+"[$_datasource.get(), sql=$_sql.get()]"
 	}
 }
 
