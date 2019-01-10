@@ -34,7 +34,8 @@ fun test(){
 	val jdbc = TinyJdbc()
 
 	jdbc.use("account")
-	jdbc.exec("select * from user limit 5")
+	val ret = jdbc.queryForMap("select * from user limit 5", null)
+	println("result= " + ret)
 
 	TinyApp.shutdown()
 }
