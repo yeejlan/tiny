@@ -98,7 +98,7 @@ class TinyJdbc {
 					}
 					resultList.add(resultMap)
 				}
-				resultList
+				return@execWithConn resultList
 			}finally {
 				try{
 					rs?.close()
@@ -138,7 +138,7 @@ class TinyJdbc {
 					}
 					break
 				}
-				resultMap
+				return@execWithConn resultMap
 			}finally {
 				try{
 					rs?.close()
