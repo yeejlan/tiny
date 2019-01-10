@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory
 private val objectMapper = jacksonObjectMapper()
 private val logger = LoggerFactory.getLogger(TinySession::class.java)
 
+private val sessionEnable = TinyApp.getConfig().getBoolean("session.enable")
+
 class TinySession {
 	private var _map = HashMap<String, Any>()
 	private var _changed = false
@@ -30,6 +32,10 @@ class TinySession {
 		_map.remove(key)	
 	}
 
+	fun touch(){
+		changed()
+	}
+
 	fun destroy() {
 		changed()
 		_map.clear()
@@ -40,7 +46,7 @@ class TinySession {
 		if(sessionId.isEmpty()){
 			return
 		}		
-		if(_sessionStorage != null){
+		if(sessionEnable && _sessionStorage != null){
 			val valueStr = _sessionStorage.load(sessionId)
 			if(valueStr.isEmpty()){
 				return
@@ -60,23 +66,13 @@ class TinySession {
 		if(sessionId.isEmpty()){
 			return
 		}
-		if(_sessionStorage != null){
+		if(sessionEnable && _sessionStorage != null){
 			val valueStr =  objectMapper.writeValueAsString(_map)
 			_sessionStorage.save(sessionId, valueStr)
 		}
 	}
 
-	fun touch(){
-		if(sessionId.isEmpty()){
-			return
-		}		
-		if(_sessionStorage != null){
-			val valueStr =  objectMapper.writeValueAsString(_map)
-			_sessionStorage.touch(sessionId, valueStr)
-		}
-	}
-
-	fun changed(){
+	private fun changed(){
 		_changed = true
 	}
 

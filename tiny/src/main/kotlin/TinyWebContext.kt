@@ -7,7 +7,8 @@ import tiny.lib.*
 
 private val sessionName = TinyApp.getConfig()["session.name"]
 private val cookieDomain = TinyApp.getConfig()["cookie.domain"]
-private val sessionExpire = TinyApp.getConfig().getInt("session.expire.seconds")
+private val sessionExpire = TinyApp.getConfig().getInt("session.expire.seconds", 3600)
+private val sessionEnable = TinyApp.getConfig().getBoolean("session.enable")
 
 class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 
@@ -35,18 +36,6 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 
 		_initParams()
 		_initCookies()
-		_initSession()
-
-	}
-
-	fun newSession(){
-		session.destroy()
-		session.sessionId = UniqueIdUtil.getUniqueId()
-		setCookie(sessionName, session.sessionId, domain=cookieDomain, maxAge=sessionExpire)
-	}
-
-	fun saveSession() {
-		session.save()
 	}
 
 	fun setCookie(name: String, value: String, maxAge: Int = 0, domain: String = "", 
@@ -58,6 +47,28 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 		c.setSecure(secure)
 		c.setHttpOnly(httponly)
 		response.addCookie(c)
+	}
+
+	fun newSession(){
+		if(!sessionEnable){
+			return
+		}
+		session.destroy()
+		session.sessionId = UniqueIdUtil.getUniqueId()
+		setCookie(sessionName, session.sessionId, domain=cookieDomain, maxAge=sessionExpire)
+	}
+
+	fun loadSession(){
+		if(!sessionEnable){
+			return
+		}
+		val sessionId = cookies[sessionName]
+		if(sessionId.isEmpty()){
+			newSession()
+		}else{
+			session.sessionId = sessionId
+			session.load()
+		}
 	}
 
 	private fun _initParams(){
@@ -81,13 +92,4 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 		cookies = TinyCookies(cookieMap)
 	}
 
-	private fun _initSession(){
-		val sessionId = cookies[sessionName]
-		if(sessionId.isEmpty()){
-			newSession()
-		}else{
-			session.sessionId = sessionId
-			session.load()
-		}
-	}
 }

@@ -25,8 +25,4 @@ class SessionStorageRedis: ISessionStorage {
 	override fun save(sessionId: String, data: String) {
 		_tinyRedis?.set(sessionId, data, sessionExpire)
 	}
-
-	override fun touch(sessionId: String, data: String) {
-		_tinyRedis?.expire(sessionId, sessionExpire)
-	}
 }

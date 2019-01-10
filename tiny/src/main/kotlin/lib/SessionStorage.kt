@@ -6,7 +6,6 @@ interface ISessionStorage {
 
 	fun load(sessionId: String): String
 	fun save(sessionId: String, data: String)
-	fun touch(sessionId: String, data: String)
 }
 
 object SessionStorage {
