@@ -74,35 +74,84 @@ class TinyJdbc {
 		return value
 	}
 
-	fun queryForMap(sql: String, paramMap: Map<String, *>?): Map<String, Any> {
+	fun queryForList(sql: String, paramMap: Map<String, *>?): List<Map<String, Any>>? {
 		_sql.set(sql)
 		val value = execWithConn({ conn ->
-			lateinit var stmt: PreparedStatement
-			lateinit var rs: ResultSet
+			var stmt: PreparedStatement? = null
+			var rs: ResultSet? = null
 			try {
 				stmt = conn.prepareStatement(sql)
+				if(stmt == null){
+					return@execWithConn null
+				}
 				rs = stmt.executeQuery()
-				val resultList: MutableList<HashMap<String, String>> = mutableListOf()
-				val resultMap = HashMap<String, String>()
+				if(rs == null){
+					return@execWithConn null
+				}
+				val resultList: MutableList<HashMap<String, Any>> = mutableListOf()
 				val metaData = rs.getMetaData()
 				val columnCount = metaData.getColumnCount()
 				while(rs.next()){
+					val resultMap = HashMap<String, Any>()
 					for(i in 1..columnCount){
-						resultMap.put(metaData.getColumnName(i), rs.getString(i))
+						resultMap.put(metaData.getColumnName(i), JdbcUtil.getRsValue(rs, i))
 					}
 					resultList.add(resultMap)
 				}
-				println(resultList)
-				resultMap
+				resultList
 			}finally {
 				try{
 					rs?.close()
-					stmt.close()
+					stmt?.close()
 				}catch(e: Throwable){
 					logger.error("resource close error", e)
 				}
 			}
 		})
+		if(value == null){
+			return listOf()
+		}
+		@Suppress("UNCHECKED_CAST")
+		return value as List<Map<String, Any>>
+	}
+
+	fun queryForMap(sql: String, paramMap: Map<String, *>?): Map<String, Any> {
+		_sql.set(sql)
+		val value = execWithConn({ conn ->
+			var stmt: PreparedStatement? = null
+			var rs: ResultSet? = null
+			try {
+				stmt = conn.prepareStatement(sql)
+				if(stmt == null){
+					return@execWithConn null
+				}
+				rs = stmt.executeQuery()
+				if(rs == null){
+					return@execWithConn null
+				}
+				val resultMap = HashMap<String, Any>()
+				val metaData = rs.getMetaData()
+				val columnCount = metaData.getColumnCount()
+				while(rs.next()){
+					for(i in 1..columnCount){
+						resultMap.put(metaData.getColumnName(i), JdbcUtil.getRsValue(rs, i))
+					}
+					break
+				}
+				resultMap
+			}finally {
+				try{
+					rs?.close()
+					stmt?.close()
+				}catch(e: Throwable){
+					logger.error("resource close error", e)
+				}
+			}
+		})
+		if(value == null){
+			return mapOf()
+		}
+		@Suppress("UNCHECKED_CAST")
 		return value as Map<String, Any>
 	}
 
@@ -110,3 +159,4 @@ class TinyJdbc {
 		return this::class.java.getSimpleName()+"[$_datasource, sql=$_sql]"
 	}
 }
+
