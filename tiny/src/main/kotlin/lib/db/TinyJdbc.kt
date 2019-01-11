@@ -78,7 +78,7 @@ class TinyJdbc {
 		return value ?: listOf()
 	}
 
-	fun queryForMap(sql: String, paramMap: Map<String, Any>?): Map<String, Any> {
+	fun queryForMap(sql: String, paramMap: Map<String, Any>? = null): Map<String, Any> {
 
 		val value = query<Map<String, Any>>(sql, paramMap, { rs ->
 			JdbcUtil.rsToMap(rs)

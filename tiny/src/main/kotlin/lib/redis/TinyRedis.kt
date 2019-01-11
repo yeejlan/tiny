@@ -1,4 +1,4 @@
-package tiny.lib
+package tiny.lib.redis
 
 import com.fasterxml.jackson.module.kotlin.*
 import io.lettuce.core.support.ConnectionPoolSupport
@@ -23,20 +23,26 @@ private val poolMinIdle = 2
 private val poolMaxWaitMillis = 3000L
 private val poolMinEvictableIdleTimeMillis = 600000L
 private val poolTimeBetweenEvictionRunsMillis = 600000L
+private val defaultHost = "127.0.0.1"
+private val defaultPort = 6379
+private val defaultDatabase = 1
 
-class TinyRedisPoolConfig() {
+class RedisPoolLettuceConfig() {
+	val host = defaultHost
+	val port = defaultPort
+	val database = defaultDatabase
 	var maxTotal = poolMaxTotal
 	var maxIdle = poolMaxIdle
 	var minIdle = poolMinIdle
-	var maxWaitMillis = poolMaxWaitMillis
-	var minEvictableIdleTimeMillis = poolMinEvictableIdleTimeMillis
-	var timeBetweenEvictionRunsMillis = poolTimeBetweenEvictionRunsMillis
 	private val _config = GenericObjectPoolConfig<Any>()
 
 	init{
 		_config.setTestOnBorrow(false)
 		_config.setTestOnReturn(false)
 		_config.setTestWhileIdle(false)
+		_config.setMaxWaitMillis(poolMaxWaitMillis)
+		_config.setMinEvictableIdleTimeMillis(poolMinEvictableIdleTimeMillis)
+		_config.setTimeBetweenEvictionRunsMillis(poolTimeBetweenEvictionRunsMillis)		
 	}
 
 	fun getConfig(): GenericObjectPoolConfig<Any>{
@@ -53,27 +59,20 @@ class TinyRedisPoolConfig() {
 		_config.setMinIdle(minIdle)
 		_config.setMaxTotal(maxTotal)
 		_config.setMaxIdle(maxIdle)
-		_config.setMaxWaitMillis(maxWaitMillis)
-		_config.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis)
-		_config.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis)
 		return this
 	}
 
 	fun doConfig(config: TinyConfig, prefix: String): TinyRedisPoolConfig{
-		maxTotal = config.getInt("${prefix}.maxTotal", poolMaxTotal)
-		maxIdle = config.getInt("${prefix}.maxIdle", poolMaxIdle)
-		minIdle = config.getInt("${prefix}.minIdle", poolMinIdle)
-		maxWaitMillis = config.getLong("${prefix}.maxWaitMillis", poolMaxWaitMillis)
-		minEvictableIdleTimeMillis = config.getLong("${prefix}.minEvictableIdleTimeMillis", poolMinEvictableIdleTimeMillis)
-		timeBetweenEvictionRunsMillis = config.getLong("${prefix}.timeBetweenEvictionRunsMillis", poolTimeBetweenEvictionRunsMillis)
+		host = config["${prefix}.lettuce.maxTotal", poolMaxTotal)
+		maxTotal = config.getInt("${prefix}.lettuce.maxTotal", poolMaxTotal)
+		maxIdle = config.getInt("${prefix}.lettuce.maxIdle", poolMaxIdle)
+		minIdle = config.getInt("${prefix}.lettuce.minIdle", poolMinIdle)
 		return doConfig()
 	}
 }
 
-class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Duration = connectTimeout) {
-	private val _host: String
-	private val _port: Int
-	private val _database: Int
+class RedisPoolLettuce(host: String, port:Int = 6379, database: Int = 1, timeout: Duration = connectTimeout) {
+
 	private val _timeout: Duration
 	private lateinit var _pool: GenericObjectPool<StatefulRedisConnection<String, String>>
 	private lateinit var _client: RedisClient
@@ -102,7 +101,10 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 
 		TinyApp.addShutdownHook(RedisShutdownHook())
 		return this	
-	}
+	}	
+}
+class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Duration = connectTimeout) {
+
 
 	fun exec(body: (StatefulRedisConnection<String, String>) -> Unit) {
 		val conn = _pool.borrowObject()

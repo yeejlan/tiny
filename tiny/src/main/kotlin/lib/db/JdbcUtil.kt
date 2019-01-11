@@ -5,6 +5,7 @@ import java.sql.Blob
 import java.sql.Clob
 
 object JdbcUtil {
+
 	/*Convert ResultSet to Map<String, Any>*/
 	fun rsToMap(rs: ResultSet): Map<String, Any>{
 		val resultMap = HashMap<String, Any>()
