@@ -1,6 +1,7 @@
 package tiny.lib.db
 
 import tiny.*
+import tiny.db.*
 import javax.sql.DataSource
 import java.sql.Connection
 import java.sql.SQLException
