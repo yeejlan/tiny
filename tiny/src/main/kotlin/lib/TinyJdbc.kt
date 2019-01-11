@@ -41,17 +41,15 @@ class TinyJdbc(ds: DataSource) {
 			var rs: ResultSet? = null
 			stmt.use{
 				rs = stmt.executeQuery()
+				if(rs == null){
+					return@exec null
+				}
+				var value: T? = null
+				rs.use{
+					value = body(rs as ResultSet)
+				}
+				return@exec value
 			}
-			if(rs == null){
-				return@exec null
-			}
-			println("===333")
-			var value: T? = null
-			rs.use{
-				value = body(rs as ResultSet)
-				println("===2222")
-			}
-			value
 		})
 
 		return exeValue
@@ -61,7 +59,6 @@ class TinyJdbc(ds: DataSource) {
 
 		val value = query<List<Map<String, Any>>>(sql, paramMap, { rs ->
 			val value = JdbcUtil.rsToList(rs)
-			println("===1111")
 			return@query value
 		})
 		return value ?: listOf()
