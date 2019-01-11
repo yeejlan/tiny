@@ -32,11 +32,11 @@ fun test(){
 
 	TinyApp.init(env, appName)
 
-	val jdbc = TinyRegistry["datasource.account"] as TinyJdbc
-	println(TinyRegistry)
+	val jdbc = TinyRegistry["db.account"] as TinyJdbc
+	//println(TinyRegistry)
 
-	val ret = jdbc.queryForList("select * from user limit 5 1", null)
-	println("queryForList result= " + ret)
+	//val ret = jdbc.queryForList("select * from user limit 5 ", null)
+	//println("queryForList result= " + ret)
 	val ret2 = jdbc.queryForMap("select * from user limit 5", null)
 	println("queryForMap result= " + ret2)
 

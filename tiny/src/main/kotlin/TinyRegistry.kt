@@ -8,7 +8,9 @@ object TinyRegistry{
 
 	@JvmStatic operator fun get(key: String) :Any? {
 		val value = storage.get(key)
-
+		if(value == null){
+			throw TinyException("Key not found: " + key)
+		}
 		return value
 	}
 

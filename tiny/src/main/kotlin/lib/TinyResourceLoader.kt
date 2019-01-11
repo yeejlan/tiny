@@ -29,7 +29,7 @@ class TinyResourceLoader{
 	}
 
 	private fun _loadDataSourceHikari(){
-		val configFile = "config/${_envString}/datasource.ini"
+		val configFile = "config/${_envString}/db.ini"
 		lateinit var config: TinyConfig
 		try{
 			config = TinyConfig(configFile)
@@ -37,7 +37,7 @@ class TinyResourceLoader{
 			return
 		}
 
-		val configMatcher = "datasource\\.([_a-zA-Z0-9]+)\\.url".toRegex()
+		val configMatcher = "db\\.([_a-zA-Z0-9]+)\\.url".toRegex()
 		for(one in config.getConfigMap()){
 			val key = one.key
 			if(configMatcher.containsMatchIn(key)){
