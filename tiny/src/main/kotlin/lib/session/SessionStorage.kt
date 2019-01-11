@@ -1,4 +1,4 @@
-package tiny.lib
+package tiny.lib.session
 
 import com.fasterxml.jackson.module.kotlin.*
 

@@ -1,4 +1,4 @@
-package tiny.lib
+package tiny.lib.session
 
 import tiny.*
 import org.slf4j.LoggerFactory
