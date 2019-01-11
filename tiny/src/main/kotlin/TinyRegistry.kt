@@ -6,12 +6,10 @@ private val storage = HashMap<String, Any>()
 
 object TinyRegistry{
 
-	@JvmStatic operator fun get(key: String) :Any {
-		val v = storage.get(key)
-		if(v == null){
-			throw TinyException("Value not found for key: " + key)
-		}
-		return v
+	@JvmStatic operator fun get(key: String) :Any? {
+		val value = storage.get(key)
+
+		return value
 	}
 
 	@JvmStatic operator fun set(key: String, value: Any) {

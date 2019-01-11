@@ -3,6 +3,8 @@ package tiny.lib
 import com.zaxxer.hikari.HikariDataSource
 import tiny.*
 import tiny.lib.db.*
+import tiny.lib.redis.*
+import tiny.lib.session.*
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(TinyResourceLoader::class.java)
@@ -10,12 +12,9 @@ private val logger = LoggerFactory.getLogger(TinyResourceLoader::class.java)
 class TinyResourceLoader{
 	val _envString = TinyApp.getEnvString()
 
-	fun buildRedis(config: TinyConfig, prefix: String): TinyRedis{
-		val host = config.getString("${prefix}.host")
-		val port = config.getInt("${prefix}.port")
-		val database = config.getInt("${prefix}.database")
-		val poolConfig = TinyRedisPoolConfig().doConfig(config, "${prefix}.pool")
-		return TinyRedis(host, port, database).create(poolConfig)
+	fun buildRedis(config: TinyConfig, prefix: String): LettuceRedisPool{
+		val poolConfig = LettuceRedisPoolConfig().doConfig(config, prefix)
+		return LettuceRedisPool().create(poolConfig)
 	}
 
 	fun buildDataSourceHikari(config: TinyConfig, prefix: String): HikariDataSource{

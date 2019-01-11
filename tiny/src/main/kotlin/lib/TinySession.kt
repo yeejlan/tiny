@@ -2,7 +2,7 @@ package tiny.lib
 
 import com.fasterxml.jackson.module.kotlin.*
 import tiny.*
-import tiny.session.*
+import tiny.lib.session.*
 import org.slf4j.LoggerFactory
 
 private val objectMapper = jacksonObjectMapper()

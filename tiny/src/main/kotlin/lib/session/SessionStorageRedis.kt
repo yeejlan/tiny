@@ -1,6 +1,7 @@
 package tiny.lib.session
 
 import tiny.*
+import tiny.lib.TinyRedis
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(SessionStorageRedis::class.java)

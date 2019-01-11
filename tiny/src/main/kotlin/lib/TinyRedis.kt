@@ -2,27 +2,44 @@ package tiny.lib
 
 import tiny.*
 import tiny.lib.redis.*
+import com.fasterxml.jackson.module.kotlin.*
+import io.lettuce.core.api.StatefulRedisConnection
+import org.slf4j.LoggerFactory
 
-class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Duration = connectTimeout) {
+private val logger = LoggerFactory.getLogger(TinyRedis::class.java)
+private val objectMapper = jacksonObjectMapper()
 
+class TinyRedis(ds: LettuceDataSource) {
+	private var _datasource: LettuceDataSource 
+
+	init{
+		_datasource = ds
+	}
 
 	fun exec(body: (StatefulRedisConnection<String, String>) -> Unit) {
-		val conn = _pool.borrowObject()
-		try{
-			body(conn)
-		}finally{
-			_pool.returnObject(conn)
+		val conn = _datasource.getConnection()
+		conn.use {
+			try{
+				body(conn)
+			}catch(e: Throwable){
+				logger.warn("Redis exec error on ${this} " + e)
+				throw e
+			}
 		}
 	}
 
 	fun query(body: (StatefulRedisConnection<String, String>) -> String?): String {
-		val conn = _pool.borrowObject()
-		var value: String?
-		try{
-			value = body(conn)
-		}finally{
-			_pool.returnObject(conn)
+		val conn = _datasource.getConnection()
+		var value: String? = null
+		conn.use {
+			try{
+				value = body(conn)
+			}catch(e: Throwable){
+				logger.warn("Redis query error on ${this} " + e)
+				throw e
+			}
 		}
+
 		return value ?: ""
 	}
 
@@ -83,14 +100,6 @@ class TinyRedis(host: String, port:Int = 6379, database: Int = 1, timeout: Durat
 	}
 
 	override fun toString(): String {
-		return this::class.java.getSimpleName() + "[${_name}]"
-	}
-
-	private inner class RedisShutdownHook() : TinyShutdownHook {
-
-		override fun shutdownProcess() {
-			_pool.close()
-			_client.shutdown()
-		}
+		return this::class.java.getSimpleName() + "[${_datasource}]"
 	}
 }
