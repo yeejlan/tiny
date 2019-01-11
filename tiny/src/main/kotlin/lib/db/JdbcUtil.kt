@@ -1,4 +1,4 @@
-package tiny.lib
+package tiny.lib.db
 
 import java.sql.ResultSet
 import java.sql.Blob

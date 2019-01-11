@@ -2,6 +2,7 @@ package tiny.lib
 
 import com.zaxxer.hikari.HikariDataSource
 import tiny.*
+import tiny.lib.db.*
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(TinyResourceLoader::class.java)

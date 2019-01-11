@@ -1,4 +1,4 @@
-package tiny.lib
+package tiny.lib.db
 
 import tiny.*
 import javax.sql.DataSource

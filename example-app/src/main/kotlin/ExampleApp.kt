@@ -2,6 +2,7 @@ package example
 
 import tiny.*
 import tiny.lib.*
+import tiny.lib.db.*
 import tiny.annotation.TinyApplication
 
 @TinyApplication

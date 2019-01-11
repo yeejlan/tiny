@@ -1,4 +1,4 @@
-package tiny.lib
+package tiny.lib.db
 
 import com.zaxxer.hikari.HikariDataSource
 import com.zaxxer.hikari.HikariConfig
