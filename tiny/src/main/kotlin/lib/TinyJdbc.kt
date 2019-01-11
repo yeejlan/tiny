@@ -11,33 +11,17 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(TinyJdbc::class.java)
 
-class TinyJdbc {
-	private val _datasource = ThreadLocal<DataSource?>()
+class TinyJdbc(ds: DataSource) {
+	private var _datasource: DataSource
 	private val _sql = ThreadLocal<String>()
 
-	fun use(dsName: String) {
-		var ds: DataSource?
-		try{
-			ds = TinyRegistry["datasource." + dsName] as? DataSource
-		}catch(e: TinyException){
-			throw SQLException("DataSource not found: " + dsName)
-		}
-		if(ds != null){
-			setDataSource(ds)
-		}
-	}
-
-	fun setDataSource(dataSource: DataSource) {
-		_datasource.set(dataSource)
+	init{
+		_datasource = ds
 	}
 
 	fun <T> exec(body: (Connection) -> T?): T? {
-		val ds = _datasource.get()
-		if(ds == null){
-			throw SQLException("DataSource is null")
-		}
 		var value: T? = null
-		var conn = ds.getConnection()
+		var conn = _datasource.getConnection()
 		conn.use{
 			try{
 				value = body(conn)
@@ -88,7 +72,7 @@ class TinyJdbc {
 	}
 
 	override fun toString(): String {
-		return this::class.java.getSimpleName()+"[${_sql.get()} , ${_datasource.get()}]"
+		return this::class.java.getSimpleName()+"[${_sql.get()} , ${_datasource}]"
 	}
 }
 

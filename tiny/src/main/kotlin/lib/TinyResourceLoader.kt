@@ -12,7 +12,7 @@ private val logger = LoggerFactory.getLogger(TinyResourceLoader::class.java)
 class TinyResourceLoader{
 	val _envString = TinyApp.getEnvString()
 
-	fun buildRedis(config: TinyConfig, prefix: String): LettuceRedisPool{
+	fun buildRedisPool(config: TinyConfig, prefix: String): LettuceRedisPool{
 		val poolConfig = LettuceRedisPoolConfig().doConfig(config, prefix)
 		return LettuceRedisPool().create(poolConfig)
 	}
@@ -43,7 +43,8 @@ class TinyResourceLoader{
 			if(configMatcher.containsMatchIn(key)){
 				val dataSourceName = key.substring(0, key.length - ".url".length)
 				val dataSourceHikari = buildDataSourceHikari(config, dataSourceName)
-				TinyRegistry[dataSourceName] = dataSourceHikari
+				TinyRegistry["hikari." + dataSourceName] = dataSourceHikari
+				TinyRegistry[dataSourceName] = TinyJdbc(dataSourceHikari)
 			}
 		}
 	}
@@ -62,8 +63,9 @@ class TinyResourceLoader{
 			val key = one.key
 			if(configMatcher.containsMatchIn(key)){
 				val redisName = key.substring(0, key.length - ".host".length)
-				val tinyRedis = buildRedis(config, redisName)
-				TinyRegistry[redisName] = tinyRedis
+				val redisPool = buildRedisPool(config, redisName)
+				TinyRegistry["pool." + redisName] = redisPool
+				TinyRegistry[redisName] = TinyRedis(redisPool)
 			}
 		}
 	}
