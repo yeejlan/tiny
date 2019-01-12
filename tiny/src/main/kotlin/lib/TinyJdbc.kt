@@ -38,7 +38,7 @@ class TinyJdbc(ds: DataSource) {
 
 		val exeValue = exec<T>({ conn ->
 			var stmt = conn.prepareStatement(sql)
-			var rs: ResultSet? = null
+			var rs: ResultSet?
 			stmt.use{
 				rs = stmt.executeQuery()
 				if(rs == null){

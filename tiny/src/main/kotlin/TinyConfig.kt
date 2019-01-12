@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 private val logger = LoggerFactory.getLogger(TinyConfig::class.java)
 class TinyConfig{
 
-	var _configMap: Map<String, String> = mapOf()
+	private var _configMap: Map<String, String> = mapOf()
 
 	constructor(configFile: String) {
 
