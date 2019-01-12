@@ -8,7 +8,7 @@ import kotlin.io.println as pn
 private val objectMapper = jacksonObjectMapper()
 
 object DebugUtil {
-	private val tab = "    "
+	private val tab = " ".repeat(4)
 
 	init{
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT)

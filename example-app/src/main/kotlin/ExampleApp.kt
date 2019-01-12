@@ -36,7 +36,10 @@ fun test(){
 
 	val ret = jdbc.queryForList("select * from user limit 5 ", null)
 	DebugUtil.print(ret)
-	val ret2 = jdbc.queryForMap("select * from user limit 5", null)
+	val ret2 = jdbc.queryForMap("select * from user where id=:id and name = :name", mapOf(
+			":id" to 2,
+			":name" to "nana"
+		))
 	DebugUtil.print(ret2)
 
 	TinyApp.shutdown()

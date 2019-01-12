@@ -3,8 +3,14 @@ package tiny.lib.db
 import java.sql.ResultSet
 import java.sql.Blob
 import java.sql.Clob
+import java.sql.Connection
+import java.sql.SQLException
+import java.sql.PreparedStatement
+
+import tiny.lib.DebugUtil
 
 object JdbcUtil {
+	private val _namedRegex = ":([_a-zA-Z0-9]+)".toRegex()
 
 	/*Convert ResultSet to Map<String, Any>*/
 	fun rsToMap(rs: ResultSet): Map<String, Any>{
@@ -66,5 +72,31 @@ object JdbcUtil {
 			}
 		}
 		return obj
-	}	
+	}
+
+	/*create PreparedStatement*/
+	fun createPreparedStatement(conn: Connection, namedSql: String, paramMap: Map<String, Any>): PreparedStatement {
+
+		val matchList = _namedRegex.findAll(namedSql).toList().map{it.groupValues}
+		if(matchList.isEmpty()){
+			return conn.prepareStatement(namedSql)
+		}
+		val bindList: MutableList<Any> = mutableListOf()
+		matchList.onEach{
+			val bindName = it[0]
+			val bindValue = paramMap.get(bindName)
+			if(bindValue == null) {
+				throw SQLException("bind param missing: [$bindName]")
+			}
+			bindList.add(bindValue)
+		}
+
+		val sql = namedSql.replace(_namedRegex ,"?")
+		val stmt = conn.prepareStatement(sql)
+		bindList.forEachIndexed { idx, bindValue ->
+			stmt.setObject(idx+1, bindValue)
+		}
+
+		return stmt
+	}
 }
