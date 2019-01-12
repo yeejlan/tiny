@@ -19,7 +19,7 @@ class TinyJdbc(ds: DataSource) {
 		_datasource = ds
 	}
 
-	fun <T> exec(body: (Connection) -> T?): T? {
+	private fun <T> exec(body: (Connection) -> T?): T? {
 		var value: T? = null
 		var conn = _datasource.getConnection()
 		conn.use{
@@ -33,7 +33,7 @@ class TinyJdbc(ds: DataSource) {
 		return value
 	}
 
-	fun <T> query(sql: String, paramMap: Map<String, Any>?, body: (ResultSet) -> T?) : T? {
+	private fun <T> query(sql: String, paramMap: Map<String, Any>?, body: (ResultSet) -> T?) : T? {
 		_sql.set(sql)
 
 		val exeValue = exec<T>({ conn ->
@@ -87,7 +87,7 @@ class TinyJdbc(ds: DataSource) {
 		return updateRows ?: 0
 	}
 
-	fun batchQuery (sql: String, paramList: List<Map<String, Any>>): Unit {
+	fun batchQuery(sql: String, paramList: List<Map<String, Any>>): Unit {
 		_sql.set(sql)
 		exec<Any?>({ conn ->
 			var stmt = JdbcUtil.createBatchPreparedStatement(conn, sql, paramList)
