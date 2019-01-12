@@ -42,9 +42,6 @@ class TinyJdbc(ds: DataSource) {
 			var rs: ResultSet?
 			stmt.use{
 				rs = stmt.executeQuery()
-				if(rs == null){
-					return@exec null
-				}
 				var value: T? = null
 				rs.use{
 					value = body(rs as ResultSet)
@@ -54,6 +51,50 @@ class TinyJdbc(ds: DataSource) {
 		})
 
 		return exeValue
+	}
+
+	fun insert(sql: String, paramMap: Map<String, Any>, returnAutoGenKey: Boolean = false) : Long {
+		_sql.set(sql)
+		val insertId = exec<Long>({ conn ->
+			var stmt = JdbcUtil.createPreparedStatement(conn, sql, paramMap, returnAutoGenKey)
+			var generatedId = 0L
+			stmt.use{
+				stmt.executeUpdate()
+				if(returnAutoGenKey){
+					val rs = stmt.getGeneratedKeys()
+					rs.use{
+						if(rs.next()){
+							generatedId = rs.getLong(1)
+						}
+					}
+				}
+				return@exec generatedId
+			}
+		})
+		return insertId ?: 0L
+	}
+
+	fun update(sql: String, paramMap: Map<String, Any>) : Int {
+		_sql.set(sql)
+		val updateRows = exec<Int>({ conn ->
+			var stmt = JdbcUtil.createPreparedStatement(conn, sql, paramMap)
+			var rows = 0
+			stmt.use{
+				rows = stmt.executeUpdate()
+			}
+			return@exec rows
+		})
+		return updateRows ?: 0
+	}
+
+	fun batchQuery (sql: String, paramList: List<Map<String, Any>>): Unit {
+		_sql.set(sql)
+		exec<Any?>({ conn ->
+			var stmt = JdbcUtil.createBatchPreparedStatement(conn, sql, paramList)
+			stmt.use{
+				stmt.executeBatch()
+			}
+		})
 	}
 
 	fun queryForList(sql: String, paramMap: Map<String, Any>? = null): List<Map<String, Any>> {

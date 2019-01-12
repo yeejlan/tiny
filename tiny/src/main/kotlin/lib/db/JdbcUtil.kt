@@ -6,6 +6,7 @@ import java.sql.Clob
 import java.sql.Connection
 import java.sql.SQLException
 import java.sql.PreparedStatement
+import java.sql.Statement
 
 import tiny.lib.DebugUtil
 
@@ -75,13 +76,18 @@ object JdbcUtil {
 	}
 
 	/*create PreparedStatement*/
-	fun createPreparedStatement(conn: Connection, namedSql: String, paramMap: Map<String, Any>): PreparedStatement {
+	fun createPreparedStatement(conn: Connection, namedSql: String, paramMap: Map<String, Any>, returnAutoGenKey: Boolean = false): PreparedStatement {
 
 		val matchList = _namedRegex.findAll(namedSql).toList().map{it.groupValues}
 		if(matchList.isEmpty()){
-			return conn.prepareStatement(namedSql)
+			if(returnAutoGenKey){
+				return conn.prepareStatement(namedSql, Statement.RETURN_GENERATED_KEYS)
+			}else{
+				return conn.prepareStatement(namedSql)
+			}
 		}
-		val bindList: MutableList<Any> = mutableListOf()
+
+		val bindList: ArrayList<Any> = ArrayList(matchList.size)
 		matchList.onEach{
 			val bindName = it[0]
 			val bindValue = paramMap.get(bindName)
@@ -92,11 +98,60 @@ object JdbcUtil {
 		}
 
 		val sql = namedSql.replace(_namedRegex ,"?")
-		val stmt = conn.prepareStatement(sql)
-		bindList.forEachIndexed { idx, bindValue ->
-			stmt.setObject(idx+1, bindValue)
+		var stmt: PreparedStatement
+		if(returnAutoGenKey){
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+		}else{
+			stmt = conn.prepareStatement(sql)
+		}
+		try{
+			bindList.forEachIndexed { idx, bindValue ->
+				stmt.setObject(idx+1, bindValue)
+			}
+		}catch(e: SQLException){
+			stmt.close()
+			throw e
 		}
 
+		return stmt
+	}
+
+	/*create batch PreparedStatement*/
+	fun createBatchPreparedStatement(conn: Connection, namedSql: String, paramList: List<Map<String, Any>>): PreparedStatement {
+		val matchList = _namedRegex.findAll(namedSql).toList().map{it.groupValues}
+		if(matchList.isEmpty()){
+			return conn.prepareStatement(namedSql)
+		}
+
+		val bindArr: ArrayList<ArrayList<Any>> = ArrayList(paramList.size)
+		val matchCnt = matchList.size
+		for(paramMap in paramList){
+			val bindList: ArrayList<Any> = ArrayList(matchCnt)
+			matchList.onEach{
+				val bindName = it[0]
+				val bindValue = paramMap.get(bindName)
+				if(bindValue == null) {
+					throw SQLException("bind param missing: [$bindName]")
+				}
+				bindList.add(bindValue)
+			}
+			bindArr.add(bindList)
+
+		}
+
+		val sql = namedSql.replace(_namedRegex ,"?")
+		val stmt = conn.prepareStatement(sql)
+		try{
+			for(bindList in bindArr){
+				bindList.forEachIndexed { idx, bindValue ->
+					stmt.setObject(idx+1, bindValue)
+				}
+				stmt.addBatch()
+			}
+		}catch(e: SQLException){
+			stmt.close()
+			throw e
+		}
 		return stmt
 	}
 }

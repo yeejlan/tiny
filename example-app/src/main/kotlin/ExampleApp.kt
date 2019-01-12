@@ -20,6 +20,8 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
+	val t = 3456L
+	DebugUtil.inspect(t/1000*1000)
 	test()
 	//TinyApp.runJetty()
 }
@@ -34,13 +36,10 @@ fun test(){
 
 	val jdbc = TinyRegistry["db.account"] as TinyJdbc
 
-	val ret = jdbc.queryForList("select * from user limit 5 ", null)
-	DebugUtil.print(ret)
-	val ret2 = jdbc.queryForMap("select * from user where id=:id and name = :name", mapOf(
-			":id" to 2,
-			":name" to "nana"
+	val users = jdbc.queryForList("select id,name from user where 1 order by id desc limit 5", mapOf(
+			":id" to 1002,
+			":name" to "note.gif"
 		))
-	DebugUtil.print(ret2)
-
+	DebugUtil.print(users)
 	TinyApp.shutdown()
 }
