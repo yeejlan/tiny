@@ -16,19 +16,21 @@ class TinyRedis(ds: LettuceDataSource) {
 		_datasource = ds
 	}
 
-	fun exec(body: (StatefulRedisConnection<String, String>) -> Unit) {
+	fun exec(body: (StatefulRedisConnection<String, String>) -> Unit, throwException: Boolean = false) {
 		val conn = _datasource.getConnection()
 		conn.use {
 			try{
 				body(conn)
 			}catch(e: Throwable){
 				logger.warn("Redis exec error on ${this} " + e)
-				throw e
+				if(throwException){
+					throw e
+				}
 			}
 		}
 	}
 
-	fun query(body: (StatefulRedisConnection<String, String>) -> String?): String {
+	fun query(body: (StatefulRedisConnection<String, String>) -> String?, throwException: Boolean = false): String {
 		val conn = _datasource.getConnection()
 		var value: String? = null
 		conn.use {
@@ -36,7 +38,9 @@ class TinyRedis(ds: LettuceDataSource) {
 				value = body(conn)
 			}catch(e: Throwable){
 				logger.warn("Redis query error on ${this} " + e)
-				throw e
+				if(throwException){
+					throw e
+				}
 			}
 		}
 

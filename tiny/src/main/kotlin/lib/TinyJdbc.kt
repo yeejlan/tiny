@@ -19,6 +19,47 @@ class TinyJdbc(ds: DataSource) {
 		_datasource = ds
 	}
 
+	fun insert(sql: String, paramMap: Map<String, Any>, returnAutoGenKey: Boolean = false) : SqlResult<Long> {
+		try{
+			return SqlResult<Long>(null, _insert(sql, paramMap, returnAutoGenKey))
+		}catch(e: SQLException){
+			return SqlResult<Long>(e, 0L)
+		}
+	}
+
+	fun update(sql: String, paramMap: Map<String, Any>) : SqlResult<Int> {
+		try{
+			return SqlResult<Int>(null, _update(sql, paramMap))
+		}catch(e: SQLException){
+			return SqlResult<Int>(e, -1)
+		}
+	}
+
+	fun batchQuery(sql: String, paramList: List<Map<String, Any>>): SqlResult<Boolean> {
+		try{
+			_batchQuery(sql, paramList)
+			return SqlResult<Boolean>(null, true)
+		}catch(e: SQLException){
+			return SqlResult<Boolean>(e, false)
+		}
+	}
+
+	fun queryForList(sql: String, paramMap: Map<String, Any>? = null): SqlResult<List<Map<String, Any>>> {
+		try{
+			return SqlResult<List<Map<String, Any>>>(null, _queryForList(sql, paramMap))
+		}catch(e: SQLException){
+			return SqlResult<List<Map<String, Any>>>(e, listOf())
+		}
+	}
+
+	fun queryForMap(sql: String, paramMap: Map<String, Any>? = null): SqlResult<Map<String, Any>> {
+		try{
+			return SqlResult<Map<String, Any>>(null, _queryForMap(sql, paramMap))
+		}catch(e: SQLException){
+			return SqlResult<Map<String, Any>>(e, mapOf())
+		}
+	}
+
 	private fun <T> exec(body: (Connection) -> T?): T? {
 		var value: T? = null
 		var conn = _datasource.getConnection()
@@ -26,7 +67,7 @@ class TinyJdbc(ds: DataSource) {
 			try{
 				value = body(conn)
 			}catch(e: SQLException){
-				logger.error("SQL error on ${this} " + e)
+				logger.error("Exec error on ${this} " + e)
 				throw e
 			}
 		}
@@ -53,7 +94,7 @@ class TinyJdbc(ds: DataSource) {
 		return exeValue
 	}
 
-	fun insert(sql: String, paramMap: Map<String, Any>, returnAutoGenKey: Boolean = false) : Long {
+	private fun _insert(sql: String, paramMap: Map<String, Any>, returnAutoGenKey: Boolean = false) : Long {
 		_sql.set(sql)
 		val insertId = exec<Long>({ conn ->
 			var stmt = JdbcUtil.createPreparedStatement(conn, sql, paramMap, returnAutoGenKey)
@@ -74,7 +115,7 @@ class TinyJdbc(ds: DataSource) {
 		return insertId ?: 0L
 	}
 
-	fun update(sql: String, paramMap: Map<String, Any>) : Int {
+	private fun _update(sql: String, paramMap: Map<String, Any>) : Int {
 		_sql.set(sql)
 		val updateRows = exec<Int>({ conn ->
 			var stmt = JdbcUtil.createPreparedStatement(conn, sql, paramMap)
@@ -87,7 +128,7 @@ class TinyJdbc(ds: DataSource) {
 		return updateRows ?: 0
 	}
 
-	fun batchQuery(sql: String, paramList: List<Map<String, Any>>): Unit {
+	private fun _batchQuery(sql: String, paramList: List<Map<String, Any>>): Unit {
 		_sql.set(sql)
 		exec<Any?>({ conn ->
 			var stmt = JdbcUtil.createBatchPreparedStatement(conn, sql, paramList)
@@ -97,7 +138,7 @@ class TinyJdbc(ds: DataSource) {
 		})
 	}
 
-	fun queryForList(sql: String, paramMap: Map<String, Any>? = null): List<Map<String, Any>> {
+	private fun _queryForList(sql: String, paramMap: Map<String, Any>? = null): List<Map<String, Any>> {
 
 		val value = query<List<Map<String, Any>>>(sql, paramMap, { rs ->
 			val value = JdbcUtil.rsToList(rs)
@@ -106,7 +147,7 @@ class TinyJdbc(ds: DataSource) {
 		return value ?: listOf()
 	}
 
-	fun queryForMap(sql: String, paramMap: Map<String, Any>? = null): Map<String, Any> {
+	private fun _queryForMap(sql: String, paramMap: Map<String, Any>? = null): Map<String, Any> {
 
 		val value = query<Map<String, Any>>(sql, paramMap, { rs ->
 			JdbcUtil.rsToMap(rs)
