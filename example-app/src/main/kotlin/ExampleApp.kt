@@ -35,9 +35,9 @@ fun test(){
 	val jdbc = TinyRegistry["db.account"] as TinyJdbc
 	//val jdbc = TinyRegistry.get("db.account", TinyJdbc::class.java)
 
-	val users = jdbc.queryForList("select id,name from user where 1 order by id desc limit 5", mapOf(
-			":id" to 1002,
-			":name" to "note.gif"
+	val users = jdbc.queryForList("select id,name from user where id < :id order by id desc limit 5", mapOf(
+			"id" to 1002,
+			"name" to "note.gif"
 		))
 
 	users.ex?.printStackTrace()

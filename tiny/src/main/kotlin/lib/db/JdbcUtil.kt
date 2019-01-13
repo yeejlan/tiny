@@ -89,7 +89,7 @@ object JdbcUtil {
 
 		val bindList: ArrayList<Any> = ArrayList(matchList.size)
 		matchList.onEach{
-			val bindName = it[0]
+			val bindName = it[1]
 			val bindValue = paramMap.get(bindName)
 			if(bindValue == null) {
 				throw SQLException("bind param missing: [$bindName]")
@@ -128,7 +128,7 @@ object JdbcUtil {
 		for(paramMap in paramList){
 			val bindList: ArrayList<Any> = ArrayList(matchCnt)
 			matchList.onEach{
-				val bindName = it[0]
+				val bindName = it[1]
 				val bindValue = paramMap.get(bindName)
 				if(bindValue == null) {
 					throw SQLException("bind param missing: [$bindName]")
