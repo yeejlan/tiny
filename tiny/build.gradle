@@ -13,6 +13,7 @@ dependencies {
 	compileOnly group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.12.0'
 	compileOnly group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
 	compileOnly group: 'commons-io', name: 'commons-io', version: '2.6'
+	compileOnly group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
 	compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compileOnly("org.jetbrains.kotlin:kotlin-reflect")
 	compileOnly group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.8'

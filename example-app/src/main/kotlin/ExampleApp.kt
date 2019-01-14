@@ -4,6 +4,7 @@ import tiny.*
 import tiny.lib.*
 import tiny.lib.db.*
 import tiny.annotation.TinyApplication
+import javax.servlet.annotation.WebListener
 
 @TinyApplication
 class ExampleApp : TinyBootstrap {
@@ -18,6 +19,9 @@ class ExampleApp : TinyBootstrap {
 		TinyRouter.addRoute("/hello/(.*)", "user/hello", arrayOf(Pair(1, "username")))
 	}
 }
+
+@WebListener
+class MyFileCleanerCleanupListener() : org.apache.commons.fileupload.servlet.FileCleanerCleanup()
 
 fun main(args: Array<String>) {
 	test()
