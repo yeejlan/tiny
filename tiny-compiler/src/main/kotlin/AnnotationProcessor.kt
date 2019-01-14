@@ -360,11 +360,11 @@ class AnnotationProcessor : AbstractProcessor() {
 		if(_round>10) {
 			return
 		}
-		val _clz = ClassName.get("tiny.annotation", "Processor")
+		//val _clz = ClassName.get("tiny.annotation", "Processor")
 		val _class = TypeSpec
 				.classBuilder("TinyProcesorRound" + _round)
 				.addModifiers(Modifier.PUBLIC)
-				.addAnnotation(_clz)
+				//.addAnnotation(_clz)
 				.build()
 
 		val javaFile = JavaFile.builder(_web, _class).build()
