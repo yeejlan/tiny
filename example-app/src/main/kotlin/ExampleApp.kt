@@ -3,7 +3,7 @@ package example
 import tiny.*
 import tiny.lib.*
 import tiny.lib.db.*
-import tiny.annotation.TinyApplication
+import tiny.annotation.*
 import javax.servlet.annotation.WebListener
 
 @TinyApplication
@@ -24,7 +24,9 @@ class ExampleApp : TinyBootstrap {
 class MyFileCleanerCleanupListener() : org.apache.commons.fileupload.servlet.FileCleanerCleanup()
 
 fun main(args: Array<String>) {
-	test()
+
+	testCache(123, "nana", 456L)
+	//test()
 	//TinyApp.runJetty()
 }
 
@@ -50,3 +52,8 @@ fun test(){
 	TinyApp.shutdown()
 }
 
+
+@CacheAdd("cccc")
+fun testCache(a: Int, b: String, c: Long): String{
+	return "a=$a, b=$b, c=$c"
+}

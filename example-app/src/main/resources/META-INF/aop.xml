@@ -2,5 +2,6 @@
 	<weaver options="-Xset:weaveJavaxPackages=true" />
 	<aspects>
 		<aspect name="example.aop.AutoWeaveHandle" />
+		<aspect name="example.aop.CacheHandle" />
 	</aspects>
 </aspectj>
