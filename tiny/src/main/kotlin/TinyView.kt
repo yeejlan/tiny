@@ -3,6 +3,7 @@ package tiny
 
 import tiny.TinyException
 import java.io.File
+import java.nio.file.Paths
 import groovy.text.StreamingTemplateEngine
 import groovy.text.Template
 import org.apache.commons.io.IOUtils
@@ -14,8 +15,7 @@ import java.io.FileInputStream
 private val tplBasePath = "templates/"
 private val tplSuffix = ".tpl"
 private val tplCache: ConcurrentHashMap<String, Template> = ConcurrentHashMap()
-private val devResourcesDir = TinyApp.getConfig()["dev.resources.dir"]
-private val workDirectory = System.getProperty("user.dir")
+private val templateDir = TinyApp.getConfig()["template.dir"]
 private val helpers: HashMap<String, Any> = HashMap()
 
 class TinyView{
@@ -56,11 +56,11 @@ class TinyView{
 
 		var inputStream: InputStream?
 		lateinit var tplFile: String
-		if(_useCache || devResourcesDir.isEmpty()){
-			tplFile = tplBasePath + tplPath + tplSuffix
+		if(templateDir.isEmpty()){
+			tplFile = Paths.get(tplBasePath, tplPath + tplSuffix).toString()
 			inputStream = this::class.java.classLoader.getResourceAsStream(tplFile)
-		}else{//development environment and devResourcesDir is set
-			tplFile = workDirectory + "/" + devResourcesDir + "/" + tplBasePath + tplPath + tplSuffix
+		}else{
+			tplFile = Paths.get(templateDir, tplPath + tplSuffix).toAbsolutePath().toString()
 			inputStream = FileInputStream(File(tplFile))
 		}
 		if(inputStream == null){

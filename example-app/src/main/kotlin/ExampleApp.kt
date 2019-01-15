@@ -19,17 +19,14 @@ class ExampleApp : TinyBootstrap {
 	}
 }
 
-@WebListener
-class MyFileCleanerCleanupListener() : org.apache.commons.fileupload.servlet.FileCleanerCleanup()
-
 fun main(args: Array<String>) {
 
 	//testCache(123, "nana", 456L)
-	test()
+	//test()
 
 	val app = ExampleApp()
 	if(app.task.isEmpty()){
-		//TinyApp.runJetty()
+		TinyApp.runJetty()
 	}else{
 		app.bootstrap()
 		//TinyApp.runTask("abc.cde")

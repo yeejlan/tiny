@@ -8,13 +8,13 @@ import java.io.InputStream
 import java.io.BufferedInputStream
 import java.io.FileInputStream
 import java.io.File
+import java.nio.file.Paths
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 
 private val DEFAULT_EXPIRE_TIME_IN_MILLIS = TimeUnit.DAYS.toMillis(30)
 private val ONE_SECOND_IN_MILLIS = TimeUnit.SECONDS.toMillis(1)
-private val devResourcesDir = TinyApp.getConfig()["dev.resources.dir"]
-private val workDirectory = System.getProperty("user.dir")
+private val staticDir = TinyApp.getConfig()["static.dir"]
 
 private data class TinyRewrite(val regex: String, val rewriteTo: String, val paramMapping: Array<Pair<Int, String>>? = null)
 
@@ -235,9 +235,8 @@ object TinyRouter{
 		val filePath = URLDecoder.decode(uri, "UTF-8")
 
 		lateinit var file: File
-		if(!devResourcesDir.isEmpty()){
-			val staticFilePath = workDirectory + "/" + devResourcesDir + "/" + BASEPATH + filePath
-			file = File(staticFilePath)
+		if(!staticDir.isEmpty()){
+			file = Paths.get(staticDir, filePath).toFile()
 		}else{
 
 			val resourceUrl = TinyRouter::class.java.classLoader.getResource(BASEPATH + filePath)
