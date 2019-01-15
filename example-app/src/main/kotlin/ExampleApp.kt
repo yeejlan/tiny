@@ -38,7 +38,8 @@ fun test(){
 	val app = ExampleApp()
 	app.bootstrap()
 
-
+	//println(testCache(123, "nana", 456L))
+	
 	val jdbc = TinyRegistry["db.account"] as TinyJdbc
 	//val jdbc = TinyRegistry.get("db.account", TinyJdbc::class.java)
 
@@ -50,6 +51,13 @@ fun test(){
 
 	users.ex?.printStackTrace()
 	DebugUtil.print(users.data)
+	
 
 	TinyApp.shutdown()
+}
+
+
+@CacheAdd("int_test_{a}")
+fun testCache(a: Int, b: String, c: Long): Int{
+	return (a+c).toInt()
 }
