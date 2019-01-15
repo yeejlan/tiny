@@ -6,7 +6,7 @@ import tiny.*
 
 private val defauleConnectionTimeout = 3000L
 private val defaultMaximumPoolSize = 10
-private val defauleMinimumIdle = defaultMaximumPoolSize
+private val defauleMinimumIdle = 1
 
 class DataSourceHikariConfig() {
 	var driver: String = ""

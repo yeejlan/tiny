@@ -13,7 +13,7 @@ import tiny.*
 private val connectTimeout = Duration.ofSeconds(3)
 private val poolMaxTotal = 10
 private val poolMaxIdle = 10
-private val poolMinIdle = 2
+private val poolMinIdle = 1
 private val poolMaxWaitMillis = 3000L
 private val poolMinEvictableIdleTimeMillis = 600000L
 private val poolTimeBetweenEvictionRunsMillis = 600000L
