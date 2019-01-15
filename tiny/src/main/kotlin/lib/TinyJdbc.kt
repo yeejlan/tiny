@@ -49,7 +49,7 @@ class TinyJdbc(ds: DataSource) {
 		}
 	}
 
-	/*run sql query via Connection*/
+	/*run query via Connection*/
 	fun <T> execute(body: (Connection) -> T?): SqlResult<T?> {
 		var value: T?
 		try{
