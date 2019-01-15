@@ -8,14 +8,13 @@ import javax.servlet.annotation.WebListener
 
 @TinyApplication
 class ExampleApp : TinyBootstrap {
+	val name = "exampleapp"
+	val env = System.getProperty("tiny.appliction.env") ?: "production"
+	val task = System.getProperty("tiny.appliction.task") ?: ""
 
 	override fun bootstrap() {
 
-		val env = System.getProperty("tiny.appliction.env") ?: "production"
-		val appName = "exampleapp"
-
-		TinyApp.init(env, appName)
-
+		TinyApp.init(env, name)
 		TinyRouter.addRoute("/hello/(.*)", "user/hello", arrayOf(Pair(1, "username")))
 	}
 }
@@ -27,16 +26,21 @@ fun main(args: Array<String>) {
 
 	//testCache(123, "nana", 456L)
 	test()
-	//TinyApp.runJetty()
+
+	val app = ExampleApp()
+	if(app.task.isEmpty()){
+		//TinyApp.runJetty()
+	}else{
+		app.bootstrap()
+		//TinyApp.runTask("abc.cde")
+	}
 }
 
 
 fun test(){
 
-	val env = System.getProperty("tiny.appliction.env") ?: "production"
-	val appName = "exampleapp"
-
-	TinyApp.init(env, appName)
+	val app = ExampleApp()
+	app.bootstrap()
 
 	val jdbc = TinyRegistry["db.account"] as TinyJdbc
 	//val jdbc = TinyRegistry.get("db.account", TinyJdbc::class.java)

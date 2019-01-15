@@ -149,6 +149,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		writeControllerLoader()
 		writeHelperLoader()
 		writeTinyServlet()
+		writeTinyFileCleanerCleanupListener()
 		writeMagicBox()
 		writeTinyBird()
 
@@ -259,7 +260,7 @@ class AnnotationProcessor : AbstractProcessor() {
 			.addParameter(_clzRequest, "request")
 			.addParameter(_clzResponse, "response")
 			.addStatement("\$T.dispatch(request, response)", _clzTinyRouter)
-			.build()			
+			.build()
 
 		val _methodDestroy = MethodSpec.methodBuilder("destroy")
 			.addModifiers(Modifier.PUBLIC)
@@ -275,6 +276,21 @@ class AnnotationProcessor : AbstractProcessor() {
 				.addMethod(_methodDoGet)
 				.addMethod(_methodDoPost)
 				.addMethod(_methodDestroy)
+				.build()
+
+		val javaFile = JavaFile.builder(_web, _class).build()
+		javaFile.writeTo(_filer)
+	}
+
+	private fun writeTinyFileCleanerCleanupListener() {
+		val _clzFileCleanup = ClassName.get("org.apache.commons.fileupload.servlet", "FileCleanerCleanup")
+		val _clzWebListener = ClassName.get("javax.servlet.annotation", "WebListener")
+
+		val _class = TypeSpec
+				.classBuilder("TinyFileCleanerCleanup")
+				.superclass(_clzFileCleanup)
+				.addModifiers(Modifier.PUBLIC)
+				.addAnnotation(_clzWebListener)
 				.build()
 
 		val javaFile = JavaFile.builder(_web, _class).build()
