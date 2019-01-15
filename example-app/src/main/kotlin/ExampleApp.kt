@@ -25,8 +25,8 @@ class MyFileCleanerCleanupListener() : org.apache.commons.fileupload.servlet.Fil
 
 fun main(args: Array<String>) {
 
-	testCache(123, "nana", 456L)
-	//test()
+	//testCache(123, "nana", 456L)
+	test()
 	//TinyApp.runJetty()
 }
 
