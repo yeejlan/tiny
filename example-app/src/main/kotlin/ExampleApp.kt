@@ -21,9 +21,8 @@ class ExampleApp : TinyBootstrap {
 
 fun main(args: Array<String>) {
 
-	//testCache(123, "nana", 456L)
-	//test()
-
+	test()
+	return
 	val app = ExampleApp()
 	if(app.task.isEmpty()){
 		TinyApp.runJetty()
@@ -39,6 +38,7 @@ fun test(){
 	val app = ExampleApp()
 	app.bootstrap()
 
+
 	val jdbc = TinyRegistry["db.account"] as TinyJdbc
 	//val jdbc = TinyRegistry.get("db.account", TinyJdbc::class.java)
 
@@ -47,14 +47,9 @@ fun test(){
 			"name" to "note.gif"
 		))
 
+
 	users.ex?.printStackTrace()
 	DebugUtil.print(users.data)
 
 	TinyApp.shutdown()
-}
-
-
-@CacheAdd("cccc")
-fun testCache(a: Int, b: String, c: Long): String{
-	return "a=$a, b=$b, c=$c"
 }

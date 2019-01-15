@@ -58,7 +58,7 @@ class TinyRedis(ds: LettuceDataSource) {
 		try {
 			valueStr =  objectMapper.writeValueAsString(value)
 		}catch (e: Throwable){
-			throw e
+			return
 		}
 		set(key, valueStr, expireSeconds)
 	}
@@ -95,7 +95,7 @@ class TinyRedis(ds: LettuceDataSource) {
 		try {
 			return objectMapper.readValue(value, valueType)
 		}catch (e: Throwable){
-			throw e
+			return null
 		}
 	}
 

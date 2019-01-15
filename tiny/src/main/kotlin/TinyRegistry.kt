@@ -9,7 +9,7 @@ object TinyRegistry{
 	@JvmStatic operator fun get(key: String): Any {
 		val value = storage.get(key)
 		if(value == null){
-			throw TinyException("Key not found: " + key)
+			throw TinyException("[TinyRegistry] key not found: " + key)
 		}
 		return value
 	}
@@ -17,7 +17,7 @@ object TinyRegistry{
 	@JvmStatic fun <T> get(key: String, valueType: Class<T> ): T {
 		val value = storage.get(key)
 		if(value == null){
-			throw TinyException("Key not found: " + key)
+			throw TinyException("[TinyRegistry] key not found: " + key)
 		}
 		return valueType.cast(value)
 	}
