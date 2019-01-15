@@ -82,27 +82,24 @@ task "as"(dependsOn: assemble)
 task "c"(dependsOn: classes)
 
 def enableWeave = false
+
 task weave {
+
 	if(enableWeave) {
 		println "Aspectj class weave is enabled"
 	}else{
 		return
 	}
-	def preWeaveJavaDir = project.file("${project.buildDir}/classes/java/preWeave")
-	def preWeaveKotlinDir = project.file("${project.buildDir}/classes/kotlin/preWeave")
+
 	def compileJava = project.tasks.getByName("compileJava")
 	def compileKotlin = project.tasks.getByName("compileKotlin")
-	def oldCompileJavaDestinationDir = compileJava.destinationDir
-	def weaveJavaDir = project.file("${project.buildDir}/classes/java/weaved")
 
 	project.afterEvaluate {
-		//compileJava.destinationDir = preWeaveJavaDir
-		//compileKotlin.destinationDir = preWeaveKotlinDir
 		weave.dependsOn compileKotlin, compileJava
 		def classesTask = project.tasks.getByName("classes")
 		classesTask.dependsOn weave
-
 	}
+
 	doLast {
 		ant.taskdef(resource:"org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties", classpath: configurations.ajc.asPath)
 		ant.iajc(source:"1.8", 
