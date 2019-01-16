@@ -44,6 +44,7 @@ fun test(){
 
 	users.ex?.printStackTrace()
 	DebugUtil.print(users.data)
+	DebugUtil.print(TinyRegistry.getStorage())
 
 	TinyApp.shutdown()
 }
