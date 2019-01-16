@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 
 private val DEFAULT_EXPIRE_TIME_IN_MILLIS = TimeUnit.DAYS.toMillis(30)
 private val ONE_SECOND_IN_MILLIS = TimeUnit.SECONDS.toMillis(1)
-private val staticDir = TinyApp.getConfig()["static.dir"]
+private val staticExtraDir = TinyApp.getConfig()["static.extra.dir"]
 
 private data class TinyRewrite(val regex: String, val rewriteTo: String, val paramMapping: Array<Pair<Int, String>>? = null)
 
@@ -234,11 +234,11 @@ object TinyRouter{
 		val uri = request.getPathInfo()
 		val filePath = URLDecoder.decode(uri, "UTF-8")
 
-		lateinit var file: File
-		if(!staticDir.isEmpty()){
-			file = Paths.get(staticDir, filePath).toFile()
-		}else{
-
+		var file: File? = null
+		if(!staticExtraDir.isEmpty()){
+			file = Paths.get(staticExtraDir, filePath).toFile()
+		}
+		if(file!=null && !file.exists()){//not found in extra dir
 			val resourceUrl = TinyRouter::class.java.classLoader.getResource(BASEPATH + filePath)
 			if(resourceUrl == null){
 				return fileNotFound
@@ -247,7 +247,8 @@ object TinyRouter{
 			file = File(resourceUrl.toURI())
 		}
 
-		if(file.exists() && file.isFile() && file.canRead()){
+
+		if(file!=null && file.exists() && file.isFile() && file.canRead()){
 			//pass
 		}else{
 			return fileNotFound

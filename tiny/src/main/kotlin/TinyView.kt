@@ -11,11 +11,12 @@ import java.util.concurrent.ConcurrentHashMap
 import groovy.lang.Writable
 import java.io.InputStream
 import java.io.FileInputStream
+import java.io.FileNotFoundException
 
 private val tplBasePath = "templates/"
 private val tplSuffix = ".tpl"
 private val tplCache: ConcurrentHashMap<String, Template> = ConcurrentHashMap()
-private val templateDir = TinyApp.getConfig()["template.dir"]
+private val templateExtraDir = TinyApp.getConfig()["template.extra.dir"]
 private val helpers: HashMap<String, Any> = HashMap()
 
 class TinyView{
@@ -54,14 +55,19 @@ class TinyView{
 			}
 		}
 
-		var inputStream: InputStream?
+		var inputStream: InputStream? = null
 		lateinit var tplFile: String
-		if(templateDir.isEmpty()){
+		if(!templateExtraDir.isEmpty()){
+			try{
+				tplFile = Paths.get(templateExtraDir, tplPath + tplSuffix).toAbsolutePath().toString()
+				inputStream = FileInputStream(File(tplFile))
+			}catch(e: FileNotFoundException){//template not found
+				//pass
+			}
+		}
+		if(inputStream == null){
 			tplFile = Paths.get(tplBasePath, tplPath + tplSuffix).toString()
 			inputStream = this::class.java.classLoader.getResourceAsStream(tplFile)
-		}else{
-			tplFile = Paths.get(templateDir, tplPath + tplSuffix).toAbsolutePath().toString()
-			inputStream = FileInputStream(File(tplFile))
 		}
 		if(inputStream == null){
 			throw TinyException("Read template file failed: " + tplFile)

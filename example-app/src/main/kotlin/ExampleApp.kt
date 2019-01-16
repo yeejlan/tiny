@@ -20,7 +20,8 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-
+TinyApp.runJetty()
+return
 	test()
 	return
 	val app = ExampleApp()
