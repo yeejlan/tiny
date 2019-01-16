@@ -43,7 +43,7 @@ class TinyRedis(ds: LettuceDataSource) {
 		return value ?: ""
 	}
 
-	private fun _set(key: String, value: String, expireSeconds: Long = 3600) {
+	fun set(key: String, value: String, expireSeconds: Long = 3600) {
 		exec({ connection ->
 			val commands = connection.sync()
 			commands.multi()
@@ -60,7 +60,7 @@ class TinyRedis(ds: LettuceDataSource) {
 		}catch (e: Throwable){
 			return
 		}
-		_set(key, valueStr, expireSeconds)
+		set(key, valueStr, expireSeconds)
 	}
 
 	fun expire(key: String, expireSeconds: Long = 3600) {
@@ -77,7 +77,7 @@ class TinyRedis(ds: LettuceDataSource) {
 		})
 	}
 
-	private fun _get(key: String): String {
+	fun get(key: String): String {
 		val value = query({ connection ->
 			val commands = connection.sync()
 			commands.get(key)
@@ -86,14 +86,9 @@ class TinyRedis(ds: LettuceDataSource) {
 		return value
 	}
 
-	fun get(key: String): String {
-		val value = get(key, String::class.java)
-		return value ?: ""
-	}
-
 	fun <T> get(key: String, valueType: Class<T> ): T? {
 		
-		val value = this._get(key)
+		val value = this.get(key)
 		if(value.isEmpty()){
 			return null
 		}

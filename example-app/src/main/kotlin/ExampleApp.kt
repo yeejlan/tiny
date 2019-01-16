@@ -20,8 +20,7 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-TinyApp.runJetty()
-return
+
 	test()
 	return
 	val app = ExampleApp()
@@ -52,7 +51,6 @@ fun test(){
 
 	users.ex?.printStackTrace()
 	DebugUtil.print(users.data)
-	
 
 	TinyApp.shutdown()
 }
