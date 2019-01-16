@@ -67,6 +67,13 @@ class LettuceRedisPoolConfig() {
 		minIdle = config.getInt("${prefix}.lettuce.minIdle", poolMinIdle)
 		return doConfig()
 	}
+
+	fun doFixedPoolConfig(poolSize: Int): LettuceRedisPoolConfig{
+		_config.setMinIdle(1)
+		_config.setMaxTotal(poolSize)
+		_config.setMaxIdle(poolSize)
+		return this
+	}
 }
 
 

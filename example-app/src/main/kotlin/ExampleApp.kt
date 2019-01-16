@@ -10,7 +10,6 @@ import javax.servlet.annotation.WebListener
 class ExampleApp : TinyBootstrap {
 	val name = "exampleapp"
 	val env = System.getProperty("tiny.appliction.env") ?: "production"
-	val task = System.getProperty("tiny.appliction.task") ?: ""
 
 	override fun bootstrap() {
 
@@ -20,16 +19,10 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-
 	test()
 	return
 	val app = ExampleApp()
-	if(app.task.isEmpty()){
-		TinyApp.runJetty()
-	}else{
-		app.bootstrap()
-		//TinyApp.runTask("abc.cde")
-	}
+	TinyApp.runJetty()
 }
 
 

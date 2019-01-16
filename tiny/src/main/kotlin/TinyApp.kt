@@ -47,14 +47,16 @@ object TinyApp {
 	private lateinit var _config: TinyConfig
 	private lateinit var _appName: String
 
-	@JvmStatic fun init(strEnv: String, appName: String){
+	@JvmStatic fun init(strEnv: String, appName: String, runTask :Boolean = false){
 		_appName = appName
 		val env: Int? = _strEnvMapping.get(strEnv)
 		if(env != null){
 			_env = env
 			_envString = strEnv
 		}
-		_logbackInit()
+		if(!runTask){
+			_logbackInit()
+		}
 		if(env == null){
 			logger.warn("Unknown env: ${strEnv}, fallback to ${_envString}")
 		}
@@ -64,7 +66,9 @@ object TinyApp {
 		_settle()
 		logger.info("App[${_appName}] starting with env=${_envString} and config=${_configFile}")
 		_isInit = true
-		TinyResourceLoader().load()
+		if(!runTask){
+			TinyResourceLoader().load()
+		}
 	}
 
 	@JvmStatic fun shutdown(){

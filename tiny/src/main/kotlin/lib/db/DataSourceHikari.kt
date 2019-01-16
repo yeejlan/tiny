@@ -57,6 +57,12 @@ class DataSourceHikariConfig() {
 
 		return doConfig()
 	}
+
+	fun doFixedPoolConfig(poolSize: Int): DataSourceHikariConfig{
+		_config.setMaximumPoolSize(poolSize)
+		_config.setMinimumIdle(poolSize)
+		return this
+	}
 }
 
 class DatasourceHiKari{

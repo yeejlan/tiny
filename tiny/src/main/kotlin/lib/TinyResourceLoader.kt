@@ -12,14 +12,36 @@ private val logger = LoggerFactory.getLogger(TinyResourceLoader::class.java)
 class TinyResourceLoader{
 	val _envString = TinyApp.getEnvString()
 
-	fun buildRedisPool(config: TinyConfig, prefix: String): LettuceRedisPool{
-		val poolConfig = LettuceRedisPoolConfig().doConfig(config, prefix)
-		return LettuceRedisPool().create(poolConfig)
+	fun getRedisPoolConfig(config: TinyConfig, configName: String): LettuceRedisPoolConfig{
+		val poolConfig = LettuceRedisPoolConfig().doConfig(config, configName)
+		return poolConfig
 	}
 
-	fun buildDataSourceHikari(config: TinyConfig, prefix: String): HikariDataSource{
-		val hikariConfig = DataSourceHikariConfig().doConfig(config, prefix)
-		return DatasourceHiKari().create(hikariConfig)
+	fun getHikariConfig(config: TinyConfig, configName: String): DataSourceHikariConfig{
+		val hikariConfig = DataSourceHikariConfig().doConfig(config, configName)
+		return hikariConfig
+	}
+
+	fun loadTinyRedis(config: TinyConfig, configName: String, fixedPoolSize: Int = 0) {
+		var poolConfig = getRedisPoolConfig(config, configName)
+		if(fixedPoolSize > 0) {
+			poolConfig = poolConfig.doFixedPoolConfig(fixedPoolSize)
+		}
+		val redisPool = LettuceRedisPool().create(poolConfig)
+
+		TinyRegistry["pool." + configName] = redisPool
+		TinyRegistry[configName] = TinyRedis(redisPool)
+	}
+
+	fun loadTinyJdbc(config: TinyConfig, configName: String, fixedPoolSize: Int = 0) {
+		var hikariConfig = getHikariConfig(config, configName)
+		if(fixedPoolSize > 0) {
+			hikariConfig = hikariConfig.doFixedPoolConfig(fixedPoolSize)
+		}
+		val dataSourceHikari = DatasourceHiKari().create(hikariConfig)
+
+		TinyRegistry["hikari." + configName] = dataSourceHikari
+		TinyRegistry[configName] = TinyJdbc(dataSourceHikari)
 	}
 
 	fun load(){
@@ -42,9 +64,7 @@ class TinyResourceLoader{
 			val key = one.key
 			if(configMatcher.containsMatchIn(key)){
 				val dataSourceName = key.substring(0, key.length - ".url".length)
-				val dataSourceHikari = buildDataSourceHikari(config, dataSourceName)
-				TinyRegistry["hikari." + dataSourceName] = dataSourceHikari
-				TinyRegistry[dataSourceName] = TinyJdbc(dataSourceHikari)
+				loadTinyJdbc(config, dataSourceName)
 			}
 		}
 	}
@@ -63,9 +83,7 @@ class TinyResourceLoader{
 			val key = one.key
 			if(configMatcher.containsMatchIn(key)){
 				val redisName = key.substring(0, key.length - ".host".length)
-				val redisPool = buildRedisPool(config, redisName)
-				TinyRegistry["pool." + redisName] = redisPool
-				TinyRegistry[redisName] = TinyRedis(redisPool)
+				loadTinyRedis(config, redisName)
 			}
 		}
 	}
