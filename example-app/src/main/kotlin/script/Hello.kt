@@ -12,7 +12,7 @@ class Hello{
 
 		val loader = TinyResourceLoader()
 		loader.loadRedis(redisConfig, "redis.default", fixedPoolSize = 1)
-		loader.loadJdbc(dbConfig, "db.account", fixedPoolSize = 2)
+		loader.loadJdbc(dbConfig, "db.account", fixedPoolSize = 1)
 
 
 		printRegister()

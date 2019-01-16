@@ -21,12 +21,13 @@ object TinyScript {
 			}
 			method.invoke(obj)
 		}catch(e: Throwable){
-			var errMsg = e.toString()
+			var ex = e
 			if(e is InvocationTargetException ){
 				val targetException = e.getTargetException()
-				errMsg = targetException.toString()
+				ex = targetException
 			}
-			logger.error("TinyScript[$clzName].run(): " + errMsg)
+			logger.error("TinyScript[$clzName].run(): " + ex)
+			throw ex
 		}finally{
 			TinyApp.shutdown()
 			val endTime = System.currentTimeMillis()/1000L
