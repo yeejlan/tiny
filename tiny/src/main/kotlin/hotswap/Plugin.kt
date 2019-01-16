@@ -1,4 +1,4 @@
-package example.hotswap
+package tiny.hotswap
 
 import org.hotswap.agent.annotation.*
 import org.hotswap.agent.command.ReflectionCommand
@@ -11,19 +11,19 @@ import org.hotswap.agent.logging.AgentLogger
 import org.hotswap.agent.util.IOUtils
 import org.hotswap.agent.util.PluginManagerInvoker
 import org.hotswap.agent.config.PluginManager
+import org.hotswap.agent.util.classloader.*
 
 import org.hotswap.agent.annotation.FileEvent.CREATE
 import org.hotswap.agent.annotation.FileEvent.MODIFY
 import org.hotswap.agent.annotation.LoadEvent.DEFINE
 import org.hotswap.agent.annotation.LoadEvent.REDEFINE
 
-private val LOGGER = AgentLogger.getLogger(TinyHotswapPlugin::class.java)
+private val LOGGER = AgentLogger.getLogger(TinyHotSwap::class.java)
 private const val TINYAPP_SERVICE = "tiny.TinyApp"
-private const val WATCH_PACKAGE = "example"
 
-@Plugin(name = "TinyHotswapPlugin", description = "Hotswap agent plugin for Tiny application.",
+@Plugin(name = "TinyHotSwap", description = "Hotswap agent plugin for Tiny application.",
 	testedVersions = arrayOf("current verion"))
-class TinyHotswapPlugin {
+class TinyHotSwap {
 
 	@Init
 	lateinit var appClassLoader: ClassLoader
@@ -44,8 +44,8 @@ class TinyHotswapPlugin {
 
 		@OnClassLoadEvent(classNameRegexp = TINYAPP_SERVICE)
 		@JvmStatic fun transformTinyEntityService(ctClass: CtClass) {
-			var src = PluginManagerInvoker.buildInitializePlugin(TinyHotswapPlugin::class.java)
-			src += PluginManagerInvoker.buildCallPluginMethod(TinyHotswapPlugin::class.java, "registerService", "this", "java.lang.Object")
+			var src = PluginManagerInvoker.buildInitializePlugin(TinyHotSwap::class.java)
+			src += PluginManagerInvoker.buildCallPluginMethod(TinyHotSwap::class.java, "registerService", "this", "java.lang.Object")
 			ctClass.getDeclaredConstructor(emptyArray<CtClass>()).insertAfter(src)
 
 			LOGGER.info(TINYAPP_SERVICE + " has been enhanced.")
@@ -63,14 +63,21 @@ class TinyHotswapPlugin {
 		LOGGER.info(className + " has been reloaded.")
 	}
 
-	@OnClassFileEvent(classNameRegexp = WATCH_PACKAGE + ".*", events = arrayOf(MODIFY))
+	@OnClassFileEvent(classNameRegexp = ".*", events = arrayOf(CREATE, MODIFY))
 	fun changeClassFile(ctClass: CtClass) {
-		LOGGER.info(ctClass.getName() + " has been modified.")
-		val clazz = appClassLoader.loadClass(ctClass.getName())
-		synchronized (reloadMap, {
-			reloadMap.put(clazz, ctClass.toBytecode())
-		})
-		scheduler.scheduleCommand(hotswapCommand, 500, Scheduler.DuplicateSheduleBehaviour.SKIP)
+		if (!ClassLoaderHelper.isClassLoaded(appClassLoader, ctClass.getName())){
+			return
+		}
+		
+		try{
+			val clazz = appClassLoader.loadClass(ctClass.getName())
+			synchronized (reloadMap, {
+				reloadMap.put(clazz, ctClass.toBytecode())
+			})
+			scheduler.scheduleCommand(hotswapCommand, 100, Scheduler.DuplicateSheduleBehaviour.SKIP)
+		}catch (e: ClassNotFoundException ) {
+			LOGGER.warning("Reload error: class not found: " + ctClass.getName())
+		}
 	}
 
 	inner class MyReloadCommand : Command {
