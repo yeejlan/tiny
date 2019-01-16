@@ -55,7 +55,7 @@ class TinySession {
 			try{
 				_map = objectMapper.readValue<HashMap<String, Any>>(valueStr)
 			}catch(e: Throwable){
-				throw e
+				//pass
 			}
 		}
 	}
