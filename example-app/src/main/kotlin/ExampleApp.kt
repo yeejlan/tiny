@@ -9,8 +9,8 @@ import javax.servlet.annotation.WebListener
 @TinyApplication
 class ExampleApp : TinyBootstrap {
 	val name = "exampleapp"
-	val env = System.getProperty("tiny.appliction.env") ?: "production"
-	val script = System.getProperty("tiny.appliction.script") ?: ""
+	val env = System.getProperty("tiny.app.env") ?: "production"
+	val script = System.getProperty("tiny.app.script") ?: ""
 
 	override fun bootstrap() {
 

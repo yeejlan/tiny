@@ -117,7 +117,7 @@ task weave {
 
 def runWithWeaver = true
 def runWithHotSwap = false
-def tinyApplictionEnv = "development"
+def tinyAppEnv = "development"
 
 run {
 
@@ -130,7 +130,7 @@ run {
 			jvmArgs = jvmArgs << "-XXaltjvm=dcevm"
 			jvmArgs = jvmArgs << "-javaagent:c:/tools/hotswap-agent.jar"
 		}
-		jvmArgs = jvmArgs << "-Dtiny.appliction.env=$tinyApplictionEnv"
+		jvmArgs = jvmArgs << "-Dtiny.app.env=$tinyAppEnv"
 	}
 }
 
