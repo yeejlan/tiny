@@ -47,14 +47,14 @@ object TinyApp {
 	private lateinit var _config: TinyConfig
 	private lateinit var _appName: String
 
-	@JvmStatic fun init(strEnv: String, appName: String, runTask :Boolean = false){
+	@JvmStatic fun init(strEnv: String, appName: String, runAsScript :Boolean = false){
 		_appName = appName
 		val env: Int? = _strEnvMapping.get(strEnv)
 		if(env != null){
 			_env = env
 			_envString = strEnv
 		}
-		if(!runTask){
+		if(!runAsScript){
 			_logbackInit()
 		}
 		if(env == null){
@@ -66,7 +66,7 @@ object TinyApp {
 		_settle()
 		logger.info("App[${_appName}] starting with env=${_envString} and config=${_configFile}")
 		_isInit = true
-		if(!runTask){
+		if(!runAsScript){
 			TinyResourceLoader().load()
 		}
 	}

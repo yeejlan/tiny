@@ -1,7 +1,7 @@
 <configuration>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%date{"yyyy-MM-dd'T'HH:mm:ss,SSSZ"} %level [%file:%line] %msg%n</pattern>
+			<pattern>%date{"yyyy-MM-dd'T'HH:mm:ss,SSSZ"} %level %msg%n</pattern>
 		</encoder>
 	</appender>	
 	<root level="info">

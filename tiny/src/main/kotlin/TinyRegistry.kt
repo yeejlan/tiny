@@ -31,12 +31,12 @@ object TinyRegistry{
 	}
 
 	@JvmStatic fun getStorage() : Map<String, Any>{
-		return storage
+		return storage.toSortedMap(compareBy { it })
 	}
 
 	override fun toString(): String {
 
-		return storage.toString()
+		return getStorage().toString()
 	}
 
 }

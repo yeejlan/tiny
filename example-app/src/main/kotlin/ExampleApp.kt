@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebListener
 class ExampleApp : TinyBootstrap {
 	val name = "exampleapp"
 	val env = System.getProperty("tiny.appliction.env") ?: "production"
+	val script = System.getProperty("tiny.appliction.script") ?: ""
 
 	override fun bootstrap() {
 
@@ -19,10 +20,18 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
+	val app = ExampleApp()
+	TinyScript.run(app.env, app.name, "example.script.Hello")
+	return
 	test()
 	return
-	val app = ExampleApp()
-	TinyApp.runJetty()
+
+	if(!app.script.isEmpty()){
+		TinyScript.run(app.env, app.name, app.script)
+		return
+	}
+
+	//TinyApp.runJetty()
 }
 
 
