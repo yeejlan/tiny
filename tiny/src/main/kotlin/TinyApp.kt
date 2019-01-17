@@ -67,7 +67,7 @@ object TinyApp {
 		logger.info("App[${_appName}] starting with env=${_envString} and config=${_configFile}")
 		_isInit = true
 		if(!runAsScript){
-			TinyResourceLoader().load()
+			TinyResourceLoader().autoload()
 		}
 	}
 

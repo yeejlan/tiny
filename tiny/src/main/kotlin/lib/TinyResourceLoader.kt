@@ -32,7 +32,7 @@ class TinyResourceLoader{
 		TinyRegistry[configName] = TinyJdbc(dataSourceHikari)
 	}
 
-	fun load(){
+	fun autoload(){
 		_loadDataSourceHikari()
 		_loadRedis()
 		_loadSessionStorage()
