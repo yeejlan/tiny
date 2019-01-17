@@ -45,8 +45,6 @@ dependencies {
 	ajweaver 'org.aspectj:aspectjweaver:1.9.2'
 }
 
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
 compileKotlin {
 	kotlinOptions {
 		freeCompilerArgs = ["-Xjsr305=strict"]

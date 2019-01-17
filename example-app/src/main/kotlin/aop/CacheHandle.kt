@@ -9,18 +9,18 @@ import org.aspectj.lang.reflect.MethodSignature
 import tiny.lib.TinyCache
 import tiny.lib.DebugUtil
 import tiny.TinyRegistry
-import tiny.annotation.CacheAdd
-import tiny.annotation.CacheDelete
+import tiny.annotation.AddCache
+import tiny.annotation.DeleteCache
 
 @Aspect
 class CacheHandle {
 	private val _paramRegex = "\\{([_a-zA-Z0-9]+)\\}".toRegex()
 
-	@Around("execution(* *(..)) && @annotation(tiny.annotation.CacheAdd)")
+	@Around("execution(* *(..)) && @annotation(tiny.annotation.AddCache)")
 	fun handleCacheAdd(pjp: ProceedingJoinPoint): Any {
 		val signature = pjp.getSignature() as MethodSignature
 		val method = signature.getMethod()
-		val cacheAdd = method.getAnnotation(CacheAdd::class.java)
+		val cacheAdd = method.getAnnotation(AddCache::class.java)
 
 		if(cacheAdd == null){ //should never happen
 			throw CacheHandleAOPException("Error on get annotation")
@@ -41,11 +41,11 @@ class CacheHandle {
 		return result
 	}
 
-	@Around("execution(* *(..)) && @annotation(tiny.annotation.CacheDelete)")
+	@Around("execution(* *(..)) && @annotation(tiny.annotation.DeleteCache)")
 	fun handleCacheDelete(pjp: ProceedingJoinPoint): Any {
 		val signature = pjp.getSignature() as MethodSignature
 		val method = signature.getMethod()
-		val cacheDelete = method.getAnnotation(CacheDelete::class.java)
+		val cacheDelete = method.getAnnotation(DeleteCache::class.java)
 
 		if(cacheDelete == null){ //should never happen
 			throw CacheHandleAOPException("Error on get annotation")

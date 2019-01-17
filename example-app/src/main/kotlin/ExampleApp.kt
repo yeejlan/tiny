@@ -61,7 +61,7 @@ fun test(){
 }
 
 
-@CacheAdd("int_test_{a}")
+@AddCache("int_test_{a}")
 fun testCache(a: Int, b: String, c: Long): Int{
 	return (a+c).toInt()
 }

@@ -1,4 +1,4 @@
-<configuration>
+<configuration debug="false">
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>%date{"yyyy-MM-dd'T'HH:mm:ss,SSSZ"} %level %msg%n</pattern>

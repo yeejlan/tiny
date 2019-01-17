@@ -2,6 +2,6 @@ package tiny.annotation
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-annotation class CacheAdd(
+annotation class AddCache(
 	val key: String
 )

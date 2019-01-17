@@ -1,1 +1,8 @@
 include ':example-app', ':tiny', ':tiny-compiler', ':tiny-annotation'
+
+def tinyHome = System.getenv("TINY_HOME")
+if(tinyHome!=null && !tinyHome.isEmpty()){
+	project(':tiny-annotation').projectDir = new File(tinyHome + '/tiny-annotation')
+	project(':tiny-compiler').projectDir = new File(tinyHome + '/tiny-compiler')
+	project(':tiny').projectDir = new File(tinyHome + '/tiny')
+}

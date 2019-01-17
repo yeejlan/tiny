@@ -150,16 +150,18 @@ object TinyApp {
 		}catch (e: JoranException){
 			//pass
 		}
-		StatusPrinter.printInCaseOfErrorsOrWarnings(context)
+		//StatusPrinter.printInCaseOfErrorsOrWarnings(context)
 	}
 
 	@JvmStatic fun runJetty(port: Int = 8080){
 		val server = Server(port)
+		server.setStopAtShutdown(true)
 
 		val context = WebAppContext()
 		context.setContextPath("/")
-		context.setResourceBase("./src/main")
+		context.setResourceBase("./web")
 		context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*/classes/.*")
+		
 		context.setConfigurations(arrayOf(
 			org.eclipse.jetty.annotations.AnnotationConfiguration(),
 			org.eclipse.jetty.webapp.WebInfConfiguration(), 
