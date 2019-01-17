@@ -62,7 +62,9 @@ class TinyResourceLoader{
 			val key = one.key
 			if(configMatcher.containsMatchIn(key)){
 				val dataSourceName = key.substring(0, key.length - ".url".length)
-				loadJdbc(config, dataSourceName)
+				if(config.getBoolean("${dataSourceName}.autoload")){
+					loadJdbc(config, dataSourceName)
+				}
 			}
 		}
 	}
@@ -81,7 +83,9 @@ class TinyResourceLoader{
 			val key = one.key
 			if(configMatcher.containsMatchIn(key)){
 				val redisName = key.substring(0, key.length - ".host".length)
-				loadRedis(config, redisName)
+				if(config.getBoolean("${redisName}.autoload")){
+					loadRedis(config, redisName)
+				}
 			}
 		}
 	}
