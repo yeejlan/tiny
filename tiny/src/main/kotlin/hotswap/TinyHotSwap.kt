@@ -17,6 +17,8 @@ import org.hotswap.agent.annotation.FileEvent.CREATE
 import org.hotswap.agent.annotation.FileEvent.MODIFY
 import org.hotswap.agent.annotation.LoadEvent.DEFINE
 import org.hotswap.agent.annotation.LoadEvent.REDEFINE
+import tiny.ActionPair
+import tiny.HelperPair
 
 private val LOGGER = AgentLogger.getLogger(TinyHotSwap::class.java)
 private const val TINYAPP_SERVICE = "tiny.TinyApp"
@@ -39,7 +41,6 @@ class TinyHotSwap {
 	val hotswapCommand = MyReloadCommand()
 	val reloadMap: HashMap<Class<*>, ByteArray> = HashMap()
 
-
 	companion object{
 
 		@OnClassLoadEvent(classNameRegexp = TINYAPP_SERVICE)
@@ -59,8 +60,32 @@ class TinyHotSwap {
 	}
 
 	@OnClassLoadEvent(classNameRegexp = ".*", events = arrayOf(REDEFINE))
-	fun reloadClass(className: String){
-		LOGGER.info(className + " has been reloaded.")
+	fun reloadClass(ctClass: CtClass){
+		val className = ctClass.getName()
+		val pkgName = ctClass.getPackageName()
+		if(className.endsWith("Controller") && pkgName.endsWith(".controller")){
+			for(method in ctClass.getDeclaredMethods()){
+				val methodName = method.getName()
+				if(methodName.endsWith("Action")){
+					val action = ActionPair(Class.forName(className), methodName)
+					val controllerName = className.substring(pkgName.length+1, className.length-"Controller".length)
+					val actionName = methodName.substring(0, methodName.length-"Action".length)
+					val actionKey = "$controllerName/$actionName".toLowerCase()
+					scheduler.scheduleCommand(
+						ReflectionCommand(tinyService, "addAction", actionKey, action)
+					)
+				}
+			}
+		}
+
+		if(pkgName.endsWith(".helper")){
+			val helperName = className.substring(pkgName.length+1)
+			val helperInstance = Class.forName(className).newInstance()
+			val helperPair = HelperPair(helperName, helperInstance)
+			scheduler.scheduleCommand(
+				ReflectionCommand(tinyService, "addHelper", helperPair)
+			)
+		}
 	}
 
 	@OnClassFileEvent(classNameRegexp = ".*", events = arrayOf(CREATE, MODIFY))

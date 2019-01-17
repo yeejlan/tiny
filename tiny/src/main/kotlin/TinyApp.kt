@@ -178,9 +178,22 @@ object TinyApp {
 		server.join()
 	}
 
+	/*shortcut for hotswap*/
+	@JvmStatic fun addAction(actionKey: String, action: ActionPair){
+		TinyController.addAction(actionKey, action)
+	}
+
+	/*shortcut for hotswap*/
+	@JvmStatic fun addHelper(helper: HelperPair){
+		TinyView.addHelper(helper.name, helper.instance)
+	}
+
 	private fun _checkInit() {
 		if(!_isInit) {
 			throw TinyException("App init error, env: ${_envString}, config: ${_configFile}")
 		}
 	}
 }
+
+/*shortcut for hotswap*/
+data class HelperPair(val name: String, val instance: Any)

@@ -13,7 +13,7 @@ class TestController @AutoWeave constructor(): TinyController(){
 	}
 
 	fun userAction(): Any {
-		return "12this is test/user page"
+		return "11123this is test/user page"
 	}
 
 	fun infoAction(): Any {
