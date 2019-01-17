@@ -304,6 +304,9 @@ class AnnotationProcessor : AbstractProcessor() {
 
 		val _viewClz = ClassName.get("tiny", "TinyView")
 		for(helper in _helperMap){
+			if(!helper.key.endsWith("Helper")){
+				continue
+			}
 			var _helperClz = ClassName.get(helper.value)
 			_methodBuilder.addStatement("\$T.addHelper(\$S, new \$L())", _viewClz, helper.key, _helperClz)
 		}

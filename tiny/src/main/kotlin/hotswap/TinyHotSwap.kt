@@ -78,7 +78,7 @@ class TinyHotSwap {
 			}
 		}
 
-		if(pkgName.endsWith(".helper")){
+		if(className.endsWith("Helper") && pkgName.endsWith(".helper")){
 			val helperName = className.substring(pkgName.length+1)
 			val helperInstance = Class.forName(className).newInstance()
 			val helperPair = HelperPair(helperName, helperInstance)
