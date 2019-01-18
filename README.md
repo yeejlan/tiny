@@ -183,7 +183,8 @@ redis.default.database = 1
 ##### Create controller and action
 
 ```kotlin
-/*Controllers need in a package name ending with ".controller", e.g "myapp.controller", by doing this hotswap plugin can identify it as a controller*/
+/*Controllers need in a package name ending with ".controller", e.g "myapp.controller", 
+by doing this hotswap plugin can identify it as a controller*/
 
 package myapp.controller
 
@@ -231,7 +232,8 @@ template file is in classpath: "templates" and ending with ".tpl", template cach
 ##### Create helper
 
 ```kotlin
-/*Helpers need in a package name ending with ".helper", e.g "myapp.helper", by doing this hotswap plugin can identify it as a helper*/
+/*Helpers need in a package name ending with ".helper", e.g "myapp.helper", 
+by doing this hotswap plugin can identify it as a helper*/
 
 package example.helper
 
