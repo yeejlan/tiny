@@ -33,7 +33,7 @@ Cargo["cat"] = Cat()
 Instead of  
 ```java
 Cat cat = Cargo.get("cat")
-Cargo.set("cat") = new Cat()
+Cargo.set("cat", new Cat())
 ```
 * Default parameter  
 ```kotlin
