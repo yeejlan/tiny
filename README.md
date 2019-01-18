@@ -18,6 +18,13 @@ In short, Kotlin is better Java.
 ```
 	logger.warn("script running error, file: ${script.file}, line: ${script.getCurrentLine()} at $script")
 ```
+* Multiline String
+```
+	val text = """first line
+		second line
+		third line
+	""".trimMargin()
+```
 * Operator override  
 ```  
 	val cat = Cargo["cat"]
@@ -28,7 +35,7 @@ Instead of
 	Cat cat = Cargo.get("cat")
 	Cargo.set("cat") = new Cat()
 ```
-* Default method parameter  
+* Default parameter  
 ```
 	setCache(key: String, value: String, expireSeconds: Long = 3600)
 ```	
@@ -47,7 +54,7 @@ Instead of
 ```
 	object ASingletonClass(){val name = "singleton"}
 ```	
-* import rename  
+* import alias  
 
 ```
 	import System.out.print as p
