@@ -355,11 +355,11 @@ fun main(args: Array<String>){
 
 ##### Use ioc
 
-The ioc framework tiny using is [Dagger2](https://google.github.io/dagger/)  
+The ioc framework using is [Dagger2](https://google.github.io/dagger/)  
 
 Tiny framework create the dagger component(tiny.weaver.MagicBox) and component holder(tiny.weaver.TinyBird) automatically
 
-@WeaverBird can link a module to current component:
+@WeaverBird links a module to current component:
 
 ```kotlin
 package myapp.weaver
