@@ -491,7 +491,7 @@ private class HelloScriptException(message: String?) : Throwable(message)
 static.extra.dir = src/main/resources/static
 template.extra.dir = src/main/resources/templates
 ```
-Now you can refresh your browser and check your updates, please make sure the path exists, otherwise it fallback to classpath which have to update via your resource compile command
+Now you can refresh your browser and check your updates, please make sure the path exists, otherwise it fallback to classpath resources which can't be updated until syncing them from source to class path
 
 * For class file  
 
