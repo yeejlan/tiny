@@ -229,6 +229,13 @@ This is a groovy gstring template<br />
 call square helper: 25*25 = <%=square.getSquare(25)%> <br />
 <%=view.render("footer")%>
 ```
+```kotlin
+class HelloController : TinyController(){
+	fun tplAction(): Any{
+		return render("body")  /* groovy.lang.Writable */
+	}
+}
+```
 
 template file is in classpath: "templates" and ending with ".tpl", template cache is disabled in "development" environment.
 
