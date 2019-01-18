@@ -37,7 +37,7 @@ Cargo.set("cat", new Cat())
 ```
 * Default parameter  
 ```kotlin
-setCache(key: String, value: String, expireSeconds: Long = 3600)
+fun setCache(key: String, value: String, expireSeconds: Long = 3600){...}
 ```	
 * Call method via named parameter 
 ```kotlin
