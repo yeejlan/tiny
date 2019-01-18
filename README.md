@@ -493,7 +493,7 @@ template.extra.dir = src/main/resources/templates
 ```
 Now you can refresh browser and check result once you modify source code, please make sure the path exists, otherwise it fallback to classpath files which can't auto reload after modifying the source code
 
-* For class file  
+* For class files  
 
 There is a [hotswap agent](https://github.com/HotswapProjects/HotswapAgent) plugin [tiny.hotswap.TinyHotSwap](tiny/src/main/kotlin/hotswap/TinyHotSwap.kt), once you have hotswap agent installed
 
