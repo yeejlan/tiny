@@ -367,7 +367,7 @@ fun main(args: Array<String>){
 
 The ioc framework using is [Dagger2](https://google.github.io/dagger/)  
 
-Tiny framework create the dagger component(tiny.weaver.MagicBox) and component holder(tiny.weaver.TinyBird) automatically
+Tiny framework automatically create the dagger component(tiny.weaver.MagicBox) and component holder(tiny.weaver.TinyBird)  
 
 @WeaverBird links a module to current component:
 
