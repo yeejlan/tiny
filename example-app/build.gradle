@@ -114,7 +114,7 @@ task weave {
 }
 
 def runWithWeaver = true
-def runWithHotSwap = true
+def runWithHotSwap = false
 def tinyAppEnv = "development"
 
 run {
