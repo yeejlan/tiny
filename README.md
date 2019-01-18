@@ -503,6 +503,6 @@ pluginPackages=tiny.hotswap
 autoHotswap=false
 disabledPlugins=Hibernate, Hibernate3JPA, Hibernate3, Spring, Jersey1, Jersey2, Jetty, Tomcat, ZK, Logback, Log4j2, MyFaces, Mojarra, Omnifaces, Seam, ELResolver, WildFlyELResolver, OsgiEquinox, Owb, WebObjects, Weld, JBossModules, ResteasyRegistry, Deltaspike, GlassFish, Vaadin, Wicket
 ```
-Add this to [hotswap-agent.properties](example-app/src/main/resources/hotswap-agent.properties), compile classes and check you work.
+Add this to [hotswap-agent.properties](example-app/src/main/resources/hotswap-agent.properties), compile classes and check your work.
 
 That's all. Hope you enjoy it:)
