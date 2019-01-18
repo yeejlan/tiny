@@ -258,16 +258,17 @@ class TestController : TinyController(){
 		val request = ctx.request /*javax.servlet.http.HttpServletRequest*/
 		val response = ctx.response /*javax.servlet.http.HttpServletResponse*/
 
-		/*params*/
+		/* params */
 		val userAge = ctx.params.getLong("age", 18) //defalut age = 18
 		val userName = ctx.params["name"]
 		val action = ctx.params.getString("action")
 
-		/*session*/
+		/* session */
 		val userId: Long = ctx.session["userid"]
 		if(userId < 1) {
 			val loggedinId = doUserlogin()
-			ctx.newSession() //loggedin with a new session for better security
+			/* loggedin with a new session for better security */
+			ctx.newSession()
 			ctx.session["userid"] = loggedinId
 		}
 		if(action == "logout") {
@@ -275,7 +276,7 @@ class TestController : TinyController(){
 			ctx.session["flashMessage"]  = "You have been logged out successfully"
 		}
 
-		/*cookie*/
+		/* cookie */
 		val currentArticleId = ctx.cookies.getInt("current_article_id")
 		val currentEditor = ctx.cookies["current_editor"]
 		ctx.setCookie("currentEditor", "Zorro", 
@@ -285,7 +286,7 @@ class TestController : TinyController(){
 			secure = false, 
 			httponly = false)
 
-		/*fileupload*/
+		/* fileupload */
 		val avatar = ctx.files["avatar"]  /*org.apache.commons.fileupload.FileItem*/
 		val saveTo = File("/tmp/avatar_${UniqueIdUtil.getUniqueId()}")
 		try{
@@ -301,14 +302,14 @@ class TestController : TinyController(){
 ##### Use TinyConfig, TinyCache, TinyRedis, TinyJdbc
 ```kotlin
 fun testing() {
-	/*TinyConfig*/
+	/* TinyConfig */
 	val redisConfig = TinyConfig("config/${TinyApp.getEnvString()}/redis.ini")
 	val loader = TinyResourceLoader()
 	val redisLocal = loader.loadRedis(redisConfig, "redis.local")
 	val redis = TinyRegistry["redis.default"] as TinyRedis
 	val jdbcAccount = TinyRegistry["db.account"] as TinyJdbc
 
-	/*TinyCache*/
+	/* TinyCache */
 	/* real key == "demo_user_id_123" since app.ini, cache.prefix = demo_ */
 	TinyCache.set("user_id_123", HashMap<String, Any>(
 			"id" to 123,
@@ -318,7 +319,7 @@ fun testing() {
 	val userNanaString = TinyCache.get("user_id_123") /*String*/
 	TinyCache.delete("user_id_1")
 
-	/*TinyRedis*/
+	/* TinyRedis */
 	redis.set("demo_user_id_123", HashMap<String, Any>(
 			"id" to 123,
 			"name" to "nana"
@@ -329,7 +330,7 @@ fun testing() {
 		commands.expire("demo_user_id_123", 600)
 	})
 
-	/*TinyJdbc*/
+	/* TinyJdbc */
 	val p = HashMap<String, Any>(
 			"id" to 1001,
 			"name" to "grrr"
