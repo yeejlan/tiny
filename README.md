@@ -178,6 +178,9 @@ redis.default.autoload = true #autoload on framework start or not
 redis.default.host = 127.0.0.1
 redis.default.port = 6379
 redis.default.database = 1
+redis.default.pool.maxTotal = 10
+redis.default.pool.maxIdle = 5
+redis.default.pool.minIdle = 1
 ```
 
 ##### Create controller and action
