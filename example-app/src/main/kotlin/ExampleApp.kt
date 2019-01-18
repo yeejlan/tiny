@@ -20,13 +20,9 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-	TinyApp.runJetty()
-	return
+
 	val app = ExampleApp()
-	TinyScript.run(app.env, app.name, "33example.script.Hello")
-	return
 	test()
-	return
 
 	if(!app.script.isEmpty()){
 		TinyScript.run(app.env, app.name, app.script)

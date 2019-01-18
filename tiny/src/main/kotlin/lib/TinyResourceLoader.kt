@@ -12,24 +12,28 @@ private val logger = LoggerFactory.getLogger(TinyResourceLoader::class.java)
 class TinyResourceLoader{
 	val _envString = TinyApp.getEnvString()
 
-	fun loadRedis(config: TinyConfig, configName: String, fixedPoolSize: Int = 0) {
+	fun loadRedis(config: TinyConfig, configName: String, fixedPoolSize: Int = 0): TinyRedis {
 		var poolConfig = getRedisPoolConfig(config, configName)
 		if(fixedPoolSize > 0) {
 			poolConfig = poolConfig.doFixedPoolConfig(fixedPoolSize)
 		}
 		val redisPool = LettuceRedisPool().create(poolConfig)
 
-		TinyRegistry[configName] = TinyRedis(redisPool)
+		val redis = TinyRedis(redisPool)
+		TinyRegistry[configName] = redis
+		return redis
 	}
 
-	fun loadJdbc(config: TinyConfig, configName: String, fixedPoolSize: Int = 0) {
+	fun loadJdbc(config: TinyConfig, configName: String, fixedPoolSize: Int = 0): TinyJdbc {
 		var hikariConfig = getHikariConfig(config, configName)
 		if(fixedPoolSize > 0) {
 			hikariConfig = hikariConfig.doFixedPoolConfig(fixedPoolSize)
 		}
 		val dataSourceHikari = DatasourceHiKari().create(hikariConfig)
 
-		TinyRegistry[configName] = TinyJdbc(dataSourceHikari)
+		val jdbc = TinyJdbc(dataSourceHikari)
+		TinyRegistry[configName] = jdbc
+		return jdbc
 	}
 
 	fun autoload(){
