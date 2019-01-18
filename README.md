@@ -386,7 +386,7 @@ private val dbAccount = TinyRegistry["db.account"] as TinyJdbc
 @Module
 class JdbcWeaver {
 
-	@Provides @Named("db.account") fun provideAccount(jdbc: TinyJdbc) : TinyJdbc {
+	@Provides @Named("db.account") fun provideAccount() : TinyJdbc {
 		return dbAccount
 	}
 }
@@ -401,6 +401,8 @@ import javax.inject.Inject
 import javax.inject.Named
 import tiny.weaver.TinyBird
 import tiny.annotation.AutoWeave
+import tiny.lib.db.SqlResult
+import tiny.lib.TinyJdbc
 
 class AccountDao {
 
