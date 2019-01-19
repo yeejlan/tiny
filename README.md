@@ -419,7 +419,7 @@ class AccountDao {
 		val p = HashMap<String, Any>(
 			"id" to userId,
 		)
-		val info = _dbAccount.select("select id, name from user where id = :id", p)
+		val info = _dbAccount.queryForMap("select id, name from user where id = :id", p)
 		return info
 	}
 }
