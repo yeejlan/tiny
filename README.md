@@ -8,7 +8,7 @@ I want to write xml config files as little as possible, so say goodbye to [Sprin
 In short, Kotlin is better Java.
 
 ##### The good stuff
-* No checked error(May I say stupid feature in java?)
+* No checked exception(May I say stupid feature in java?)
 * String("abc") == String("abc") is true
 * Auto type inference  
 ```kotlin
