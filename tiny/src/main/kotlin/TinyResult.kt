@@ -38,6 +38,24 @@ class TinyResult <T:Any> constructor(error: String?, data: Any?) {
 		}
 	}
 
+	/*check if there is an error*/
+	fun error(): Boolean {
+
+		if(this.error != null){
+			return true
+		}
+		return false
+	}
+
+	/*A safe way to get this.data*/
+	fun data(): T {
+
+		if(this.error()){
+			throw TinyException(this::class.java.getSimpleName() + " error: " + cause)
+		}
+		return this.data
+	}
+
 	private fun _addCause(error: String) {
 		cause.add(error + ": " + Thread.currentThread().getStackTrace()[3])
 	}
