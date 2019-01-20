@@ -48,9 +48,14 @@ fun test(){
 			"name" to "note.gif"
 		))
 
+	val trUsers = TinyResult<List<Map<String,Any>>>(users)
+	DebugUtil.print(trUsers.error)
+	if(trUsers.error == null){
+		DebugUtil.print(trUsers.data)
+	}
 
-	users.ex?.printStackTrace()
-	DebugUtil.print(users.data)
+	//users.ex?.printStackTrace()
+	//DebugUtil.print(users.data)
 	DebugUtil.print(TinyRegistry.getStorage())
 	DebugUtil.print(Thread.currentThread().getStackTrace()[1])
 	val result = TinyResult<Int>("get int error", null)
