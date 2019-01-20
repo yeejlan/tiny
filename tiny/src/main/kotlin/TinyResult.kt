@@ -28,8 +28,9 @@ class TinyResult <T:Any> constructor(error: String?, data: Any?) {
 
 	constructor(sr: SqlResult<*>) : this(null, null) {
 		if(sr.ex != null){
-			this.error = sr.ex.toString()
-			_addCause(sr.ex.toString())
+			val exStr = sr.ex.toString()
+			this.error = exStr
+			_addCause(exStr)
 		}else{
 			if(sr.data != null){
 				@Suppress("UNCHECKED_CAST")
