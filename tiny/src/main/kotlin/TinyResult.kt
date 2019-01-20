@@ -1,13 +1,15 @@
 package tiny
 
-class TinyResult <T> constructor(error: String?, data: T?) {
+class TinyResult <T:Any> constructor(error: String?, data: T?) {
 	var error: String? = null
-	var data: T? = null
+	lateinit var data: T
 	val cause = mutableListOf<String>()
 
 	init {
 		this.error = error
-		this.data = data
+		if(data != null){
+			this.data = data
+		}
 		if(error != null){
 			_addCause(error)
 		}
