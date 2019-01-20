@@ -14,7 +14,7 @@ class TinyResult <T:Any> constructor(error: String?, data: Any?) {
 		if(error != null){
 			_addCause(error)
 			if(data != null){
-				_addCause(data.toString())
+				this.cause.add(data.toString())
 			}
 		}
 	}
