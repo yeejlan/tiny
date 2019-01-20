@@ -55,16 +55,17 @@ fun test(){
 	DebugUtil.print(Thread.currentThread().getStackTrace()[1])
 	val result = TinyResult<Int>("get int error", null)
 	val result2 = TinyResult<String>("get string error", result)
-	val result3 = TinyResult<String>("3rd error", "no idea")
+	val result3 = TinyResult<Int>("3rd error", "no idea")
 	val result4 = TinyResult<String>(null, "Nana")
 	DebugUtil.print(result.cause)
 	DebugUtil.print(result2.cause)
 	DebugUtil.print(result3.cause)
 	DebugUtil.print(result4.cause)
+	DebugUtil.inspect(result4.data)
 	TinyApp.shutdown()
 }
 
 @AddCache("int_test_{a}")
-fun testCache(a: Int, b: String, c: Long): Int{
-	return (a+c).toInt()
+fun testCache(a: Int, b: Long, c: Long): Int{
+	return (a+c+b).toInt()
 }

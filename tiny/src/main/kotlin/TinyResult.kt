@@ -1,6 +1,6 @@
 package tiny
 
-class TinyResult <T:Any> constructor(error: String?, data: T?) {
+class TinyResult <T:Any> constructor(error: String?, data: Any?) {
 	var error: String? = null
 	lateinit var data: T
 	val cause = mutableListOf<String>()
@@ -8,7 +8,8 @@ class TinyResult <T:Any> constructor(error: String?, data: T?) {
 	init {
 		this.error = error
 		if(data != null){
-			this.data = data
+			@Suppress("UNCHECKED_CAST")
+			this.data = data as T
 		}
 		if(error != null){
 			_addCause(error)
