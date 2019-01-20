@@ -52,10 +52,17 @@ fun test(){
 	users.ex?.printStackTrace()
 	DebugUtil.print(users.data)
 	DebugUtil.print(TinyRegistry.getStorage())
-
+	DebugUtil.print(Thread.currentThread().getStackTrace()[1])
+	val result = TinyResult<Int>("get int error", null)
+	val result2 = TinyResult<String>("get string error", result)
+	val result3 = TinyResult<String>("3rd error", "no idea")
+	val result4 = TinyResult<String>(null, "Nana")
+	DebugUtil.print(result.cause)
+	DebugUtil.print(result2.cause)
+	DebugUtil.print(result3.cause)
+	DebugUtil.print(result4.cause)
 	TinyApp.shutdown()
 }
-
 
 @AddCache("int_test_{a}")
 fun testCache(a: Int, b: String, c: Long): Int{
