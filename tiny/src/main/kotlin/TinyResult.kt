@@ -12,12 +12,10 @@ class TinyResult <T:Any> constructor(error: String?, data: T?) {
 		}
 		if(error != null){
 			_addCause(error)
+			if(data != null){
+				_addCause(data.toString())
+			}
 		}
-	}
-
-	constructor(error: String, cause: String) : this(null, null) {
-		_addCause(error)
-		this.cause.add(cause)
 	}
 
 	constructor(error: String, tr: TinyResult<*>) : this(null, null) {
