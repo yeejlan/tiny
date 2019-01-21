@@ -47,5 +47,3 @@ class TimeItHandle {
 		return result
 	}
 }
-
-private class TimeItHandleException(message: String?) : Throwable(message)

@@ -72,7 +72,7 @@ class ApiClient (host: String, port: Int = 80, scheme: String = "http") {
 	}
 
 	fun getUrl(): String {
-		return _url.toString()
+		return _url?.toString() ?: ""
 	}
 
 	fun timeout(seconds: Long): ApiClient {
