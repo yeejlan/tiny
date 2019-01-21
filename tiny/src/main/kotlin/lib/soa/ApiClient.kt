@@ -11,7 +11,7 @@ import okhttp3.HttpUrl
 import okhttp3.logging.HttpLoggingInterceptor
 
 import java.io.IOException
-import tiny.annotation.TimeIt
+import tiny.annotation.Profiling
 
 private val JSON = MediaType.parse("application/json; charset=utf-8")
 
@@ -85,7 +85,7 @@ class ApiClient (host: String, port: Int = 80, scheme: String = "http") {
 		return this
 	}
 
-	@TimeIt
+	@Profiling
 	fun call(): ApiResult{
 
 		var jsonStr: String = ""

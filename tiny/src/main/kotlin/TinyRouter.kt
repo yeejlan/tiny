@@ -16,8 +16,8 @@ import tiny.lib.TinyProfiler
 private val DEFAULT_EXPIRE_TIME_IN_MILLIS = TimeUnit.DAYS.toMillis(30)
 private val ONE_SECOND_IN_MILLIS = TimeUnit.SECONDS.toMillis(1)
 private val staticExtraDir = TinyApp.getConfig()["static.extra.dir"]
-private val profileName = TinyApp.getConfig()["profile.name"]
-private val profileToken = TinyApp.getConfig()["profile.token"]
+private val profilingName = TinyApp.getConfig()["profiling.name"]
+private val profilingToken = TinyApp.getConfig()["profiling.token"]
 
 private data class TinyRewrite(val regex: String, val rewriteTo: String, val paramMapping: Array<Pair<Int, String>>? = null)
 
@@ -163,7 +163,7 @@ object TinyRouter{
 
 	private fun _callMethod(ctx: TinyWebContext, actionPair: ActionPair){
 		TinyProfiler.disable()
-		if(!profileName.isEmpty() && !profileToken.isEmpty() && ctx.params[profileName] == profileToken){
+		if(!profilingName.isEmpty() && !profilingToken.isEmpty() && ctx.params[profilingName] == profilingToken){
 			TinyProfiler.init()
 			TinyProfiler.enable()
 		}

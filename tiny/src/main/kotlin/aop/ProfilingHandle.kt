@@ -9,14 +9,14 @@ import org.aspectj.lang.reflect.MethodSignature
 import tiny.lib.DebugUtil
 import tiny.lib.TinyProfiler
 import tiny.lib.MethodProfiler
-import tiny.annotation.TimeIt
+import tiny.annotation.Profiling
 
 
 @Aspect
-class TimeItHandle {
+class ProfilingHandle {
 
-	@Around("execution(* *(..)) && @annotation(tiny.annotation.TimeIt)")
-	fun handleTimeIt(pjp: ProceedingJoinPoint): Any {
+	@Around("execution(* *(..)) && @annotation(tiny.annotation.Profiling)")
+	fun handleProfiling(pjp: ProceedingJoinPoint): Any {
 		if(!TinyProfiler.enabled()){
 			return pjp.proceed()
 		}
