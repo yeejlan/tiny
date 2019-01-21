@@ -297,7 +297,10 @@ class TestController : TinyController(){
 			httponly = false)
 
 		/* fileupload */
-		val avatar = ctx.files["avatar"]  /*org.apache.commons.fileupload.FileItem*/
+		val avatar = ctx.files["avatar"]  /* org.apache.commons.fileupload.FileItem */
+		if(avatar == null || avatar.size == 0L){
+			return "no avatar uploaded."
+		}
 		val saveTo = File("/tmp/avatar_${UniqueIdUtil.getUniqueId()}")
 		try{
 			avatar.write(saveTo)
@@ -305,6 +308,7 @@ class TestController : TinyController(){
 			logger.warn("Save avator error: " + e)
 			throw e
 		}
+		return "done."
 	}
 }
 ```

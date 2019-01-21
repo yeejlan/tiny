@@ -39,4 +39,19 @@ class TestController @AutoWeave constructor(): TinyController(){
 		println(info)
 		return ctx.session
 	}
+
+	fun uploadAction(): Any {
+		println(ctx.params)
+		println(ctx.files)
+		val file1 = ctx.files["file1"]
+		if(file1 == null || file1.size == 0L){
+			return "no file uploaded."
+		}
+		val result = UploadUtil.SaveUploadFile(file1, "d:/data/temp/a.txt")
+		if(result.error()){
+			return "upload error: " + result.error
+		}else{
+			return "upload done."
+		}
+	}
 }

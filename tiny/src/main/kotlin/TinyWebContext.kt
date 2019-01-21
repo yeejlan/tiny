@@ -34,7 +34,7 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 	lateinit var params: TinyParams
 
 	/*store upload files*/
-	lateinit var files: HashMap<String, FileItem>
+	var files = HashMap<String, FileItem>()
 
 	/*session support*/
 	val session = TinySession()
