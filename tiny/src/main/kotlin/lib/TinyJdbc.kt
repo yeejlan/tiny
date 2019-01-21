@@ -9,6 +9,7 @@ import java.sql.PreparedStatement
 import java.sql.Statement
 import java.sql.ResultSet
 import org.slf4j.LoggerFactory
+import tiny.annotation.TimeIt
 
 private val logger = LoggerFactory.getLogger(TinyJdbc::class.java)
 
@@ -22,6 +23,7 @@ class TinyJdbc(ds: DataSource) {
 	}
 
 	/*insert a record*/
+	@TimeIt
 	fun insert(sql: String, paramMap: Map<String, Any>, returnAutoGenKey: Boolean = false) : SqlResult<Long> {
 		try{
 			return SqlResult<Long>(null, _insert(sql, paramMap, returnAutoGenKey))
@@ -31,6 +33,7 @@ class TinyJdbc(ds: DataSource) {
 	}
 
 	/*delete or update records*/
+	@TimeIt
 	fun update(sql: String, paramMap: Map<String, Any>) : SqlResult<Int> {
 		try{
 			return SqlResult<Int>(null, _update(sql, paramMap))
@@ -75,6 +78,7 @@ class TinyJdbc(ds: DataSource) {
 	}
 
 	/*select multiple records*/
+	@TimeIt
 	fun queryForList(sql: String, paramMap: Map<String, Any>? = null): SqlResult<List<Map<String, Any>>> {
 		try{
 			return SqlResult<List<Map<String, Any>>>(null, _queryForList(sql, paramMap))
@@ -84,6 +88,7 @@ class TinyJdbc(ds: DataSource) {
 	}
 
 	/*select one record*/
+	@TimeIt
 	fun queryForMap(sql: String, paramMap: Map<String, Any>? = null): SqlResult<Map<String, Any>> {
 		try{
 			return SqlResult<Map<String, Any>>(null, _queryForMap(sql, paramMap))

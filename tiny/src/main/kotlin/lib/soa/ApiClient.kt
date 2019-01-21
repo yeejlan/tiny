@@ -11,7 +11,7 @@ import okhttp3.HttpUrl
 import okhttp3.logging.HttpLoggingInterceptor
 
 import java.io.IOException
-import tiny.lib.TinyParams
+import tiny.annotation.TimeIt
 
 private val JSON = MediaType.parse("application/json; charset=utf-8")
 
@@ -67,12 +67,12 @@ class ApiClient (host: String, port: Int = 80, scheme: String = "http") {
 		return this
 	}
 
-	fun getRequest(): JsonMap? {
-		return _requestMap
+	fun getRequest(): Map<String, Any?>{
+		return _requestMap?.getMap() ?: mapOf<String, Any?>()
 	}
 
-	fun getUrl(): HttpUrl? {
-		return _url
+	fun getUrl(): String {
+		return _url.toString()
 	}
 
 	fun timeout(seconds: Long): ApiClient {
@@ -85,6 +85,7 @@ class ApiClient (host: String, port: Int = 80, scheme: String = "http") {
 		return this
 	}
 
+	@TimeIt
 	fun call(): ApiResult{
 
 		var jsonStr: String = ""

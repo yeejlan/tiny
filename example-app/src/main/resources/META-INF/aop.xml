@@ -3,5 +3,6 @@
 	<aspects>
 		<aspect name="example.aop.AutoWeaveHandle" />
 		<aspect name="tiny.aop.CacheHandle" />
+		<aspect name="tiny.aop.TimeItHandle" />
 	</aspects>
 </aspectj>

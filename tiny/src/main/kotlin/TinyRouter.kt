@@ -11,10 +11,13 @@ import java.io.File
 import java.nio.file.Paths
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
+import tiny.lib.TinyProfiler
 
 private val DEFAULT_EXPIRE_TIME_IN_MILLIS = TimeUnit.DAYS.toMillis(30)
 private val ONE_SECOND_IN_MILLIS = TimeUnit.SECONDS.toMillis(1)
 private val staticExtraDir = TinyApp.getConfig()["static.extra.dir"]
+private val profileName = TinyApp.getConfig()["profile.name"]
+private val profileToken = TinyApp.getConfig()["profile.token"]
 
 private data class TinyRewrite(val regex: String, val rewriteTo: String, val paramMapping: Array<Pair<Int, String>>? = null)
 
@@ -159,6 +162,11 @@ object TinyRouter{
 	}
 
 	private fun _callMethod(ctx: TinyWebContext, actionPair: ActionPair){
+		TinyProfiler.disable()
+		if(!profileName.isEmpty() && !profileToken.isEmpty() && ctx.params[profileName] == profileToken){
+			TinyProfiler.init()
+			TinyProfiler.enable()
+		}
 		val targetClz = actionPair.first
 		val targetAction = actionPair.second
 
@@ -175,6 +183,11 @@ object TinyRouter{
 			out.writeTo(writer)
 		}else{
 			writer.print(out)
+		}
+		if(TinyProfiler.enabled()){
+			writer.print("<!--profiling begin---------\r\n")
+			writer.print(TinyProfiler.toString())
+			writer.print("\r\n---------profiling end-->")
 		}
 	}
 
