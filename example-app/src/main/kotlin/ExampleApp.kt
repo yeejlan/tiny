@@ -38,7 +38,7 @@ fun test(){
 	val app = ExampleApp()
 	app.bootstrap()
 
-	//println(testCache(123, "nana", 456L))
+	//println(testCache(123, 8L, 456L))
 	
 	val jdbc = TinyRegistry["db.account"] as TinyJdbc
 	//val jdbc = TinyRegistry.get("db.account", TinyJdbc::class.java)
