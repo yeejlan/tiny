@@ -367,9 +367,9 @@ fun main(args: Array<String>){
 }
 ```
 
-##### Use ioc
+##### Use dependency injection
 
-The ioc framework using is [Dagger2](https://google.github.io/dagger/)  
+The dependency injection framework using is [Dagger2](https://google.github.io/dagger/)  
 
 Tiny framework automatically create the dagger component(tiny.weaver.MagicBox) and component holder(tiny.weaver.TinyBird)  
 
