@@ -2,7 +2,7 @@ package tiny
 
 import tiny.lib.db.SqlResult
 
-class TinyResult <T:Any> constructor(error: String?, data: Any?) {
+class TinyResult <T:Any> constructor(error: String?, data: T?) {
 	var error: String? = null
 	lateinit var data: T
 	val cause = mutableListOf<String>()
@@ -10,8 +10,7 @@ class TinyResult <T:Any> constructor(error: String?, data: Any?) {
 	init {
 		this.error = error
 		if(data != null){
-			@Suppress("UNCHECKED_CAST")
-			this.data = data as T
+			this.data = data
 		}
 		if(error != null){
 			_addCause(error)
@@ -19,6 +18,12 @@ class TinyResult <T:Any> constructor(error: String?, data: Any?) {
 				this.cause.add(data.toString())
 			}
 		}
+	}
+
+	constructor(error: String, cause: String) : this(null, null) {
+		this.error = error
+		_addCause(error)
+		this.cause.add(cause)
 	}
 
 	constructor(error: String, tr: TinyResult<*>) : this(null, null) {
