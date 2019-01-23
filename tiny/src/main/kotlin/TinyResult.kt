@@ -31,16 +31,13 @@ class TinyResult <T:Any> constructor(error: String?, data: T?) {
 		_addCause(tr)
 	}
 
-	constructor(sr: SqlResult<*>) : this(null, null) {
+	constructor(sr: SqlResult<T>) : this(null, null) {
 		if(sr.ex != null){
 			val exStr = sr.ex.toString()
 			this.error = exStr
 			_addCause(exStr)
 		}else{
-			if(sr.data != null){
-				@Suppress("UNCHECKED_CAST")
-				this.data = sr.data as T
-			}
+			this.data = sr.data
 		}
 	}
 
