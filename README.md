@@ -164,7 +164,7 @@ upload.post.maxSize.megabyte = 50
 
 ```ini
 #datasource config: db.ini
-db.account.autoload = true #autoload on framework start or not
+db.account.autoload = true #autoload on application start or not
 db.account.url = jdbc:mysql://127.0.0.1:3306/account?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT
 db.account.username = username
 db.account.password = password
@@ -174,7 +174,7 @@ db.account.hikari.maximumPoolSize = 30
 
 ```ini
 #redis config: redis.ini
-redis.default.autoload = true #autoload on framework start or not
+redis.default.autoload = true
 redis.default.host = 127.0.0.1
 redis.default.port = 6379
 redis.default.database = 1
