@@ -1,5 +1,5 @@
 
-def runWithWeaver = false
+def runWithWeaver = true
 def runWithHotSwap = false
 def tinyAppEnv = "development"
 
