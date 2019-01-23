@@ -20,24 +20,25 @@ class ExampleApp : TinyBootstrap {
 }
 
 fun main(args: Array<String>) {
-TinyApp.runJetty()
-return
-	val app = ExampleApp()
-	test()
 
-	if(!app.script.isEmpty()){
-		TinyScript.run(app.env, app.name, app.script)
-		return
+	val app = ExampleApp()
+	app.bootstrap()
+
+	try{
+		test()
+
+		if(!app.script.isEmpty()){
+			TinyScript.run(app.env, app.name, app.script)
+		}
+	}finally{
+		TinyApp.shutdown()
 	}
 
-	//TinyApp.runJetty()
+
 }
 
 
 fun test(){
-
-	val app = ExampleApp()
-	app.bootstrap()
 
 	//println(testCache(123, 8L, 456L))
 	
@@ -55,7 +56,7 @@ fun test(){
 	}else{
 		DebugUtil.print(trUsers.data())
 	}
-	TinyApp.shutdown()
+	
 }
 
 @AddCache("int_test_{a}")

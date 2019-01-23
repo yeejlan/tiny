@@ -76,7 +76,7 @@ compileJava {
 	targetCompatibility="1.8"
 }
 
-apply from: 'jettyrun.gradle'
+apply from: 'jetty.gradle'
 
 task "as"(dependsOn: assemble)
 task "c"(dependsOn: classes)
