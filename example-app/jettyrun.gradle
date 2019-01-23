@@ -1,0 +1,60 @@
+buildscript {
+	repositories {
+		ext {
+			jettyVersion = '9.4.14.v20181114'
+		}		
+		maven{
+			url 'http://maven.aliyun.com/nexus/content/groups/public/'
+		}
+		dependencies {
+			classpath "org.eclipse.jetty:jetty-server:${jettyVersion}"
+			classpath "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
+			classpath "org.eclipse.jetty:jetty-annotations:${jettyVersion}"
+		}		
+	}
+}
+
+
+import org.eclipse.jetty.server.Server
+import org.eclipse.jetty.servlet.ServletContextHandler
+import org.eclipse.jetty.webapp.WebAppContext
+
+task "JettyRun"(dependsOn: classes){
+	def port = 8080
+	def compileJava = project.tasks.getByName("compileJava")
+	//workingDir = buildDir
+	doLast {
+		//println compileJava.destinationDir
+		def server = new Server(port)
+		server.setStopAtShutdown(true)
+
+		def context = new WebAppContext()
+		context.setContextPath("/")
+		context.setResourceBase("./example-app/web")
+		context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*//classes/.*")
+		
+		context.setConfigurations([
+			new org.eclipse.jetty.annotations.AnnotationConfiguration(),
+			new org.eclipse.jetty.webapp.WebInfConfiguration(), 
+			new org.eclipse.jetty.webapp.WebXmlConfiguration(),
+			new org.eclipse.jetty.webapp.MetaInfConfiguration(), 
+			new org.eclipse.jetty.webapp.FragmentConfiguration(), 
+			new org.eclipse.jetty.plus.webapp.EnvConfiguration(),
+			new org.eclipse.jetty.plus.webapp.PlusConfiguration(), 
+			new org.eclipse.jetty.webapp.JettyWebXmlConfiguration()	
+		] as org.eclipse.jetty.webapp.Configuration[])	
+		server.setHandler(context)
+		
+		server.start()
+		server.join()
+		try {
+            while(true) {
+                Thread.sleep(100)
+            }
+        }
+        catch(InterruptedException e) {
+            println "~~~~~~~~~~~"
+            server.stop()
+        }		
+	}
+}
