@@ -153,7 +153,7 @@ object TinyRouter{
 				_callMethod(ctx, actionPair)
 			}catch(e: Throwable){
 				ctx.exception = e
-				_internalServerError(ctx, e)
+				_internalServerError(ctx)
 			}
 		}else{ //action not found
 			_pageNotFound(ctx)
@@ -207,22 +207,23 @@ object TinyRouter{
 
 	}
 
-	private fun _internalServerError(ctx: TinyWebContext, e: Throwable){
+	private fun _internalServerError(ctx: TinyWebContext){
 		ctx.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
 
 		val actionKey = "error/page500"
 		val actions = TinyController.getActions()
 		val actionPair = actions.get(actionKey)
 		if(actionPair == null){
-			_printInternalError(ctx, e)
+			_printInternalError(ctx)
 			return
 		}
 		
 		_callMethod(ctx, actionPair)
 	}
 
-	private fun _printInternalError(ctx: TinyWebContext, e: Throwable){
+	private fun _printInternalError(ctx: TinyWebContext){
 		val writer = ctx.response.getWriter()
+		val e = ctx.exception!!
 		writer.println("Internal Server Error!")
 		if(TinyApp.getEnv() > TinyApp.PRODUCTION){
 			writer.println("<br /><pre>\r\n")
