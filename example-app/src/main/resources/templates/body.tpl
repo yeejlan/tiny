@@ -1,4 +1,4 @@
 <%=view.render("header")%>
-this is body <br />
-call helper: <%=SquareHelper.getSquare(25)%> <br />
+Greeting, $username <br />
+25*25 = <%=helper.Square.getSquare(25)%> <br />
 <%=view.render("footer")%>

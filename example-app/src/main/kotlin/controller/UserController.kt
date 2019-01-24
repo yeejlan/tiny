@@ -15,6 +15,7 @@ class UserController @AutoWeave constructor(): TinyController() {
 	}
 
 	fun infoAction(): Any {
+		this.view["username"] = "Lina"
 		return render("body")
 	}
 

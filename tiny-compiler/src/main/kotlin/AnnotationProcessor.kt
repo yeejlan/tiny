@@ -308,7 +308,8 @@ class AnnotationProcessor : AbstractProcessor() {
 				continue
 			}
 			var _helperClz = ClassName.get(helper.value)
-			_methodBuilder.addStatement("\$T.addHelper(\$S, new \$L())", _viewClz, helper.key, _helperClz)
+			val helperStr = helper.key.substring(0, helper.key.length - "Helper".length)
+			_methodBuilder.addStatement("\$T.addHelper(\$S, new \$L())", _viewClz, helperStr, _helperClz)
 		}
 		val _method = _methodBuilder.build()
 

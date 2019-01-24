@@ -224,14 +224,17 @@ The only template engine supported is Groovy [GString](http://docs.groovy-lang.o
 
 ```groovy
 <%=view.render("header")%>
+
 This is a groovy gstring template<br />
-<%def square = SquareHelper%>
-call square helper: 25*25 = <%=square.getSquare(25)%> <br />
+Greeting, $username <br />
+25*25 = <%=helper.Square.getSquare(25)%> <br />
+
 <%=view.render("footer")%>
 ```
 ```kotlin
 class HelloController : TinyController(){
 	fun tplAction(): Any{
+		this.view["username"] = "Lina"
 		return render("body")  /* groovy.lang.Writable */
 	}
 }
@@ -253,7 +256,7 @@ import tiny.annotation.Helper
 /*helper class need end with "Helper"*/
 class SquareHelper {
 
-	fun getSquare(value: Long): Long {
+	fun getSquare(value: Long): Long {  /* in template: helper.Square.getSquare(25) */
 		return value * value
 	}
 }
