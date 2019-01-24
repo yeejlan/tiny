@@ -1,11 +1,8 @@
 package tiny.lib.redis
 
-import java.lang.AutoCloseable
 import io.lettuce.core.api.StatefulRedisConnection
 
-interface LettuceDataSource : AutoCloseable{
+interface LettuceDataSource {
 
 	fun getConnection(): StatefulRedisConnection<String, String>
-
-	override fun close()
 }

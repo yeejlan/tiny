@@ -83,7 +83,6 @@ class LettuceRedisPool(): LettuceDataSource {
 	private lateinit var _pool: GenericObjectPool<StatefulRedisConnection<String, String>>
 	private lateinit var _client: RedisClient
 	private var _name: String = ""
-	private val _statefulConnection = ThreadLocal<StatefulRedisConnection<String, String>>()
 
 	fun create(config: LettuceRedisPoolConfig): LettuceRedisPool{
 		val uri = RedisURI.Builder.redis(config.host, config.port)
@@ -101,16 +100,7 @@ class LettuceRedisPool(): LettuceDataSource {
 
 	override fun getConnection(): StatefulRedisConnection<String, String> {
 		val conn = _pool.borrowObject()
-		_statefulConnection.set(conn)
 		return conn
-	}
-
-	override fun close(){
-		val conn = _statefulConnection.get()
-		if(conn != null){
-			_statefulConnection.remove()
-			//Allocated instances are wrapped and must not be returned with _pool.returnObject(conn)
-		}
 	}
 
 	override fun toString(): String {
