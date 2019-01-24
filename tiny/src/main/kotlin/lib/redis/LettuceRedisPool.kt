@@ -109,7 +109,7 @@ class LettuceRedisPool(): LettuceDataSource {
 		val conn = _statefulConnection.get()
 		if(conn != null){
 			_statefulConnection.remove()
-			_pool.returnObject(conn)
+			//Allocated instances are wrapped and must not be returned with _pool.returnObject(conn)
 		}
 	}
 
