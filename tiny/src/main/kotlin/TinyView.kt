@@ -30,7 +30,7 @@ class TinyView{
 			_useCache = false
 		}
 
-		_model = helpers
+		_model = HashMap<String, Any>(helpers)
 		_model.put("view", this)
 	}
 
