@@ -93,7 +93,7 @@ class LettuceRedisPool(): LettuceDataSource {
 
 		_name = config.poolName
 		_client = RedisClient.create(uri)
-		_pool = ConnectionPoolSupport.createGenericObjectPool({ _client.connect() }, config.getConfig())
+		_pool = ConnectionPoolSupport.createGenericObjectPool({ _client.connect() }, config.getConfig(), false)
 
 		TinyApp.addShutdownHook(RedisShutdownHook())
 		return this	
@@ -109,7 +109,7 @@ class LettuceRedisPool(): LettuceDataSource {
 		val conn = _statefulConnection.get()
 		if(conn != null){
 			_statefulConnection.remove()
-			//Allocated instances are wrapped and must not be returned with _pool.returnObject(conn)
+			_pool.returnObject(conn)
 		}
 	}
 
