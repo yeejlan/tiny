@@ -22,9 +22,9 @@ class SwingJettyControl(title: String) : JFrame() {
 
 		setTitle(title)
 
-		val closeBtn = JButton("Reload Jetty")
+		val closeBtn = JButton("Stop Jetty")
 		closeBtn.setMinimumSize(Dimension(180,40))
-		closeBtn.addActionListener { jettyWebApp.stop(); jettyWebApp.start(); }
+		closeBtn.addActionListener { System.exit(0) }
 
 		createLayout(closeBtn)
 
