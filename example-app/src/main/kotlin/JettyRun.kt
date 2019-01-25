@@ -82,7 +82,7 @@ fun runJetty(port: Int = 8080){
 	val context = WebAppContext()
 	context.setContextPath("/")
 	context.setResourceBase("./web")
-	context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*/classes/.*")
+	context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*/classes/java/main/.*")
 	
 	context.setConfigurations(arrayOf(
 		org.eclipse.jetty.annotations.AnnotationConfiguration(),
