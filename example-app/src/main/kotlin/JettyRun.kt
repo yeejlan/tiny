@@ -8,11 +8,13 @@ import javax.swing.*
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletContextHandler
 import org.eclipse.jetty.webapp.WebAppContext
+import java.util.prefs.Preferences
 
-private lateinit var jettyServer: Server
-private lateinit var jettyWebApp: WebAppContext
+private val preferences = Preferences.userRoot().node(SwingJettyControl::class.java.getSimpleName())
 
 class SwingJettyControl(title: String) : JFrame() {
+	val w = 380
+	val h = 100
 
 	init {
 		createUI(title)
@@ -24,7 +26,12 @@ class SwingJettyControl(title: String) : JFrame() {
 
 		val closeBtn = JButton("Reload")
 		closeBtn.setMinimumSize(Dimension(180,40))
-		closeBtn.addActionListener { System.exit(1) }
+		closeBtn.addActionListener {
+			val location = getLocation()
+			preferences.putInt("x", location.x)
+			preferences.putInt("y", location.y)
+			System.exit(1)
+		}
 
 		val gl = GroupLayout(contentPane)
 		contentPane.layout = gl
@@ -38,10 +45,27 @@ class SwingJettyControl(title: String) : JFrame() {
 		pack()
 
 		defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-		setSize(380, 100)
+		setSize(w, h)
 		setAlwaysOnTop(true)
 		setResizable(false)
-		setLocationRelativeTo(null)
+		val x = preferences.getInt("x", -1)
+		val y = preferences.getInt("y", -1)
+		val ss = java.awt.Toolkit.getDefaultToolkit().getScreenSize()
+		if(x < 0 || y < 0 || x > ss.width-w || y > ss.height-h) {
+			setLocationRelativeTo(null)
+		}else{
+			setLocation(x, y)
+		}
+		addWindowListener(JFrameCloseHandler())
+	}
+
+	inner class JFrameCloseHandler: java.awt.event.WindowAdapter() {
+		override fun windowClosing(windowEvent: java.awt.event.WindowEvent){
+			val location = getLocation()
+			preferences.putInt("x", location.x)
+			preferences.putInt("y", location.y)
+			System.exit(0)
+		}
 	}
 }
 
@@ -53,11 +77,9 @@ private fun createAndShowGUI() {
 
 fun runJetty(port: Int = 8080){
 	val server = Server(port)
-	jettyServer = server
 	server.setStopAtShutdown(true)
 
 	val context = WebAppContext()
-	jettyWebApp = context
 	context.setContextPath("/")
 	context.setResourceBase("./web")
 	context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*/classes/.*")
@@ -78,7 +100,7 @@ fun runJetty(port: Int = 8080){
 }
 
 fun main() {
-	runJetty()
+	val port = System.getProperty("tiny.app.port")?.toIntOrNull() ?: 8080
+	runJetty(port)
 	EventQueue.invokeLater(::createAndShowGUI)
-	jettyServer.join()
 }

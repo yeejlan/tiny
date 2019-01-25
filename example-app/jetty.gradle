@@ -1,13 +1,14 @@
 
 def runWithWeaver = true
 def runWithHotSwap = false
+def tinyAppPort = 8080
 def tinyAppEnv = "development"
 def tinyAppMainClass = "example.JettyRunKt"
 
 task "JettyRun"(dependsOn: classes){
 	doLast {
 		while(true){
-			def ret = runTinyApp(runWithWeaver, runWithHotSwap, tinyAppEnv, tinyAppMainClass)
+			def ret = runTinyApp(runWithWeaver, runWithHotSwap, tinyAppPort, tinyAppEnv, tinyAppMainClass)
 			if(ret == 0){
 				break
 			}
@@ -18,7 +19,7 @@ task "JettyRun"(dependsOn: classes){
 task "jr"(dependsOn: JettyRun)
 
 
-def runTinyApp(runWithWeaver, runWithHotSwap, tinyAppEnv, tinyAppMainClass) {
+def runTinyApp(runWithWeaver, runWithHotSwap, tinyAppPort, tinyAppEnv, tinyAppMainClass) {
 	String javaExe = 'java'
 	String javaPath = new File(System.getProperty("java.home"), "bin/$javaExe").absolutePath
 	String classpath = sourceSets.main.runtimeClasspath.collect { it.absolutePath }.join(";")
@@ -33,6 +34,7 @@ def runTinyApp(runWithWeaver, runWithHotSwap, tinyAppEnv, tinyAppMainClass) {
 		jvmArgs = jvmArgs << "-javaagent:c:/tools/hotswap-agent.jar"
 	}
 	jvmArgs = jvmArgs << "-Dtiny.app.env=$tinyAppEnv"
+	jvmArgs = jvmArgs << "-Dtiny.app.port=$tinyAppPort"
 
 	def procParams = [ javaPath ] + jvmArgs + [ "-cp", classpath, tinyAppMainClass ]
 	Process proc = procParams.execute()
