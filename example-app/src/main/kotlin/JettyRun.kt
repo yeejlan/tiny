@@ -22,31 +22,26 @@ class SwingJettyControl(title: String) : JFrame() {
 
 		setTitle(title)
 
-		val closeBtn = JButton("Stop Jetty")
+		val closeBtn = JButton("Reload")
 		closeBtn.setMinimumSize(Dimension(180,40))
-		closeBtn.addActionListener { System.exit(0) }
+		closeBtn.addActionListener { System.exit(1) }
 
-		createLayout(closeBtn)
+		val gl = GroupLayout(contentPane)
+		contentPane.layout = gl
+		gl.autoCreateContainerGaps = true
+		gl.setHorizontalGroup(gl.createSequentialGroup()
+				.addComponent(closeBtn)
+		)
+		gl.setVerticalGroup(gl.createSequentialGroup()
+				.addComponent(closeBtn)
+		)
+		pack()
 
 		defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 		setSize(380, 100)
 		setAlwaysOnTop(true)
 		setResizable(false)
 		setLocationRelativeTo(null)
-	}
-
-
-	private fun createLayout(vararg arg: JComponent) {
-		val gl = GroupLayout(contentPane)
-		contentPane.layout = gl
-		gl.autoCreateContainerGaps = true
-		gl.setHorizontalGroup(gl.createSequentialGroup()
-				.addComponent(arg[0])
-		)
-		gl.setVerticalGroup(gl.createSequentialGroup()
-				.addComponent(arg[0])
-		)
-		pack()
 	}
 }
 

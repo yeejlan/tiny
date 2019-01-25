@@ -2,8 +2,27 @@
 def runWithWeaver = true
 def runWithHotSwap = false
 def tinyAppEnv = "development"
+def tinyAppMainClass = "example.JettyRunKt"
 
-task "JettyRun"(type: JavaExec){
+task "JettyRun"(dependsOn: classes){
+	doLast {
+		while(true){
+			def ret = runTinyApp(runWithWeaver, runWithHotSwap, tinyAppEnv, tinyAppMainClass)
+			if(ret == 0){
+				break
+			}
+		}
+	}
+}
+
+task "jr"(dependsOn: JettyRun)
+
+
+def runTinyApp(runWithWeaver, runWithHotSwap, tinyAppEnv, tinyAppMainClass) {
+	String javaExe = 'java'
+	String javaPath = new File(System.getProperty("java.home"), "bin/$javaExe").absolutePath
+	String classpath = sourceSets.main.runtimeClasspath.collect { it.absolutePath }.join(";")
+	def jvmArgs = []
 
 	if(runWithWeaver) {
 		def weaver = configurations.ajweaver.asPath
@@ -15,9 +34,8 @@ task "JettyRun"(type: JavaExec){
 	}
 	jvmArgs = jvmArgs << "-Dtiny.app.env=$tinyAppEnv"
 
-	classpath = sourceSets.main.runtimeClasspath
-
-	main = 'example.JettyRunKt'
+	def procParams = [ javaPath ] + jvmArgs + [ "-cp", classpath, tinyAppMainClass ]
+	Process proc = procParams.execute()
+	proc.waitForProcessOutput(System.out, System.err)
+	return proc.exitValue()
 }
-
-task "jr"(dependsOn: JettyRun)
