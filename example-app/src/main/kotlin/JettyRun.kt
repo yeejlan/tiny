@@ -46,7 +46,7 @@ class SwingJettyControl(title: String) : JFrame() {
 
 		defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 		setSize(w, h)
-		setAlwaysOnTop(true)
+		//setAlwaysOnTop(true)
 		setResizable(false)
 		val x = preferences.getInt("x", -1)
 		val y = preferences.getInt("y", -1)
