@@ -109,70 +109,69 @@ private class LoggerThread() : Thread() {
 			Thread.currentThread().interrupt()
 		}
 	}
+}
 
-	private fun writeLog(message: String, prefix: String) {
+private fun writeLog(message: String, prefix: String) {
+	val c = Calendar.getInstance()
+	val year = c.get(Calendar.YEAR).toString()
+	val month = String.format("%02d", c.get(Calendar.MONTH) + 1)
+	val day = String.format("%02d", c.get(Calendar.DAY_OF_MONTH))
 
-		val c = Calendar.getInstance()
-		val year = c.get(Calendar.YEAR).toString()
-		val month = String.format("%02d", c.get(Calendar.MONTH) + 1)
-		val day = String.format("%02d", c.get(Calendar.DAY_OF_MONTH))
+	val logName = prefix + "_" + day + ".log"
 
-		val logName = prefix + "_" + day + ".log"
-
-		val monthDir = Paths.get(logPath, year, month)
-		try{
-			if(!Files.isDirectory(monthDir)) {
-				if(isPosix){
-					Files.createDirectories(monthDir, dirAttr)
-				}else{
-					Files.createDirectories(monthDir)
-				}
+	val monthDir = Paths.get(logPath, year, month)
+	try{
+		if(!Files.isDirectory(monthDir)) {
+			if(isPosix){
+				Files.createDirectories(monthDir, dirAttr)
+			}else{
+				Files.createDirectories(monthDir)
 			}
+		}
+	}catch(e: IOException){
+		//pass
+	}
+
+	val logFile = Paths.get(logPath, year, month, logName)
+	try{
+		if(!Files.exists(logFile)) {
+			if(isPosix){
+				Files.createFile(logFile, fileAttr)
+			}else{
+				Files.createFile(logFile)
+			}
+		}
+	}catch(e: IOException){
+		//pass
+	}
+
+	val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+	val now = sdf.format(Date())
+
+	var writer = writerCache.get(logFile)
+
+	if(writer == null){//not found in cache
+		try{
+			writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, 
+				StandardOpenOption.APPEND, StandardOpenOption.WRITE)
 		}catch(e: IOException){
 			//pass
 		}
+		if(writer != null){
+			writerCache.put(logFile, writer)
+		}
+	}
+	val msg = now + " " + message + "\r\n"
+	try{
 
-		val logFile = Paths.get(logPath, year, month, logName)
+		writer?.write(msg)
+		writer?.flush()
+	}catch(e: IOException){ //remove bad writer
+		writerCache.remove(logFile)
 		try{
-			if(!Files.exists(logFile)) {
-				if(isPosix){
-					Files.createFile(logFile, fileAttr)
-				}else{
-					Files.createFile(logFile)
-				}
-			}
+			writer?.close()
 		}catch(e: IOException){
 			//pass
-		}
-
-		val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-		val now = sdf.format(Date())
-
-		var writer = writerCache.get(logFile)
-
-		if(writer == null){//not found in cache
-			try{
-				writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, 
-					StandardOpenOption.APPEND, StandardOpenOption.WRITE)
-			}catch(e: IOException){
-				//pass
-			}
-			if(writer != null){
-				writerCache.put(logFile, writer)
-			}
-		}
-		val msg = now + " " + message + "\r\n"
-		try{
-
-			writer?.write(msg)
-			writer?.flush()
-		}catch(e: IOException){ //remove bad writer
-			writerCache.remove(logFile)
-			try{
-				writer?.close()
-			}catch(e: IOException){
-				//pass
-			}
 		}
 	}
 }
@@ -183,6 +182,15 @@ private class LoggerShutdownHook() : TinyShutdownHook {
 
 	override fun shutdownProcess() {
 		loggerRunning = false
+
+		//flush log
+		var logObject: LogObject? = queue.poll()
+		while(logObject != null) {
+			writeLog(logObject.message, logObject.prefix)
+			logObject = queue.poll()
+		}
+
+		//close writer
 		for(one in writerCache){
 			val writer = one.value
 			try{

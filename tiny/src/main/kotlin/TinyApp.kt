@@ -83,11 +83,7 @@ object TinyApp {
 			}
 			hookObject = shutdownQueue.poll()
 		}
-		try {
-			Thread.sleep(1000) //wait shutdown cleanup
-		} catch (e: InterruptedException) {
-			//pass
-		}
+
 		logger.info("App[${_appName}] stoped with ${hookCount} shutdown hook[s] processed")
 	}
 
