@@ -277,7 +277,7 @@ class TestController : TinyController(){
 		val action = ctx.params.getString("action")
 
 		/* session */
-		val userId: Long = ctx.session["userid"]
+		val userId: Long = ctx.session["userid"] as? Long ?: 0
 		if(userId < 1) {
 			val loggedinId = doUserlogin()
 			/* loggedin with a new session for better security */
