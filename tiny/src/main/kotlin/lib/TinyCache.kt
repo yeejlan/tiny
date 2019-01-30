@@ -7,7 +7,7 @@ import io.lettuce.core.api.StatefulRedisConnection
 object TinyCache {
 
 	private val redisProvider = TinyApp.getConfig()["cache.storage.provider"]
-	private val redis = TinyRegistry[redisProvider] as TinyRedis
+	private val redis: TinyRedis = TinyRegistry[redisProvider] 
 	private val cacheEnable = TinyApp.getConfig().getBoolean("cache.enable")
 	private val cachePrefix = TinyApp.getConfig()["cache.prefix"]
 	private val cacheExpireSeconds = TinyApp.getConfig().getLong("cache.expire.seconds", 3600)
