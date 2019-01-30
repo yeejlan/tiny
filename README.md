@@ -109,7 +109,7 @@ fun main(args: Array<String>){
 	val app = MyApp()
 	app.bootstrap()
 
-	val jdbc: TinyJdbc = TinyRegistry["db.account"]
+	val jdbc = TinyRegistry["db.account"] as TinyJdbc
 	try{
 		val users = jdbc.queryForList("select id, name from users where 1 order by id desc limit 5")
 		users.ex?.printStackTrace()
@@ -323,8 +323,8 @@ fun testing() {
 	val redisConfig = TinyConfig("config/${TinyApp.getEnvString()}/redis.ini")
 	val loader = TinyResourceLoader()
 	val redisLocal = loader.loadRedis(redisConfig, "redis.local")
-	val redis: TinyRedis = TinyRegistry["redis.default"]
-	val jdbcAccount: TinyJdbc = TinyRegistry["db.account"]
+	val redis = TinyRegistry["redis.default"] as TinyRedis
+	val jdbcAccount = TinyRegistry["db.account"] as TinyJdbc
 
 	/* TinyCache */
 	/* real key == "demo_user_id_123" since app.ini, cache.prefix = demo_ */
@@ -387,7 +387,7 @@ import dagger.Provides
 import dagger.Module
 import javax.inject.Named
 
-private val dbAccount: TinyJdbc = TinyRegistry["db.account"]
+private val dbAccount = TinyRegistry["db.account"] as TinyJdbc
 
 @WeaverBird
 @Module

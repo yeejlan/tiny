@@ -4,17 +4,17 @@ import tiny.TinyException
 
 object TinyRegistry{
 
-	val storage = HashMap<String, Any>()
+	private val storage = HashMap<String, Any>()
 
-	inline operator fun <reified T: Any> get(key: String): T {
+	@JvmStatic operator fun get(key: String): Any {
 		val value = storage.get(key)
 		if(value == null){
 			throw TinyException("[TinyRegistry] key not found: " + key)
 		}
-		return value as T
+		return value
 	}
 
-	@JvmStatic fun <T: Any> get(key: String, valueType: Class<T> ): T {
+	@JvmStatic fun <T> get(key: String, valueType: Class<T> ): T {
 		val value = storage.get(key)
 		if(value == null){
 			throw TinyException("[TinyRegistry] key not found: " + key)
