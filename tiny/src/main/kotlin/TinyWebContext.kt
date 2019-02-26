@@ -50,7 +50,7 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 		_initCookies()
 	}
 
-	fun setCookie(name: String, value: String, maxAge: Int = 0, domain: String = "", 
+	fun setCookie(name: String, value: String, maxAge: Int = -1, domain: String = "", 
 		path: String = "/", secure: Boolean = false, httponly: Boolean = false) {
 		val c = Cookie(name, value)
 		c.setMaxAge(maxAge)
