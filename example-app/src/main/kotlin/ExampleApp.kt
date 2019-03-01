@@ -45,18 +45,31 @@ fun test(){
 	val jdbc = TinyRegistry["db.account"] as TinyJdbc
 	//val jdbc = TinyRegistry.get("db.account", TinyJdbc::class.java)
 
-	val users = jdbc.queryForList("select id,name from user where id < :id order by id desc limit 5", mapOf(
+	val result = jdbc.queryForList("select id,name from user where id < :id order by id desc limit 5", mapOf(
 			"id" to 1002,
 			"name" to "note.gif"
 		))
+	//val uu = toTinyResult<User>()
 
-	val trUsers = TinyResult<List<Map<String,Any>>>(users)
+	val trUsers = TinyResult<List<Map<String,Any>>>(result)
+	val trUserObjs = TinyResult.fromList(result, User::class)
 	if(trUsers.error()){
 		DebugUtil.print(trUsers.cause)
 	}else{
 		DebugUtil.print(trUsers.data())
 	}
+
+	if(trUserObjs.error()){
+		DebugUtil.print(trUserObjs.cause)
+	}else{
+		DebugUtil.print(trUserObjs.data())
+	}
 	
+}
+
+class User(val map: HashMap<String, Any>) {
+	var id: Int by map
+	var name: String by map
 }
 
 @AddCache("int_test_{a}")
