@@ -13,6 +13,14 @@ open class TinyController{
 	var view = TinyView()
 	lateinit var ctx: TinyWebContext
 
+	open fun before() {
+		//pass
+	}
+
+	open fun after() {
+		//pass
+	}
+
 	/**
 	* render a template (without .tpl)
 	**/

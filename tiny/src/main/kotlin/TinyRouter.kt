@@ -174,9 +174,13 @@ object TinyRouter{
 		(_instance as TinyController).ctx = ctx
 
 		val _method = targetClz.getMethod(targetAction)
+		val _before = targetClz.getMethod("before")
+		val _after = targetClz.getMethod("after")
 
 		ctx.loadSession()
+		_before.invoke(_instance)
 		val out = _method.invoke(_instance)
+		_after.invoke(_instance)
 		ctx.session.save()
 		val writer = ctx.response.getWriter()
 		if(out is groovy.lang.Writable){
