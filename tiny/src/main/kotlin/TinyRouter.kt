@@ -25,6 +25,7 @@ object TinyRouter{
 	private val _routers: HashMap<Regex, TinyRewrite> = HashMap()
 	private val _controller = ThreadLocal<String>()
 	private val _action = ThreadLocal<String>()
+	private val _ctx = ThreadLocal<TinyWebContext>()
 
 	/**
 	* get current controller
@@ -38,6 +39,13 @@ object TinyRouter{
 	**/
 	@JvmStatic fun currAction(): String {
 		return _action.get()
+	}
+
+	/**
+	* get ctx
+	**/
+	@JvmStatic fun ctx(): TinyWebContext {
+		return _ctx.get()
 	}
 
 	/**
@@ -64,6 +72,7 @@ object TinyRouter{
 		var controller = ""
 		var action = ""
 		val ctx = TinyWebContext(request, response)
+		_ctx.set(ctx)
 
 		if(TinyApp.getEnv() > TinyApp.PRODUCTION){
 			val staticFileFound = _serveStaticFile(ctx) 
