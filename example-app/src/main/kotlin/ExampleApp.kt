@@ -52,7 +52,7 @@ fun test(){
 	//val uu = toTinyResult<User>()
 
 	val trUsers = TinyResult<List<Map<String,Any>>>(result)
-	val trUserObjs = TinyResult.fromList(result, User::class)
+	val trUserObjs = TinyResult.fromList(result, User::class) //TinyResult<List<User>>
 	if(trUsers.error()){
 		DebugUtil.print(trUsers.cause)
 	}else{

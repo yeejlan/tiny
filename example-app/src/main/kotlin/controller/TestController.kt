@@ -85,4 +85,16 @@ class TestController @AutoWeave constructor(): TinyController(){
 		val result = client.method("/test/api").request(paramsMap).call()
 		return result
 	}
+
+	fun writeAction(): Any {
+		val writer = ctx.response.getWriter()
+		var i = 0
+		while(i<10) {
+			writer.write("$i")
+			writer.flush()
+			i++
+			Thread.sleep(1000)
+		}
+		return ""
+	}
 }
