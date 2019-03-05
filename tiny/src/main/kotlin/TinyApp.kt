@@ -64,7 +64,7 @@ object TinyApp {
 		_configFile = "config/${_envString}/${appName}.ini"
 		_config = TinyConfig(_configFile)
 		_settle()
-		logger.info("App[${_appName}] starting with env=${_envString} and config=${_configFile}")
+		logger.info("App[${_appName}] starting with env=${_envString}, config=${_configFile}, working_dir = " + System.getProperty("user.dir"))
 		_isInit = true
 		if(!runAsScript){
 			TinyResourceLoader().autoload()
