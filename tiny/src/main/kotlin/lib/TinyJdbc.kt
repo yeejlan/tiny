@@ -1,4 +1,4 @@
-package tiny.lib.db
+package tiny.lib
 
 import tiny.*
 import tiny.lib.db.*
