@@ -19,6 +19,14 @@ class TestController @AutoWeave constructor(): TinyController(){
 		return "11123this is test/user page"
 	}
 
+	fun redirectAction(): Any {
+		println("redirect to /test/user")
+		TinyRouter.ctx().response.sendRedirect("/test/user")
+		TinyRouter.exit()
+		println("after redirect to /test/user")
+		return "this is test/redirect page"
+	}
+
 	fun infoAction(): Any {
 		return "this is test/info page"
 	}

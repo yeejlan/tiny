@@ -49,6 +49,13 @@ object TinyRouter{
 	}
 
 	/**
+	* terminate current request handling
+	**/
+	@JvmStatic fun exit(): Unit {
+		throw TinyRouterExitException("exit")
+	}
+
+	/**
 	* add a regex router
 	* TinyRewrite("shop/product/(\d+)", "shop/showprod", array(1 => "prod_id"))
 	* will match uri "/shop/product/1001" to "shop" controller and "showprod" action, with ctx.params["prod_id"] = 1001
@@ -161,8 +168,14 @@ object TinyRouter{
 			try{
 				_callMethod(ctx, actionPair)
 			}catch(e: Throwable){
-				ctx.exception = e
-				_internalServerError(ctx)
+				if(e is TinyRouterExitException){ //ignore TinyRouterExitException
+					//pass
+				}else if(e is InvocationTargetException && e.getTargetException() is TinyRouterExitException){
+					//pass
+				}else{
+					ctx.exception = e
+					_internalServerError(ctx)
+				}
 			}
 		}else{ //action not found
 			_pageNotFound(ctx)
@@ -351,3 +364,4 @@ object TinyRouter{
 
 }
 
+private class TinyRouterExitException(message: String?) : Throwable(message)
