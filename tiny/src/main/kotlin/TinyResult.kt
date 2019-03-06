@@ -62,6 +62,11 @@ class TinyResult <T:Any> constructor(error: String?, data: T?) {
 		return this.data
 	}
 
+	/*return this.cause as String*/
+	fun cause(): String {
+		return this.cause.toString()
+	}
+
 	companion object{
 		@JvmStatic fun <T: Any> fromMap(sr: SqlResult<Map<String, Any>>, clazz: KClass<T>): TinyResult<T> {
 			if(sr.ex != null) {
