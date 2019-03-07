@@ -62,4 +62,7 @@ class TinyParams(paramMap: HashMap<String, String>) {
 		return this.get(key).toBoolean()
 	}
 
+	fun getMap(): HashMap<String, String> {
+		return _params
+	}
 }

@@ -62,7 +62,7 @@ class TinyResourceLoader{
 		}
 
 		val configMatcher = "^db\\.([_a-zA-Z0-9]+)\\.url".toRegex()
-		for(one in config.getConfigMap()){
+		for(one in config.getMap()){
 			val key = one.key
 			if(configMatcher.containsMatchIn(key)){
 				val dataSourceName = key.substring(0, key.length - ".url".length)
@@ -83,7 +83,7 @@ class TinyResourceLoader{
 		}
 
 		val configMatcher = "^redis\\.([_a-zA-Z0-9]+)\\.host".toRegex()
-		for(one in config.getConfigMap()){
+		for(one in config.getMap()){
 			val key = one.key
 			if(configMatcher.containsMatchIn(key)){
 				val redisName = key.substring(0, key.length - ".host".length)

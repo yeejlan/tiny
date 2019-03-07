@@ -54,7 +54,7 @@ class TinyConfig{
 		return value
 	}
 
-	fun getConfigMap(): Map<String, String> {
+	fun getMap(): Map<String, String> {
 		return _configMap
 	}
 
