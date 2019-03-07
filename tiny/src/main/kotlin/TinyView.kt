@@ -42,6 +42,10 @@ class TinyView{
 		return _model.get(key) ?: Any()
 	}
 
+	fun getMap(): HashMap<String, Any> {
+		return _model
+	}
+
 	/*
 	* render a template, for example render('common/header') will lookup /templates/common/header.tpl
 	*/
