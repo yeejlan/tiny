@@ -5,9 +5,9 @@ import kotlin.reflect.full.primaryConstructor
 
 import tiny.lib.db.SqlResult
 
-class TinyResult <T:Any> constructor(error: String?, data: T?) {
+class TinyResult <T:Any?> constructor(error: String?, data: T?) {
 	var error: String? = null
-	lateinit var data: T
+	var data: T? = null
 	val cause = mutableListOf<String>()
 
 	init {
@@ -59,7 +59,8 @@ class TinyResult <T:Any> constructor(error: String?, data: T?) {
 		if(this.error()){
 			throw TinyException(this::class.java.getSimpleName() + " error: " + cause)
 		}
-		return this.data
+		@Suppress("UNCHECKED_CAST")
+		return this.data as T
 	}
 
 	/*return this.cause as String*/
@@ -68,14 +69,16 @@ class TinyResult <T:Any> constructor(error: String?, data: T?) {
 	}
 
 	companion object{
-		@JvmStatic fun <T: Any> fromMap(sr: SqlResult<Map<String, Any>>, clazz: KClass<T>): TinyResult<T> {
+		@JvmStatic fun <T: Any> fromMap(sr: SqlResult<Map<String, Any>>, clazz: KClass<T>): TinyResult<T?> {
 			if(sr.ex != null) {
 				val msg = sr.ex.toString() + ": " + Thread.currentThread().getStackTrace()[2]
-				return TinyResult<T>("Sql query error",  msg)
+				return TinyResult<T?>("Sql query error",  msg)
 			}
-
+			if(sr.data.isEmpty()) {
+				return TinyResult<T?>(null, null as T?)
+			}
 			val con = clazz.primaryConstructor!!
-			return TinyResult<T>(null, con.call(sr.data))
+			return TinyResult<T?>(null, con.call(sr.data))
 		}
 
 		@JvmStatic fun <T: Any> fromList(sr: SqlResult<List<Map<String, Any>>>, clazz: KClass<T>): TinyResult<List<T>> {
