@@ -205,7 +205,9 @@ object TinyRouter{
 		_after.invoke(_instance)
 		ctx.session.save()
 		val writer = ctx.response.getWriter()
-		if(out is groovy.lang.Writable){
+		if(null == out) {
+			//pass
+		}else if(out is groovy.lang.Writable){
 			out.writeTo(writer)
 		}else{
 			writer.print(out)

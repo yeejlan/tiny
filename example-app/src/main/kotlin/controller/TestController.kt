@@ -94,7 +94,7 @@ class TestController @AutoWeave constructor(): TinyController(){
 		return result
 	}
 
-	fun writeAction(): Any {
+	fun writeAction(): Unit {
 		val writer = ctx.response.getWriter()
 		var i = 0
 		while(i<10) {
@@ -103,6 +103,6 @@ class TestController @AutoWeave constructor(): TinyController(){
 			i++
 			Thread.sleep(1000)
 		}
-		return ""
+		return
 	}
 }
