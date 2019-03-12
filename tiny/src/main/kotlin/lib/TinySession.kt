@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.*
 import tiny.*
 import tiny.lib.session.*
 import org.slf4j.LoggerFactory
+import com.fasterxml.jackson.databind.DeserializationFeature
 
 private val objectMapper = jacksonObjectMapper()
 private val logger = LoggerFactory.getLogger(TinySession::class.java)
@@ -17,6 +18,10 @@ class TinySession {
 
 	companion object{
 		private val _sessionStorage = SessionStorage.get()
+	}
+
+	init{
+		objectMapper.enable(DeserializationFeature.USE_LONG_FOR_INTS)
 	}
 
 	operator fun set(key: String, value: Any) {
