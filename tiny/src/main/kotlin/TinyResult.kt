@@ -68,6 +68,13 @@ class TinyResult <T:Any?> constructor(error: String?, data: T?) {
 		return this.cause.toString()
 	}
 
+	/*Throw exception if there is error*/
+	fun mayThrow(message: String = ""): Unit {
+		if(error()) {
+			throw TinyResultException(message + " " + cause())
+		}
+	}
+
 	companion object{
 		@JvmStatic fun <T: Any> fromMap(sr: SqlResult<Map<String, Any>>, clazz: KClass<T>): TinyResult<T?> {
 			if(sr.ex != null) {
@@ -100,3 +107,5 @@ class TinyResult <T:Any?> constructor(error: String?, data: T?) {
 		cause.addAll(tr.cause)
 	}
 }
+
+class TinyResultException(message: String?) : Throwable(message)
