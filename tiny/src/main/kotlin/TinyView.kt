@@ -21,7 +21,7 @@ private val helpers: HashMap<String, Any> = HashMap()
 
 class TinyView{
 
-	private var _model = HashMap<String, Any>()
+	private var _model = HashMap<String, Any?>()
 	private var _useCache = true
 
 	constructor() {
@@ -34,7 +34,7 @@ class TinyView{
 		_model.put("helper", helpers)
 	}
 
-	operator fun set(key: String, value: Any) {
+	operator fun set(key: String, value: Any?) {
 		_model.put(key, value)
 	}
 
@@ -42,7 +42,7 @@ class TinyView{
 		return _model.get(key) ?: Any()
 	}
 
-	fun getMap(): HashMap<String, Any> {
+	fun getMap(): HashMap<String, Any?> {
 		return _model
 	}
 
