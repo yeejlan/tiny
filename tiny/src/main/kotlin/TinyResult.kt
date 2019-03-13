@@ -57,7 +57,7 @@ class TinyResult <T:Any?> constructor(error: String?, data: T?) {
 	fun data(): T {
 
 		if(this.error()){
-			throw TinyException(this::class.java.getSimpleName() + " error: " + cause)
+			throw TinyResultException("bad result" + cause())
 		}
 		@Suppress("UNCHECKED_CAST")
 		return this.data as T
@@ -71,7 +71,7 @@ class TinyResult <T:Any?> constructor(error: String?, data: T?) {
 	/*Throw exception if there is error*/
 	fun mayThrow(message: String = ""): Unit {
 		if(error()) {
-			throw TinyResultException(message + " " + cause())
+			throw TinyResultException(message + cause())
 		}
 	}
 
