@@ -3,6 +3,7 @@ package tiny.lib
 import tiny.*
 import tiny.lib.redis.*
 import com.fasterxml.jackson.module.kotlin.*
+import com.fasterxml.jackson.databind.DeserializationFeature
 import io.lettuce.core.api.StatefulRedisConnection
 import org.slf4j.LoggerFactory
 
@@ -14,6 +15,7 @@ class TinyRedis(ds: LettuceDataSource) {
 
 	init{
 		_datasource = ds
+		objectMapper.enable(DeserializationFeature.USE_LONG_FOR_INTS)
 	}
 
 	fun exec(body: (StatefulRedisConnection<String, String>) -> Unit) {
