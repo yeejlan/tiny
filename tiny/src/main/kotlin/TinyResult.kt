@@ -2,8 +2,10 @@ package tiny
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
-
+import org.slf4j.LoggerFactory
 import tiny.lib.db.SqlResult
+
+private val logger = LoggerFactory.getLogger(TinyResult::class.java)
 
 class TinyResult <T:Any?> constructor(error: String?, data: T?) {
 	var error: String? = null
@@ -57,7 +59,9 @@ class TinyResult <T:Any?> constructor(error: String?, data: T?) {
 	fun data(): T {
 
 		if(this.error()){
-			throw TinyResultException("bad result" + cause())
+			val msg = "Bad TinyResult: " + Thread.currentThread().getStackTrace()[2] + cause()
+			logger.error(msg)
+			throw TinyResultException("Bad TinyResult" + cause())
 		}
 		@Suppress("UNCHECKED_CAST")
 		return this.data as T
@@ -71,6 +75,8 @@ class TinyResult <T:Any?> constructor(error: String?, data: T?) {
 	/*Throw exception if there is error*/
 	fun mayThrow(message: String = ""): Unit {
 		if(error()) {
+			val msg = "${message}: " + Thread.currentThread().getStackTrace()[2] + cause()
+			logger.error(msg)
 			throw TinyResultException(message + cause())
 		}
 	}
