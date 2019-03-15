@@ -138,11 +138,11 @@ object TinyApp {
 			configurator.setContext(context)
 			context.reset()
 			val configFile = "config/${_envString}/logback.xml"
-			val resourceUrl = this::class.java.classLoader.getResource(configFile)
-			if(resourceUrl == null){
+			val inputStream = this::class.java.classLoader.getResourceAsStream(configFile)
+			if(inputStream == null){
 				throw TinyException("Logback config is missing: " + configFile)
 			}
-			configurator.doConfigure(File(resourceUrl.toURI()))
+			configurator.doConfigure(inputStream)
 		}catch (e: JoranException){
 			//pass
 		}
