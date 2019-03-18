@@ -8,6 +8,7 @@ import tiny.lib.session.*
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(TinyResourceLoader::class.java)
+private val sessionEnable = TinyApp.getConfig().getBoolean("session.enable")
 
 class TinyResourceLoader{
 	val _envString = TinyApp.getEnvString()
@@ -97,6 +98,11 @@ class TinyResourceLoader{
 	private fun _loadSessionStorage() {
 		val configName = "session.storage"
 		var storageName = TinyApp.getConfig()[configName]
+
+		if(!sessionEnable) {
+			logger.info("Session is NOT enabled.")
+			return
+		}
 		if(storageName.isEmpty()){
 			logger.warn("""App config["${configName}"] not found, fallback to "redis" """)
 			storageName = "redis"
