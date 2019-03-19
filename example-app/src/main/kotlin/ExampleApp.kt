@@ -42,7 +42,7 @@ fun test(){
 
 	//println(testCache(123, 8L, 456L))
 	
-	val jdbc = TinyRegistry["db.account"] as TinyJdbc
+	val jdbc: TinyJdbc = TinyRegistry["db.account"]
 	//val jdbc = TinyRegistry.get("db.account", TinyJdbc::class.java)
 
 	val result = jdbc.queryForList("select id,name from user where id < :id order by id desc limit 5", mapOf(

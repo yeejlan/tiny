@@ -67,7 +67,7 @@ class TestController @AutoWeave constructor(): TinyController(){
 	}
 
 	fun selectAction() : Any {
-		val jdbc = TinyRegistry["db.account"] as TinyJdbc
+		val jdbc: TinyJdbc = TinyRegistry["db.account"]
 		val users = jdbc.queryForList("select id,name from user where id < :id order by id desc limit 5", mapOf(
 				"id" to 1002,
 				"name" to "note.gif"
