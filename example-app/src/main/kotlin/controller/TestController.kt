@@ -46,7 +46,7 @@ class TestController @AutoWeave constructor(): TinyController(){
 
 	fun getSessionAction(): Any {
 
-		val info = ctx.session["userInfo"]
+		val info: HashMap<String, Any>? = ctx.session["userInfo"]
 		println(info)
 		return ctx.session
 	}

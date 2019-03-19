@@ -29,8 +29,9 @@ class TinySession {
 		_map.put(key, value)
 	}
 
-	operator fun get(key: String): Any? {
-		return _map.get(key)
+	operator fun <T> get(key: String): T {
+		@Suppress("UNCHECKED_CAST")
+		return _map.get(key) as T
 	}
 
 	fun delete(key: String) {
