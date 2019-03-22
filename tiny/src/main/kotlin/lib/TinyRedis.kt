@@ -18,19 +18,21 @@ class TinyRedis(ds: LettuceDataSource) {
 		objectMapper.enable(DeserializationFeature.USE_LONG_FOR_INTS)
 	}
 
-	fun exec(body: (StatefulRedisConnection<String, String>) -> Unit) {
+	fun exec(body: (StatefulRedisConnection<String, String>) -> Unit, throwEx: Boolean = false) {
 		val conn = _datasource.getConnection()
 		conn.use {
 			try{
 				body(conn)
 			}catch(e: Throwable){
 				logger.error("Redis exec error on ${this} " + e)
-				throw e
+				if(throwEx){
+					throw e
+				}
 			}
 		}
 	}
 
-	fun query(body: (StatefulRedisConnection<String, String>) -> String?): String {
+	fun query(body: (StatefulRedisConnection<String, String>) -> String?, throwEx: Boolean = false): String {
 		val conn = _datasource.getConnection()
 		var value: String? = null
 		conn.use {
@@ -38,7 +40,9 @@ class TinyRedis(ds: LettuceDataSource) {
 				value = body(conn)
 			}catch(e: Throwable){
 				logger.error("Redis query error on ${this} " + e)
-				throw e
+				if(throwEx){
+					throw e
+				}
 			}
 		}
 
