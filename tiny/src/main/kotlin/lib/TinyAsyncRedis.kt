@@ -22,11 +22,11 @@ class TinyAsyncRedis(ds: LettuceAsyncDataSource) {
 		objectMapper.enable(DeserializationFeature.USE_LONG_FOR_INTS)
 	}
 
-	fun exec(body: (RedisAsyncCommands<String, String>) -> RedisFuture<Any>): CompletableFuture<Boolean> {
+	fun exec(body: (RedisAsyncCommands<String, String>) -> RedisFuture<Any?>): CompletableFuture<Boolean> {
 
 		val retFut = CompletableFuture<Boolean>()
 		_datasource.getConnection().thenCompose{conn ->
-		var fut: RedisFuture<Any>? = null
+		var fut: RedisFuture<Any?>? = null
 		try{
 			val asyncCommands = conn.async()
 			fut = body(asyncCommands)
@@ -76,7 +76,7 @@ class TinyAsyncRedis(ds: LettuceAsyncDataSource) {
 			commands.set(key, value)
 			commands.expire(key, expireSeconds)
 			@Suppress("UNCHECKED_CAST")
-			commands.exec() as RedisFuture<Any>
+			commands.exec() as RedisFuture<Any?>
 		})
 		return fut
 	}
@@ -94,7 +94,7 @@ class TinyAsyncRedis(ds: LettuceAsyncDataSource) {
 	fun expire(key: String, expireSeconds: Long = 3600): CompletableFuture<Boolean> {
 		val fut = exec({ commands ->
 			@Suppress("UNCHECKED_CAST")
-			commands.expire(key, expireSeconds) as RedisFuture<Any>
+			commands.expire(key, expireSeconds) as RedisFuture<Any?>
 		})
 		return fut
 	}
@@ -102,7 +102,7 @@ class TinyAsyncRedis(ds: LettuceAsyncDataSource) {
 	fun delete(key: String): CompletableFuture<Boolean> {
 		val fut = exec({ commands ->
 			@Suppress("UNCHECKED_CAST")
-			commands.del(key) as RedisFuture<Any>
+			commands.del(key) as RedisFuture<Any?>
 		})
 		return fut
 	}
