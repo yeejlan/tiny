@@ -26,9 +26,9 @@ class TinyAsyncRedis(ds: LettuceAsyncDataSource) {
 
 		val retFut = CompletableFuture<Boolean>()
 		_datasource.getConnection().thenCompose{conn ->
-		val asyncCommands = conn.async()
 		var fut: RedisFuture<Any>? = null
 		try{
+			val asyncCommands = conn.async()
 			fut = body(asyncCommands)
 		}catch(e: Throwable){
 			conn.closeAsync()
@@ -50,9 +50,9 @@ class TinyAsyncRedis(ds: LettuceAsyncDataSource) {
 
 		val retFut = CompletableFuture<String>()
 		_datasource.getConnection().thenCompose{conn ->
-		val asyncCommands = conn.async()
 		var fut: RedisFuture<String>? = null
 		try{
+			val asyncCommands = conn.async()
 			fut = body(asyncCommands)
 		}catch(e: Throwable){
 			conn.closeAsync()
