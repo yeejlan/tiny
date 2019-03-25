@@ -56,6 +56,7 @@ class TinyAsyncRedis(ds: LettuceAsyncDataSource) {
 			fut = body(asyncCommands)
 		}catch(e: Throwable){
 			conn.closeAsync()
+			logger.error("Redis async query error on ${this} " + e)
 			retFut.complete("")
 		}
 		fut?.whenComplete{ v, e -> 
