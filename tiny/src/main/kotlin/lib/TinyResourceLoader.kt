@@ -25,6 +25,18 @@ class TinyResourceLoader{
 		return redis
 	}
 
+	fun loadAsyncRedis(config: TinyConfig, configName: String, fixedPoolSize: Int = 0): TinyAsyncRedis {
+		var poolConfig = getAsyncRedisPoolConfig(config, configName)
+		if(fixedPoolSize > 0) {
+			poolConfig = poolConfig.doFixedPoolConfig(fixedPoolSize)
+		}
+		val redisPool = LettuceAsyncRedisPool().create(poolConfig)
+
+		val redis = TinyAsyncRedis(redisPool)
+		TinyRegistry[configName] = redis
+		return redis
+	}
+
 	fun loadJdbc(config: TinyConfig, configName: String, fixedPoolSize: Int = 0): TinyJdbc {
 		var hikariConfig = getHikariConfig(config, configName)
 		if(fixedPoolSize > 0) {
@@ -47,6 +59,11 @@ class TinyResourceLoader{
 		val poolConfig = LettuceRedisPoolConfig().doConfig(config, configName)
 		return poolConfig
 	}
+
+	private fun getAsyncRedisPoolConfig(config: TinyConfig, configName: String): LettuceAsyncRedisPoolConfig{
+		val poolConfig = LettuceAsyncRedisPoolConfig().doConfig(config, configName)
+		return poolConfig
+	}	
 
 	private fun getHikariConfig(config: TinyConfig, configName: String): DataSourceHikariConfig{
 		val hikariConfig = DataSourceHikariConfig().doConfig(config, configName)
@@ -89,7 +106,11 @@ class TinyResourceLoader{
 			if(configMatcher.containsMatchIn(key)){
 				val redisName = key.substring(0, key.length - ".host".length)
 				if(config.getBoolean("${redisName}.autoload")){
-					loadRedis(config, redisName)
+					if(config.getBoolean("${redisName}.async")){
+						loadAsyncRedis(config, redisName)
+					}else{
+						loadRedis(config, redisName)
+					}
 				}
 			}
 		}

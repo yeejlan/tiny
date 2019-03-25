@@ -39,7 +39,6 @@ fun main(args: Array<String>) {
 
 
 fun test(){
-
 	//println(testCache(123, 8L, 456L))
 	
 	val jdbc: TinyJdbc = TinyRegistry["db.account"]
@@ -64,7 +63,14 @@ fun test(){
 	}else{
 		DebugUtil.print(trUserObjs.data())
 	}
-	
+
+	val aredis: TinyAsyncRedis = TinyRegistry["redis.local"]
+	for(i in 0..10) {
+		val r1 = aredis.set("a1" + i, i + 2000)
+		println(r1.join())
+		val r2 = aredis.get("a1" + i)
+		println(r2.join())
+	}
 }
 
 class User(val map: HashMap<String, Any>) {
