@@ -14,7 +14,7 @@ class SessionStorageRedis: ISessionStorage {
 	init {
 		val redisName = storageProvider
 		try{
-			_tinyRedis = TinyRegistry.get(redisName) as TinyRedis
+			_tinyRedis = TinyRegistry.get(redisName) as? TinyRedis
 		}catch(e: TinyException){
 			logger.warn("${this::class.java.getSimpleName()} init error: can not found ${redisName} in TinyRegistry, please make sure Redis config[\"${redisName}\"] exists")
 		}
