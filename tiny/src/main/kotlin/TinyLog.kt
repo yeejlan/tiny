@@ -25,9 +25,9 @@ private var isPosix = true
 
 private val queue = ConcurrentLinkedQueue<LogObject>()
 
-private val filePerms = PosixFilePermissions.fromString("rw-rw----")
+private val filePerms = PosixFilePermissions.fromString("rw-rw-rw-")
 private val fileAttr = PosixFilePermissions.asFileAttribute(filePerms)
-private val dirPerms = PosixFilePermissions.fromString("rwxrwx---")
+private val dirPerms = PosixFilePermissions.fromString("rwxrwxrwx")
 private val dirAttr = PosixFilePermissions.asFileAttribute(dirPerms)
 private val maxFileOpened = 10
 private val writerCache = WriterCache()
