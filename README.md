@@ -1,9 +1,6 @@
 # tiny
 A Kotlin/Java mvc framework inspired by Zend Framework 1
 
-### Reinvent the wheel?
-I want to write xml config files as little as possible, so say goodbye to [Spring Boot](https://spring.io/projects/spring-boot), rather than injecting request scoped objects to singleton threadsafe controllers, create non threadsafe controllers for each request, and store temporary variables in those controllers is my favor way. Also I like the idea of mapping URI directly to actions. Here comes this new framework.
-
 ### Kotlin or Java?
 In short, Kotlin is better Java.
 
