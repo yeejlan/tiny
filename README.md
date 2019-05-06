@@ -1,5 +1,6 @@
 # tiny
 A Kotlin/Java mvc framework inspired by Zend Framework 1
+For demo, please check [release-manager](https://github.com/yeejlan/release_manager_demo)
 
 ### Kotlin or Java?
 In short, Kotlin is better Java.
