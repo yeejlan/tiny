@@ -6,6 +6,7 @@ import org.aspectj.lang.Signature
 import org.aspectj.lang.annotation.*
 import org.aspectj.lang.reflect.MethodSignature
 
+import tiny.TinyResult
 import tiny.lib.TinyCache
 import tiny.lib.DebugUtil
 import tiny.TinyRegistry
@@ -36,6 +37,14 @@ class CacheHandle {
 
 		val result = pjp.proceed()
 		if(result != null){
+			if(result is TinyResult<*>) {
+				if(result.error() || result.data() == null || result.data() == ""){
+					return result
+				}
+				if(result.data() is List<*> && (result.data() as List<*>).isEmpty()){
+					return result
+				}
+			}
 			TinyCache.set(realCacheKey, result)
 		}
 		return result
