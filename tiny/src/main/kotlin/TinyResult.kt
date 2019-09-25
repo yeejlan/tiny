@@ -7,18 +7,12 @@ import tiny.lib.db.SqlResult
 
 private val logger = LoggerFactory.getLogger(TinyResult::class.java)
 
-class TinyResult <T:Any?> constructor(error: String?, data: T?) {
-	var error: String? = null
-	var data: T? = null
+data class TinyResult <T:Any?> constructor(var error: String?, var data: T?) {
 	val cause = mutableListOf<String>()
 
 	init {
-		this.error = error
-		if(data != null){
-			this.data = data
-		}
 		if(error != null){
-			_addCause(error)
+			_addCause(error as String)
 			if(data != null){
 				this.cause.add(data.toString())
 			}
