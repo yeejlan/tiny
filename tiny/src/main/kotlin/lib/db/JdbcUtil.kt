@@ -32,7 +32,12 @@ object JdbcUtil {
 		while(rs.next()){
 			val resultMap = HashMap<String, Any?>()
 			for(i in 1..columnCount){
-				resultMap.put(metaData.getColumnName(i), JdbcUtil.getRsValue(rs, i))
+				val value = JdbcUtil.getRsValue(rs, i)
+				if(value == null) { //a temp fix
+					//pass
+				}else{
+					resultMap.put(metaData.getColumnName(i), value)
+				}
 			}
 			resultList.add(resultMap)
 		}
