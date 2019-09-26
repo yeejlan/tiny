@@ -10,7 +10,7 @@ import tiny.lib.DebugUtil
 
 object JdbcUtil {
 
-	/*Convert ResultSet to Map<String, Any>*/
+	/*Convert ResultSet to Map<String, Any?>*/
 	fun rsToMap(rs: ResultSet): Map<String, Any?>{
 		val resultMap = HashMap<String, Any?>()
 		val metaData = rs.getMetaData()
