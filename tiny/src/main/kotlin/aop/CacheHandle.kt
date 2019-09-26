@@ -18,7 +18,7 @@ class CacheHandle {
 	private val _paramRegex = "\\{([_a-zA-Z0-9]+)\\}".toRegex()
 
 	@Around("execution(* *(..)) && @annotation(tiny.annotation.AddCache)")
-	fun handleCacheAdd(pjp: ProceedingJoinPoint): Any {
+	fun handleCacheAdd(pjp: ProceedingJoinPoint): Any? {
 		val signature = pjp.getSignature() as MethodSignature
 		val method = signature.getMethod()
 		val cacheAdd = method.getAnnotation(AddCache::class.java)
@@ -51,7 +51,7 @@ class CacheHandle {
 	}
 
 	@Around("execution(* *(..)) && @annotation(tiny.annotation.DeleteCache)")
-	fun handleCacheDelete(pjp: ProceedingJoinPoint): Any {
+	fun handleCacheDelete(pjp: ProceedingJoinPoint): Any? {
 		val signature = pjp.getSignature() as MethodSignature
 		val method = signature.getMethod()
 		val cacheDelete = method.getAnnotation(DeleteCache::class.java)
