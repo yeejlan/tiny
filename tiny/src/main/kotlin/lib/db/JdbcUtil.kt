@@ -11,8 +11,8 @@ import tiny.lib.DebugUtil
 object JdbcUtil {
 
 	/*Convert ResultSet to Map<String, Any>*/
-	fun rsToMap(rs: ResultSet): Map<String, Any>{
-		val resultMap = HashMap<String, Any>()
+	fun rsToMap(rs: ResultSet): Map<String, Any?>{
+		val resultMap = HashMap<String, Any?>()
 		val metaData = rs.getMetaData()
 		val columnCount = metaData.getColumnCount()
 		while(rs.next()){
@@ -24,13 +24,13 @@ object JdbcUtil {
 		return resultMap
 	}
 
-	/*Convert ResultSet to List<Map<String, Any>>*/
-	fun rsToList(rs: ResultSet): List<Map<String, Any>>{
-		val resultList: MutableList<HashMap<String, Any>> = mutableListOf()
+	/*Convert ResultSet to List<Map<String, Any?>>*/
+	fun rsToList(rs: ResultSet): List<Map<String, Any?>>{
+		val resultList: MutableList<HashMap<String, Any?>> = mutableListOf()
 		val metaData = rs.getMetaData()
 		val columnCount = metaData.getColumnCount()
 		while(rs.next()){
-			val resultMap = HashMap<String, Any>()
+			val resultMap = HashMap<String, Any?>()
 			for(i in 1..columnCount){
 				resultMap.put(metaData.getColumnName(i), JdbcUtil.getRsValue(rs, i))
 			}
@@ -40,7 +40,7 @@ object JdbcUtil {
 	}
 
 	/*copy from org.springframework.jdbc.support.JdbcUtils*/
-	fun getRsValue(rs: ResultSet, index: Int): Any{
+	fun getRsValue(rs: ResultSet, index: Int): Any? {
 		var obj = rs.getObject(index)
 		var className: String = ""
 		if (obj != null) {
