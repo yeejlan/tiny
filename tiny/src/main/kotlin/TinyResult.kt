@@ -76,7 +76,7 @@ data class TinyResult <T:Any?> constructor(var error: String?, var data: T?) {
 	}
 
 	companion object{
-		@JvmStatic fun <T: Any> fromMap(sr: SqlResult<Map<String, Any?>>, clazz: KClass<T>): TinyResult<T?> {
+		@JvmStatic fun <T: Any> fromMap(sr: SqlResult<HashMap<String, Any?>>, clazz: KClass<T>): TinyResult<T?> {
 			if(sr.ex != null) {
 				val msg = sr.ex.toString() + ": " + Thread.currentThread().getStackTrace()[2]
 				return TinyResult<T?>("Sql query error",  msg)
@@ -88,7 +88,7 @@ data class TinyResult <T:Any?> constructor(var error: String?, var data: T?) {
 			return TinyResult<T?>(null, con.call(sr.data))
 		}
 
-		@JvmStatic fun <T: Any> fromList(sr: SqlResult<List<Map<String, Any?>>>, clazz: KClass<T>): TinyResult<List<T>> {
+		@JvmStatic fun <T: Any> fromList(sr: SqlResult<List<HashMap<String, Any?>>>, clazz: KClass<T>): TinyResult<List<T>> {
 			if(sr.ex != null) {
 				val msg = sr.ex.toString() + ": " + Thread.currentThread().getStackTrace()[2]
 				return TinyResult<List<T>>("Sql query error",  msg)

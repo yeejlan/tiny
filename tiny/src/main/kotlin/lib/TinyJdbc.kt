@@ -79,21 +79,21 @@ class TinyJdbc(ds: DataSource) {
 
 	/*select multiple records*/
 	@Profiling
-	fun queryForList(sql: String, paramMap: Map<String, Any>? = null): SqlResult<List<Map<String, Any?>>> {
+	fun queryForList(sql: String, paramMap: Map<String, Any>? = null): SqlResult<List<HashMap<String, Any?>>> {
 		try{
-			return SqlResult<List<Map<String, Any?>>>(null, _queryForList(sql, paramMap))
+			return SqlResult<List<HashMap<String, Any?>>>(null, _queryForList(sql, paramMap))
 		}catch(e: SQLException){
-			return SqlResult<List<Map<String, Any?>>>(e, listOf())
+			return SqlResult<List<HashMap<String, Any?>>>(e, listOf())
 		}
 	}
 
 	/*select one record*/
 	@Profiling
-	fun queryForMap(sql: String, paramMap: Map<String, Any>? = null): SqlResult<Map<String, Any?>> {
+	fun queryForMap(sql: String, paramMap: Map<String, Any>? = null): SqlResult<HashMap<String, Any?>> {
 		try{
-			return SqlResult<Map<String, Any?>>(null, _queryForMap(sql, paramMap))
+			return SqlResult<HashMap<String, Any?>>(null, _queryForMap(sql, paramMap))
 		}catch(e: SQLException){
-			return SqlResult<Map<String, Any?>>(e, mapOf())
+			return SqlResult<HashMap<String, Any?>>(e, HashMap())
 		}
 	}
 
@@ -246,21 +246,21 @@ class TinyJdbc(ds: DataSource) {
 		})
 	}
 
-	private fun _queryForList(sql: String, paramMap: Map<String, Any>? = null): List<Map<String, Any?>> {
+	private fun _queryForList(sql: String, paramMap: Map<String, Any>? = null): List<HashMap<String, Any?>> {
 
-		val value = query<List<Map<String, Any?>>>(sql, paramMap, { rs ->
+		val value = query<List<HashMap<String, Any?>>>(sql, paramMap, { rs ->
 			val value = JdbcUtil.rsToList(rs)
 			return@query value
 		})
 		return value ?: listOf()
 	}
 
-	private fun _queryForMap(sql: String, paramMap: Map<String, Any>? = null): Map<String, Any?> {
+	private fun _queryForMap(sql: String, paramMap: Map<String, Any>? = null): HashMap<String, Any?> {
 
-		val value = query<Map<String, Any?>>(sql, paramMap, { rs ->
+		val value = query<HashMap<String, Any?>>(sql, paramMap, { rs ->
 			JdbcUtil.rsToMap(rs)
 		})
-		return value ?: mapOf()
+		return value ?: HashMap()
 	}
 
 	override fun toString(): String {

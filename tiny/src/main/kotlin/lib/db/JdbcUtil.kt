@@ -10,8 +10,8 @@ import tiny.lib.DebugUtil
 
 object JdbcUtil {
 
-	/*Convert ResultSet to Map<String, Any?>*/
-	fun rsToMap(rs: ResultSet): Map<String, Any?>{
+	/*Convert ResultSet to HashMap<String, Any?>*/
+	fun rsToMap(rs: ResultSet): HashMap<String, Any?>{
 		val resultMap = HashMap<String, Any?>()
 		val metaData = rs.getMetaData()
 		val columnCount = metaData.getColumnCount()
@@ -24,8 +24,8 @@ object JdbcUtil {
 		return resultMap
 	}
 
-	/*Convert ResultSet to List<Map<String, Any?>>*/
-	fun rsToList(rs: ResultSet): List<Map<String, Any?>>{
+	/*Convert ResultSet to List<HashMap<String, Any?>>*/
+	fun rsToList(rs: ResultSet): List<HashMap<String, Any?>>{
 		val resultList: MutableList<HashMap<String, Any?>> = mutableListOf()
 		val metaData = rs.getMetaData()
 		val columnCount = metaData.getColumnCount()
