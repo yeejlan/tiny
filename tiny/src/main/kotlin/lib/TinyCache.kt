@@ -27,16 +27,10 @@ object TinyCache {
 	}
 
 	@JvmStatic fun set(key: String, value: String, expireSeconds: Long = cacheExpireSeconds) {
-		if(!cacheEnable){
-			return
-		}
 		redis.set(cachePrefix + key, value, expireSeconds)
 	}
 
 	@JvmStatic fun set(key: String, value: Any, expireSeconds: Long = cacheExpireSeconds) {
-		if(!cacheEnable){
-			return
-		}
 		redis.set(cachePrefix + key, value, expireSeconds)
 	}
 
@@ -56,16 +50,10 @@ object TinyCache {
 	}
 
 	@JvmStatic fun delete(key: String) {
-		if(!cacheEnable){
-			return
-		}
 		redis.delete(cachePrefix + key)
 	}
 
 	@JvmStatic fun expire(key: String, expireSeconds: Long = cacheExpireSeconds) {
-		if(!cacheEnable){
-			return
-		}
 		redis.expire(cachePrefix + key, expireSeconds)
 	}
 
