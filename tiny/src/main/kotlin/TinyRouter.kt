@@ -366,4 +366,4 @@ object TinyRouter{
 
 }
 
-private class TinyRouterExitException(message: String?) : Throwable(message)
+class TinyRouterExitException(message: String?) : Throwable(message)
