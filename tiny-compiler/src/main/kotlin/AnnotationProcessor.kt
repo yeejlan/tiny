@@ -262,6 +262,15 @@ class AnnotationProcessor : AbstractProcessor() {
 			.addStatement("\$T.dispatch(request, response)", _clzTinyRouter)
 			.build()
 
+		val _methodDoOptions = MethodSpec.methodBuilder("doOptions")
+			.addModifiers(Modifier.PUBLIC)
+			.addException(_clzServletException)
+			.addException(_clzIOException)
+			.addParameter(_clzRequest, "request")
+			.addParameter(_clzResponse, "response")
+			.addStatement("\$T.dispatch(request, response)", _clzTinyRouter)
+			.build()
+
 		val _methodDestroy = MethodSpec.methodBuilder("destroy")
 			.addModifiers(Modifier.PUBLIC)
 			.addStatement("\$T.shutdown()", _clzTinyApp)
@@ -275,6 +284,7 @@ class AnnotationProcessor : AbstractProcessor() {
 				.addMethod(_methodInit)
 				.addMethod(_methodDoGet)
 				.addMethod(_methodDoPost)
+				.addMethod(_methodDoOptions)
 				.addMethod(_methodDestroy)
 				.build()
 
