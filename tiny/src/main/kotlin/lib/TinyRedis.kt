@@ -3,6 +3,7 @@ package tiny.lib
 import tiny.*
 import tiny.lib.redis.*
 import com.fasterxml.jackson.module.kotlin.*
+import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.DeserializationFeature
 import io.lettuce.core.api.StatefulRedisConnection
 import org.slf4j.LoggerFactory
@@ -94,6 +95,18 @@ class TinyRedis(ds: LettuceDataSource) {
 
 	fun <T> get(key: String, valueType: Class<T> ): T? {
 		
+		val value = this.get(key)
+		if(value.isEmpty()){
+			return null
+		}
+		try {
+			return objectMapper.readValue(value, valueType)
+		}catch (e: Throwable){
+			return null
+		}
+	}
+
+	fun get(key: String, valueType: JavaType): Any? {
 		val value = this.get(key)
 		if(value.isEmpty()){
 			return null

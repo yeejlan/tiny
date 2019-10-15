@@ -5,6 +5,8 @@ import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.Signature
 import org.aspectj.lang.annotation.*
 import org.aspectj.lang.reflect.MethodSignature
+import java.lang.reflect.ParameterizedType
+import com.fasterxml.jackson.module.kotlin.*
 
 import tiny.TinyResult
 import tiny.lib.TinyCache
@@ -12,6 +14,8 @@ import tiny.lib.DebugUtil
 import tiny.TinyRegistry
 import tiny.annotation.AddCache
 import tiny.annotation.DeleteCache
+
+private val objectMapper = jacksonObjectMapper()
 
 @Aspect
 class CacheHandle {
@@ -30,10 +34,19 @@ class CacheHandle {
 		val cacheKey = cacheAdd.key
 		val cacheExpire = cacheAdd.expire
 		val realCacheKey = getRealCacheKey(cacheKey, pjp)
-		val returnType = signature.getReturnType()
-		val cachedResult = TinyCache.get(realCacheKey, returnType)
-		if(cachedResult != null){
-			return cachedResult
+		val gType = method.getGenericReturnType()
+		if(gType is ParameterizedType) {
+			val javatype = objectMapper.getTypeFactory().constructType(gType)
+			val cachedResult = TinyCache.get(realCacheKey, javatype)
+			if(cachedResult != null){
+				return cachedResult
+			}
+		}else{
+			val returnType = signature.getReturnType()
+			val cachedResult = TinyCache.get(realCacheKey, returnType)
+			if(cachedResult != null){
+				return cachedResult
+			}
 		}
 
 		val result = pjp.proceed()

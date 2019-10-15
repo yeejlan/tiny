@@ -3,6 +3,7 @@ package tiny.lib
 import tiny.*
 import tiny.lib.*
 import io.lettuce.core.api.StatefulRedisConnection
+import com.fasterxml.jackson.databind.JavaType
 
 object TinyCache {
 
@@ -43,6 +44,13 @@ object TinyCache {
 	}
 
 	@JvmStatic fun <T> get(key: String, valueType: Class<T> ): T? {
+		if(!cacheEnable){
+			return null
+		}
+		return redis.get(cachePrefix + key, valueType)
+	}
+
+	fun get(key: String, valueType: JavaType): Any? {
 		if(!cacheEnable){
 			return null
 		}
