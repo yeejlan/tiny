@@ -78,9 +78,18 @@ class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 		if(sessionId.isEmpty()){
 			newSession()
 		}else{
-			session.sessionId = sessionId
-			session.load()
+			setSessionId(sessionId)
 		}
+	}
+
+	/*set session id and reload the session*/
+	fun setSessionId(sessionId: String) {
+		session.sessionId = sessionId
+		session.load()
+	}
+
+	fun flushSession() {
+		session.save()
 	}
 
 	private fun _initParams(){
