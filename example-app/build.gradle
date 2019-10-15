@@ -100,17 +100,18 @@ task weave {
 		classesTask.dependsOn weave
 	}
 
+	def tinyHome = System.getenv("TINY_HOME")
 	doLast {
 		ant.taskdef(resource:"org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties", classpath: configurations.ajc.asPath)
 		ant.iajc(source:"1.8", 
 				target:"1.8", 
-				showWeaveInfo:false,
-				inpath: "$compileKotlin.destinationDir",
+				showWeaveInfo:true,
+				verbose: true,
+				inpath: "$tinyHome/tiny/build/classes/kotlin;$compileKotlin.destinationDir",
 				destDir: "$compileKotlin.destinationDir",
-				classpath: "${configurations.compile.asPath};${configurations.ajc.asPath};../tiny/build/classes/kotlin/main;../tiny-annotation/build/classes/kotlin/main",
+				classpath: "${configurations.compile.asPath};${configurations.ajc.asPath}",
 				maxmem:"512m", 
 				fork:"true",
-				//aspectPath:"",
 			){}
 	}
 }
