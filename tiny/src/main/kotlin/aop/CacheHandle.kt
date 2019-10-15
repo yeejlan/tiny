@@ -28,6 +28,7 @@ class CacheHandle {
 		}
 
 		val cacheKey = cacheAdd.key
+		val cacheExpire = cacheAdd.expire
 		val realCacheKey = getRealCacheKey(cacheKey, pjp)
 		val returnType = signature.getReturnType()
 		val cachedResult = TinyCache.get(realCacheKey, returnType)
@@ -45,7 +46,7 @@ class CacheHandle {
 					return result
 				}
 			}
-			TinyCache.set(realCacheKey, result)
+			TinyCache.set(realCacheKey, result, cacheExpire)
 		}
 		return result
 	}
