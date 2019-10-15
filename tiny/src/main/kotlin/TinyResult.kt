@@ -61,6 +61,42 @@ data class TinyResult <T:Any?> constructor(var error: String?, var data: T?) {
 		return this.data as T
 	}
 
+	/*convert data to object*/
+	fun <T: Any> toObj(clazz: KClass<T>): T? {
+		if(this.error()){
+			val msg = "Bad TinyResult: " + Thread.currentThread().getStackTrace()[2] + cause()
+			logger.error(msg)
+			throw TinyResultException("Bad TinyResult" + cause())
+		}
+		if(this.data is Map<*,*>) {
+			val con = clazz.primaryConstructor!!
+			return con.call(this.data)
+		}
+		@Suppress("UNCHECKED_CAST")
+		return this.data as T?
+	}
+
+	/*convert data to list<Object>*/
+	fun <T: Any> toList(clazz: KClass<T>): List<T> {
+		if(this.error()){
+			val msg = "Bad TinyResult: " + Thread.currentThread().getStackTrace()[2] + cause()
+			logger.error(msg)
+			throw TinyResultException("Bad TinyResult" + cause())
+		}
+		val con = clazz.primaryConstructor!!
+		val theList = this.data as List<*>
+		val newList: MutableList<T> = mutableListOf()
+		theList.forEach{
+			if(it is Map<*,*>) {
+				newList.add(con.call(it))
+			}else{
+				@Suppress("UNCHECKED_CAST")
+				return theList as List<T>
+			}
+		}
+		return newList
+	}
+
 	/*return this.cause as String*/
 	fun cause(): String {
 		return this.cause.toString()
