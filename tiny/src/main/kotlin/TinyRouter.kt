@@ -176,6 +176,9 @@ object TinyRouter{
 					ctx.exception = e
 					_internalServerError(ctx)
 				}
+			} finally{
+				//make sure session got saved
+				ctx.session.save()
 			}
 		}else{ //action not found
 			_pageNotFound(ctx)

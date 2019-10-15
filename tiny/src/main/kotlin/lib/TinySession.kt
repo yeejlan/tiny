@@ -70,6 +70,7 @@ class TinySession {
 		if(!_changed){
 			return
 		}
+		_changed = false
 		if(sessionId.isEmpty()){
 			return
 		}
