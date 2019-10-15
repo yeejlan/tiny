@@ -45,6 +45,9 @@ class CacheHandle {
 				if(result.data() is List<*> && (result.data() as List<*>).isEmpty()){
 					return result
 				}
+				if(result.data() is Map<*, *> && (result.data() as Map<*, *>).isEmpty()){
+					return result
+				}
 			}
 			TinyCache.set(realCacheKey, result, cacheExpire)
 		}
