@@ -74,7 +74,11 @@ object TinyRouter{
 		_action.set("")
 
 		val requestUri = request.getPathInfo()
-		val uri = requestUri.trim('/').toLowerCase()
+		var uri = requestUri
+		if(uri == null) {
+			uri = "/"
+		}
+		uri = uri.trim('/').toLowerCase()
 		var routeMatched = false
 		var controller = ""
 		var action = ""
@@ -277,6 +281,9 @@ object TinyRouter{
 		val response = ctx.response
 
 		val uri = request.getPathInfo()
+		if(uri == null) {
+			return fileNotFound
+		}
 		val filePath = URLDecoder.decode(uri, "UTF-8")
 
 		var file: File? = null
