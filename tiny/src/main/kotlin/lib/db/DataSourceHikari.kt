@@ -32,7 +32,7 @@ class DataSourceHikariConfig() {
 			minimumIdle = maximumPoolSize
 		}
 		if(!driver.isEmpty()){
-			_config.setDataSourceClassName(driver)
+			_config.setDriverClassName(driver)
 		}
 		if(!poolName.isEmpty()){
 			_config.setPoolName(poolName)
