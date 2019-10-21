@@ -40,6 +40,7 @@ class AnnotationProcessor : AbstractProcessor() {
 	private lateinit var _types: Types
 	private lateinit var _filer: Filer
 	private var _tinyApplication: TypeElement? = null
+	private var _asyncServlet: Boolean = false
 	private val _helperMap : HashMap<String, TypeElement> = HashMap()
 	private val _controllerMap : HashMap<String, TypeElement> = HashMap()
 	private val _autoWeaveMap : HashMap<String, TypeElement> = HashMap()
@@ -127,6 +128,8 @@ class AnnotationProcessor : AbstractProcessor() {
 				printError("@"+TinyApplication::class.java.getName() + " can only apply on class, incorrect usage on: "+ ele)
 			}
 			val classElement = ele as TypeElement
+			val annoElement = classElement.getAnnotation(TinyApplication::class.java)
+			_asyncServlet = annoElement.async
 			_tinyApplication = classElement
 			_foundSomething = true
 		}
@@ -148,7 +151,7 @@ class AnnotationProcessor : AbstractProcessor() {
 
 		writeControllerLoader()
 		writeHelperLoader()
-		writeTinyServlet()
+		writeTinyServlet(_asyncServlet)
 		writeTinyFileCleanerCleanupListener()
 		writeMagicBox()
 		writeTinyBird()
@@ -212,7 +215,7 @@ class AnnotationProcessor : AbstractProcessor() {
 		javaFile.writeTo(_filer)
 	}
 
-	private fun writeTinyServlet(){
+	private fun writeTinyServlet(async: Boolean = false){
 		if(_tinyApplication == null){
 			printError("No @TinyApplication found, please provide one")
 			return
@@ -224,17 +227,27 @@ class AnnotationProcessor : AbstractProcessor() {
 		val _clzResponse = ClassName.get("javax.servlet.http", "HttpServletResponse")
 		val _clzAnnoServlet = ClassName.get("javax.servlet.annotation", "WebServlet")
 		val _clzTinyRouter = ClassName.get("tiny", "TinyRouter")
+		val _clzAsyncRouter = ClassName.get("tiny.async", "AsyncRouter")
 		val _clzTinyHelperLoader = ClassName.get("tiny.web", "TinyHelperLoader")
 		val _clzTinyControllerLoader = ClassName.get("tiny.web", "TinyControllerLoader")
 		val _clzServletException = ClassName.get("javax.servlet", "ServletException")
 		val _clzIOException = ClassName.get("java.io", "IOException")
 		val _clzTinyApp = ClassName.get("tiny", "TinyApp")
 
-		val _anno = AnnotationSpec.builder(_clzAnnoServlet)
+		var _clzRouter = _clzTinyRouter
+		if(async) {
+			_clzRouter = _clzAsyncRouter
+		}
+
+		val _annoBuilder = AnnotationSpec.builder(_clzAnnoServlet)
 			.addMember("name", "\$S", "TinyServlet")
 			.addMember("urlPatterns", "\$S", "/*")
 			.addMember("loadOnStartup", "1")
-			.build()
+
+		if(async) {
+			_annoBuilder.addMember("asyncSupported", "true")
+		}
+		val _anno = _annoBuilder.build()
 
 		val _methodInit = MethodSpec.methodBuilder("init")
 			.addModifiers(Modifier.PUBLIC)
@@ -250,7 +263,7 @@ class AnnotationProcessor : AbstractProcessor() {
 			.addException(_clzIOException)
 			.addParameter(_clzRequest, "request")
 			.addParameter(_clzResponse, "response")
-			.addStatement("\$T.dispatch(request, response)", _clzTinyRouter)
+			.addStatement("\$T.dispatch(request, response)", _clzRouter)
 			.build()
 
 		val _methodDoPost = MethodSpec.methodBuilder("doPost")
@@ -259,7 +272,7 @@ class AnnotationProcessor : AbstractProcessor() {
 			.addException(_clzIOException)
 			.addParameter(_clzRequest, "request")
 			.addParameter(_clzResponse, "response")
-			.addStatement("\$T.dispatch(request, response)", _clzTinyRouter)
+			.addStatement("\$T.dispatch(request, response)", _clzRouter)
 			.build()
 
 		val _methodDoOptions = MethodSpec.methodBuilder("doOptions")
@@ -268,7 +281,7 @@ class AnnotationProcessor : AbstractProcessor() {
 			.addException(_clzIOException)
 			.addParameter(_clzRequest, "request")
 			.addParameter(_clzResponse, "response")
-			.addStatement("\$T.dispatch(request, response)", _clzTinyRouter)
+			.addStatement("\$T.dispatch(request, response)", _clzRouter)
 			.build()
 
 		val _methodDestroy = MethodSpec.methodBuilder("destroy")

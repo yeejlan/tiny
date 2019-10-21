@@ -4,4 +4,6 @@ import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-annotation class TinyApplication
+annotation class TinyApplication(
+	val async: Boolean = false
+)

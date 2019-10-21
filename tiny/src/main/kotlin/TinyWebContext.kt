@@ -19,7 +19,7 @@ private val uploadMaxInMemory = TinyApp.getConfig().getInt("upload.fileInMemory.
 private val uploadTempfileDir = TinyApp.getConfig().getString("upload.tempfile.dir", "/tmp")
 
 private val logger = LoggerFactory.getLogger(TinyWebContext::class.java)
-class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
+open class TinyWebContext(req: HttpServletRequest, res: HttpServletResponse) {
 
 	/*HttpServletRequest*/
 	var request: HttpServletRequest
