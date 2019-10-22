@@ -11,6 +11,7 @@ import java.io.File
 import java.nio.file.Paths
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.Executors
 import tiny.lib.TinyProfiler
 import tiny.*
 
@@ -24,6 +25,7 @@ object AsyncRouter{
 	private val _controller = ThreadLocal<String>()
 	private val _action = ThreadLocal<String>()
 	private val _ctx = ThreadLocal<AsyncWebContext>()
+	private val _cachedThreadPool = Executors.newCachedThreadPool()
 
 	/**
 	* get current controller
@@ -127,7 +129,10 @@ object AsyncRouter{
 			}
 		}		
 
-		callAction(ctx, controller, action)
+		_cachedThreadPool.execute({
+			callAction(ctx, controller, action)
+			ctx.complete()
+		})
 	}
 
 
