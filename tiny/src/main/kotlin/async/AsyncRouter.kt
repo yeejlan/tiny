@@ -12,6 +12,7 @@ import java.nio.file.Paths
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.Executors
+import org.slf4j.LoggerFactory
 import tiny.lib.TinyProfiler
 import tiny.*
 
@@ -20,6 +21,7 @@ private val ONE_SECOND_IN_MILLIS = TimeUnit.SECONDS.toMillis(1)
 private val staticExtraDir = TinyApp.getConfig()["static.extra.dir"]
 private val profilingName = TinyApp.getConfig()["profiling.name"]
 private val profilingToken = TinyApp.getConfig()["profiling.token"]
+private val logger = LoggerFactory.getLogger(AsyncRouter::class.java)
 
 object AsyncRouter{
 	private val _controller = ThreadLocal<String>()
@@ -130,8 +132,13 @@ object AsyncRouter{
 		}		
 
 		_cachedThreadPool.execute({
-			callAction(ctx, controller, action)
-			ctx.complete()
+			try{
+				callAction(ctx, controller, action)
+			}catch(e: Throwable){
+				logger.error(e.toString())
+			}finally{
+				ctx.complete()
+			}
 		})
 	}
 
